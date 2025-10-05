@@ -1,11 +1,37 @@
+'use client';
+
+import { useEffect } from 'react';
+import { useSession } from 'next-auth/react';
+import { useRouter } from 'next/navigation';
 import Link from "next/link";
 
 import { Command } from "lucide-react";
 
-import { LoginForm } from "../../_components/login-form";
-import { GoogleButton } from "../../_components/social-auth/google-button";
+import { LoginForm } from "../_components/login-form";
+import { GoogleButton } from "../_components/social-auth/google-button";
 
-export default function LoginV1() {
+export default function LoginPage() {
+  const { data: session, status } = useSession();
+  const router = useRouter();
+
+  useEffect(() => {
+    if (status === 'authenticated' && session?.user?.verified) {
+      router.push('/dashboard');
+    }
+  }, [session, status, router]);
+
+  if (status === 'loading') {
+    return (
+      <div className="flex h-dvh items-center justify-center">
+        <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary"></div>
+      </div>
+    );
+  }
+
+  if (status === 'authenticated' && session?.user?.verified) {
+    return null; // Will redirect
+  }
+
   return (
     <div className="flex h-dvh">
       <div className="bg-primary hidden lg:block lg:w-1/3">
@@ -33,7 +59,7 @@ export default function LoginV1() {
             <GoogleButton className="w-full" variant="outline" />
             <p className="text-muted-foreground text-center text-xs">
               Don&apos;t have an account?{" "}
-              <Link href="register" className="text-primary">
+              <Link href="/auth/register" className="text-primary">
                 Register
               </Link>
             </p>

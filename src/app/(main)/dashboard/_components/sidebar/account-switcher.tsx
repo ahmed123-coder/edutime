@@ -1,8 +1,10 @@
 "use client";
 
 import { useState } from "react";
+import { useSession, signOut } from "next-auth/react";
+import { useRouter } from "next/navigation";
 
-import { BadgeCheck, Bell, CreditCard, LogOut } from "lucide-react";
+import { BadgeCheck, Bell, CreditCard, LogOut, Loader2 } from "lucide-react";
 
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import {
@@ -18,7 +20,7 @@ import { cn, getInitials } from "@/lib/utils";
 export function AccountSwitcher({
   users,
 }: {
-  readonly users: ReadonlyArray<{
+  readonly users?: ReadonlyArray<{
     readonly id: string;
     readonly name: string;
     readonly email: string;
@@ -26,7 +28,43 @@ export function AccountSwitcher({
     readonly role: string;
   }>;
 }) {
-  const [activeUser, setActiveUser] = useState(users[0]);
+  const { data: session } = useSession();
+  const router = useRouter();
+  const [isLoggingOut, setIsLoggingOut] = useState(false);
+
+  // Use session data if available, otherwise fallback to users prop
+  const currentUser = session?.user ? {
+    id: session.user.id || '1',
+    name: session.user.name || 'User',
+    email: session.user.email || '',
+    avatar: session.user.image || '',
+    role: session.user.role || 'USER'
+  } : users?.[0];
+
+  const [activeUser, setActiveUser] = useState(currentUser);
+
+  const handleLogout = async () => {
+    setIsLoggingOut(true);
+    try {
+      await signOut({
+        callbackUrl: '/auth/login',
+        redirect: true
+      });
+    } catch (error) {
+      console.error('Logout error:', error);
+      setIsLoggingOut(false);
+    }
+  };
+
+  if (!activeUser) {
+    return (
+      <Avatar className="size-9 rounded-lg">
+        <AvatarFallback className="rounded-lg">
+          <Loader2 className="h-4 w-4 animate-spin" />
+        </AvatarFallback>
+      </Avatar>
+    );
+  }
 
   return (
     <DropdownMenu>
@@ -37,10 +75,25 @@ export function AccountSwitcher({
         </Avatar>
       </DropdownMenuTrigger>
       <DropdownMenuContent className="min-w-56 space-y-1 rounded-lg" side="bottom" align="end" sideOffset={4}>
-        {users.map((user) => (
+        {/* Current User Display */}
+        <DropdownMenuItem className="p-0 bg-accent/50 border-l-primary border-l-2">
+          <div className="flex w-full items-center justify-between gap-2 px-1 py-1.5">
+            <Avatar className="size-9 rounded-lg">
+              <AvatarImage src={activeUser.avatar || undefined} alt={activeUser.name} />
+              <AvatarFallback className="rounded-lg">{getInitials(activeUser.name)}</AvatarFallback>
+            </Avatar>
+            <div className="grid flex-1 text-left text-sm leading-tight">
+              <span className="truncate font-semibold">{activeUser.name}</span>
+              <span className="truncate text-xs capitalize">{activeUser.role.toLowerCase()}</span>
+            </div>
+          </div>
+        </DropdownMenuItem>
+
+        {/* Additional users if provided */}
+        {users && users.length > 1 && users.filter(user => user.id !== activeUser.id).map((user) => (
           <DropdownMenuItem
             key={user.email}
-            className={cn("p-0", user.id === activeUser.id && "bg-accent/50 border-l-primary border-l-2")}
+            className="p-0"
             onClick={() => setActiveUser(user)}
           >
             <div className="flex w-full items-center justify-between gap-2 px-1 py-1.5">
@@ -71,9 +124,17 @@ export function AccountSwitcher({
           </DropdownMenuItem>
         </DropdownMenuGroup>
         <DropdownMenuSeparator />
-        <DropdownMenuItem>
-          <LogOut />
-          Log out
+        <DropdownMenuItem
+          onClick={handleLogout}
+          disabled={isLoggingOut}
+          className="text-red-600 focus:text-red-600 focus:bg-red-50"
+        >
+          {isLoggingOut ? (
+            <Loader2 className="h-4 w-4 animate-spin" />
+          ) : (
+            <LogOut />
+          )}
+          {isLoggingOut ? 'Logging out...' : 'Log out'}
         </DropdownMenuItem>
       </DropdownMenuContent>
     </DropdownMenu>

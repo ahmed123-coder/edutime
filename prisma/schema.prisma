@@ -1,0 +1,433 @@
+// SaaS Formation Space Management Platform - Database Schema
+// Multi-tenant architecture for training centers and space booking
+
+generator client {
+  provider = "prisma-client-js"
+  output   = "../src/generated/prisma"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+// ============================================================================
+// USER MANAGEMENT & AUTHENTICATION
+// ============================================================================
+
+model User {
+  id            String    @id @default(cuid())
+  email         String    @unique
+  name          String?
+  phone         String?
+  password      String?   // For credentials login
+  role          UserRole
+  verified      Boolean   @default(false)
+  avatar        String?
+  speciality    String?   // For teachers
+  documents     Json?     // Verification documents
+  createdAt     DateTime  @default(now())
+  updatedAt     DateTime  @updatedAt
+
+  // Relations
+  accounts      Account[]
+  sessions      Session[]
+  organizations OrganizationMember[]
+  bookings      Booking[]
+  reviews       Review[]
+  payments      Payment[]
+  notifications Notification[]
+  serviceOrders ServiceOrder[]
+
+  @@map("users")
+}
+
+enum UserRole {
+  ADMIN
+  CENTER_OWNER
+  TRAINING_MANAGER
+  TEACHER
+  PARTNER
+}
+
+// NextAuth.js required models
+model Account {
+  id                String  @id @default(cuid())
+  userId            String
+  type              String
+  provider          String
+  providerAccountId String
+  refresh_token     String? @db.Text
+  access_token      String? @db.Text
+  expires_at        Int?
+  token_type        String?
+  scope             String?
+  id_token          String? @db.Text
+  session_state     String?
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@unique([provider, providerAccountId])
+  @@map("accounts")
+}
+
+model Session {
+  id           String   @id @default(cuid())
+  sessionToken String   @unique
+  userId       String
+  expires      DateTime
+  user         User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@map("sessions")
+}
+
+model VerificationToken {
+  identifier String
+  token      String   @unique
+  expires    DateTime
+
+  @@unique([identifier, token])
+  @@map("verification_tokens")
+}
+
+// ============================================================================
+// MULTI-TENANT ORGANIZATION MANAGEMENT
+// ============================================================================
+
+model Organization {
+  id              String             @id @default(cuid())
+  name            String
+  slug            String             @unique
+  description     String?
+  logo            String?
+  type            OrganizationType
+  subscription    SubscriptionPlan
+  subscriptionEnd DateTime?
+  address         Json               // Address object
+  coordinates     Json?              // Lat/lng for maps
+  hours           Json?              // Operating hours
+  phone           String?
+  email           String?
+  website         String?
+  verified        Boolean            @default(false)
+  active          Boolean            @default(true)
+  createdAt       DateTime           @default(now())
+  updatedAt       DateTime           @updatedAt
+
+  // Relations
+  members         OrganizationMember[]
+  rooms           Room[]
+  bookings        Booking[]
+  reviews         Review[]
+  promotions      Promotion[]
+  services        Service[]
+
+  @@map("organizations")
+}
+
+enum OrganizationType {
+  TRAINING_CENTER
+  PARTNER_SERVICE
+}
+
+enum SubscriptionPlan {
+  ESSENTIAL
+  PRO
+  PREMIUM
+}
+
+model OrganizationMember {
+  id             String       @id @default(cuid())
+  userId         String
+  organizationId String
+  role           MemberRole
+  permissions    Json?
+  createdAt      DateTime     @default(now())
+
+  user           User         @relation(fields: [userId], references: [id], onDelete: Cascade)
+  organization   Organization @relation(fields: [organizationId], references: [id], onDelete: Cascade)
+
+  @@unique([userId, organizationId])
+  @@map("organization_members")
+}
+
+enum MemberRole {
+  OWNER
+  MANAGER
+  STAFF
+}
+
+// ============================================================================
+// ROOMS AND SPACES MANAGEMENT
+// ============================================================================
+
+model Room {
+  id             String       @id @default(cuid())
+  organizationId String
+  name           String
+  description    String?
+  capacity       Int
+  area           Float?       // Square meters
+  hourlyRate     Decimal      @db.Decimal(10,2)
+  equipment      Json?        // Array of equipment
+  amenities      Json?        // Array of amenities
+  photos         Json?        // Array of photo URLs
+  active         Boolean      @default(true)
+  createdAt      DateTime     @default(now())
+  updatedAt      DateTime     @updatedAt
+
+  // Relations
+  organization   Organization @relation(fields: [organizationId], references: [id], onDelete: Cascade)
+  bookings       Booking[]
+  availability   RoomAvailability[]
+
+  @@map("rooms")
+}
+
+model RoomAvailability {
+  id        String              @id @default(cuid())
+  roomId    String
+  date      DateTime            @db.Date
+  startTime DateTime            @db.Time
+  endTime   DateTime            @db.Time
+  type      AvailabilityType
+  reason    String?
+  createdAt DateTime            @default(now())
+
+  room      Room                @relation(fields: [roomId], references: [id], onDelete: Cascade)
+
+  @@unique([roomId, date, startTime, endTime])
+  @@map("room_availability")
+}
+
+enum AvailabilityType {
+  AVAILABLE
+  BLOCKED
+  MAINTENANCE
+}
+
+// ============================================================================
+// BOOKING SYSTEM
+// ============================================================================
+
+model Booking {
+  id             String        @id @default(cuid())
+  organizationId String
+  roomId         String
+  userId         String        // Teacher who made the booking
+  date           DateTime      @db.Date
+  startTime      DateTime      @db.Time
+  endTime        DateTime      @db.Time
+  totalAmount    Decimal       @db.Decimal(10,2)
+  commission     Decimal       @db.Decimal(10,2)
+  status         BookingStatus
+  paymentMethod  PaymentMethod?
+  paymentStatus  PaymentStatus @default(PENDING)
+  notes          String?
+  cancelReason   String?
+  createdAt      DateTime      @default(now())
+  updatedAt      DateTime      @updatedAt
+
+  // Relations
+  organization   Organization  @relation(fields: [organizationId], references: [id])
+  room           Room          @relation(fields: [roomId], references: [id])
+  user           User          @relation(fields: [userId], references: [id])
+  payments       Payment[]
+
+  @@map("bookings")
+}
+
+enum BookingStatus {
+  PENDING
+  CONFIRMED
+  CANCELLED
+  COMPLETED
+  NO_SHOW
+}
+
+enum PaymentMethod {
+  KONNECT
+  CLICKTOPAY
+  ON_SITE
+  BANK_TRANSFER
+}
+
+enum PaymentStatus {
+  PENDING
+  PAID
+  FAILED
+  REFUNDED
+  PARTIAL_REFUND
+}
+
+// ============================================================================
+// PAYMENT AND FINANCIAL MANAGEMENT
+// ============================================================================
+
+model Payment {
+  id              String        @id @default(cuid())
+  bookingId       String
+  userId          String
+  amount          Decimal       @db.Decimal(10,2)
+  commission      Decimal       @db.Decimal(10,2)
+  method          PaymentMethod
+  status          PaymentStatus
+  transactionId   String?       // External payment provider ID
+  refundAmount    Decimal?      @db.Decimal(10,2)
+  refundReason    String?
+  metadata        Json?         // Payment provider specific data
+  createdAt       DateTime      @default(now())
+  updatedAt       DateTime      @updatedAt
+
+  // Relations
+  booking         Booking       @relation(fields: [bookingId], references: [id])
+  user            User          @relation(fields: [userId], references: [id])
+
+  @@map("payments")
+}
+
+// ============================================================================
+// REVIEWS AND RATINGS SYSTEM
+// ============================================================================
+
+model Review {
+  id             String       @id @default(cuid())
+  organizationId String
+  userId         String
+  rating         Int          // 1-5 stars
+  comment        String?
+  response       String?      // Organization response
+  responseAt     DateTime?
+  verified       Boolean      @default(false)
+  reported       Boolean      @default(false)
+  createdAt      DateTime     @default(now())
+  updatedAt      DateTime     @updatedAt
+
+  // Relations
+  organization   Organization @relation(fields: [organizationId], references: [id])
+  user           User         @relation(fields: [userId], references: [id])
+
+  @@unique([organizationId, userId])
+  @@map("reviews")
+}
+
+// ============================================================================
+// PROMOTIONS AND DISCOUNTS
+// ============================================================================
+
+model Promotion {
+  id             String         @id @default(cuid())
+  organizationId String
+  name           String
+  description    String?
+  code           String?        @unique
+  type           PromotionType
+  value          Decimal        @db.Decimal(10,2)
+  minAmount      Decimal?       @db.Decimal(10,2)
+  maxDiscount    Decimal?       @db.Decimal(10,2)
+  startDate      DateTime
+  endDate        DateTime
+  usageLimit     Int?
+  usageCount     Int            @default(0)
+  active         Boolean        @default(true)
+  createdAt      DateTime       @default(now())
+
+  // Relations
+  organization   Organization   @relation(fields: [organizationId], references: [id])
+
+  @@map("promotions")
+}
+
+enum PromotionType {
+  PERCENTAGE
+  FIXED_AMOUNT
+  FREE_HOURS
+}
+
+// ============================================================================
+// PARTNER SERVICES
+// ============================================================================
+
+model Service {
+  id             String       @id @default(cuid())
+  organizationId String       // Partner organization
+  name           String
+  description    String?
+  category       ServiceCategory
+  price          Decimal      @db.Decimal(10,2)
+  unit           String       // per page, per hour, etc.
+  active         Boolean      @default(true)
+  createdAt      DateTime     @default(now())
+
+  // Relations
+  organization   Organization @relation(fields: [organizationId], references: [id])
+  orders         ServiceOrder[]
+
+  @@map("services")
+}
+
+enum ServiceCategory {
+  PRINTING
+  PHOTOCOPYING
+  DOCUMENT_DELIVERY
+  CATERING
+  EQUIPMENT_RENTAL
+  OTHER
+}
+
+model ServiceOrder {
+  id              String            @id @default(cuid())
+  serviceId       String
+  userId          String
+  quantity        Int
+  totalAmount     Decimal           @db.Decimal(10,2)
+  status          ServiceOrderStatus
+  notes           String?
+  deliveryAddress String?
+  deliveryDate    DateTime?
+  createdAt       DateTime          @default(now())
+  updatedAt       DateTime          @updatedAt
+
+  // Relations
+  service         Service           @relation(fields: [serviceId], references: [id])
+  user            User              @relation(fields: [userId], references: [id])
+
+  @@map("service_orders")
+}
+
+enum ServiceOrderStatus {
+  PENDING
+  CONFIRMED
+  IN_PROGRESS
+  COMPLETED
+  CANCELLED
+}
+
+// ============================================================================
+// NOTIFICATIONS SYSTEM
+// ============================================================================
+
+model Notification {
+  id        String           @id @default(cuid())
+  userId    String
+  type      NotificationType
+  title     String
+  message   String
+  data      Json?            // Additional data
+  read      Boolean          @default(false)
+  createdAt DateTime         @default(now())
+
+  // Relations
+  user      User             @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@map("notifications")
+}
+
+enum NotificationType {
+  BOOKING_CONFIRMED
+  BOOKING_CANCELLED
+  PAYMENT_RECEIVED
+  REVIEW_RECEIVED
+  PROMOTION_AVAILABLE
+  SYSTEM_UPDATE
+}
