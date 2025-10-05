@@ -1,7 +1,7 @@
 "use client";
 
 import Link from "next/link";
-import { usePathname } from "next/navigation";
+import { usePathname, useSearchParams } from "next/navigation";
 
 import { PlusCircleIcon, MailIcon, ChevronRight } from "lucide-react";
 
@@ -39,10 +39,12 @@ const NavItemExpanded = ({
   item,
   isActive,
   isSubmenuOpen,
+  isUrlActive,
 }: {
   item: NavMainItem;
   isActive: (url: string, subItems?: NavMainItem["subItems"]) => boolean;
   isSubmenuOpen: (subItems?: NavMainItem["subItems"]) => boolean;
+  isUrlActive: (url: string) => boolean;
 }) => {
   return (
     <Collapsible key={item.title} asChild defaultOpen={isSubmenuOpen(item.subItems)} className="group/collapsible">
@@ -79,7 +81,7 @@ const NavItemExpanded = ({
             <SidebarMenuSub>
               {item.subItems.map((subItem) => (
                 <SidebarMenuSubItem key={subItem.title}>
-                  <SidebarMenuSubButton aria-disabled={subItem.comingSoon} isActive={isActive(subItem.url)} asChild>
+                  <SidebarMenuSubButton aria-disabled={subItem.comingSoon} isActive={isUrlActive(subItem.url)} asChild>
                     <Link href={subItem.url} target={subItem.newTab ? "_blank" : undefined}>
                       {subItem.icon && <subItem.icon />}
                       <span>{subItem.title}</span>
@@ -99,9 +101,11 @@ const NavItemExpanded = ({
 const NavItemCollapsed = ({
   item,
   isActive,
+  isUrlActive,
 }: {
   item: NavMainItem;
   isActive: (url: string, subItems?: NavMainItem["subItems"]) => boolean;
+  isUrlActive: (url: string) => boolean;
 }) => {
   return (
     <SidebarMenuItem key={item.title}>
@@ -125,7 +129,7 @@ const NavItemCollapsed = ({
                 asChild
                 className="focus-visible:ring-0"
                 aria-disabled={subItem.comingSoon}
-                isActive={isActive(subItem.url)}
+                isActive={isUrlActive(subItem.url)}
               >
                 <Link href={subItem.url} target={subItem.newTab ? "_blank" : undefined}>
                   {subItem.icon && <subItem.icon className="[&>svg]:text-sidebar-foreground" />}
@@ -143,17 +147,38 @@ const NavItemCollapsed = ({
 
 export function NavMain({ items }: NavMainProps) {
   const path = usePathname();
+  const searchParams = useSearchParams();
   const { state, isMobile } = useSidebar();
+
+  // Check if a specific URL (including query params) is active
+  const isUrlActive = (url: string) => {
+    const [urlPath, urlQuery] = url.split('?');
+    const currentUrl = `${path}${searchParams.toString() ? `?${searchParams.toString()}` : ''}`;
+
+    // Exact match for URLs with query parameters
+    if (urlQuery) {
+      return currentUrl === url;
+    }
+
+    // For URLs without query params, match if path matches and no query params in current URL
+    return path === urlPath && !searchParams.toString();
+  };
 
   const isItemActive = (url: string, subItems?: NavMainItem["subItems"]) => {
     if (subItems?.length) {
-      return subItems.some((sub) => path.startsWith(sub.url));
+      // For parent items with subItems, check if any sub-item matches the current URL
+      return subItems.some((sub) => isUrlActive(sub.url));
     }
-    return path === url;
+
+    // For regular items, check exact match
+    return isUrlActive(url);
   };
 
   const isSubmenuOpen = (subItems?: NavMainItem["subItems"]) => {
-    return subItems?.some((sub) => path.startsWith(sub.url)) ?? false;
+    return subItems?.some((sub) => {
+      const [subPath] = sub.url.split('?');
+      return path === subPath;
+    }) ?? false;
   };
 
   return (
@@ -207,11 +232,11 @@ export function NavMain({ items }: NavMainProps) {
                     );
                   }
                   // Otherwise, render the dropdown as before
-                  return <NavItemCollapsed key={item.title} item={item} isActive={isItemActive} />;
+                  return <NavItemCollapsed key={item.title} item={item} isActive={isItemActive} isUrlActive={isUrlActive} />;
                 }
                 // Expanded view
                 return (
-                  <NavItemExpanded key={item.title} item={item} isActive={isItemActive} isSubmenuOpen={isSubmenuOpen} />
+                  <NavItemExpanded key={item.title} item={item} isActive={isItemActive} isSubmenuOpen={isSubmenuOpen} isUrlActive={isUrlActive} />
                 );
               })}
             </SidebarMenu>

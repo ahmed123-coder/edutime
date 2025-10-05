@@ -26,7 +26,7 @@ export function NavUser({
     readonly avatar: string;
   };
 }) {
-  const { data: session } = useSession();
+  const { data: session, status } = useSession();
   const { isMobile } = useSidebar();
   const [isLoggingOut, setIsLoggingOut] = useState(false);
 
@@ -50,7 +50,7 @@ export function NavUser({
     }
   };
 
-  if (!currentUser) {
+  if (status === 'loading' || !currentUser) {
     return (
       <SidebarMenu>
         <SidebarMenuItem>

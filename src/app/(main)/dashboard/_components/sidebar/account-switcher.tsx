@@ -28,7 +28,7 @@ export function AccountSwitcher({
     readonly role: string;
   }>;
 }) {
-  const { data: session } = useSession();
+  const { data: session, status } = useSession();
   const router = useRouter();
   const [isLoggingOut, setIsLoggingOut] = useState(false);
 
@@ -56,7 +56,8 @@ export function AccountSwitcher({
     }
   };
 
-  if (!activeUser) {
+  // Show loading state while session is loading
+  if (status === 'loading' || !activeUser) {
     return (
       <Avatar className="size-9 rounded-lg">
         <AvatarFallback className="rounded-lg">

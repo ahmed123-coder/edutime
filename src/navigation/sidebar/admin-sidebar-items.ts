@@ -71,10 +71,10 @@ export const adminSidebarItems: NavGroup[] = [
         icon: Users,
         subItems: [
           { title: "All Users", url: "/dashboard/admin/users" },
-          { title: "Admins", url: "/dashboard/admin/users?role=admin" },
-          { title: "Center Owners", url: "/dashboard/admin/users?role=center_owner" },
-          { title: "Teachers", url: "/dashboard/admin/users?role=teacher" },
-          { title: "Partners", url: "/dashboard/admin/users?role=partner" },
+          { title: "Admins", url: "/dashboard/admin/users?role=ADMIN" },
+          { title: "Center Owners", url: "/dashboard/admin/users?role=CENTER_OWNER" },
+          { title: "Teachers", url: "/dashboard/admin/users?role=TEACHER" },
+          { title: "Partners", url: "/dashboard/admin/users?role=PARTNER" },
         ],
       },
       {
