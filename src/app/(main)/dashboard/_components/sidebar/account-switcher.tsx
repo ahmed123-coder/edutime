@@ -56,12 +56,21 @@ export function AccountSwitcher({
     }
   };
 
-  // Show loading state while session is loading
-  if (status === 'loading' || !activeUser) {
+  if (status === 'loading') {
     return (
       <Avatar className="size-9 rounded-lg">
         <AvatarFallback className="rounded-lg">
           <Loader2 className="h-4 w-4 animate-spin" />
+        </AvatarFallback>
+      </Avatar>
+    );
+  }
+
+  if (!activeUser) {
+    return (
+      <Avatar className="size-9 rounded-lg">
+        <AvatarFallback className="rounded-lg">
+          ?
         </AvatarFallback>
       </Avatar>
     );

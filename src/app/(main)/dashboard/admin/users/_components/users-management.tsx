@@ -33,6 +33,7 @@ import {
 import { toast } from 'sonner';
 import { getInitials } from '@/lib/utils';
 import { CreateUserModal } from './create-user-modal';
+import { EditUserModal } from './edit-user-modal';
 
 interface User {
   id: string;
@@ -45,6 +46,18 @@ interface User {
   speciality?: string;
   createdAt: string;
   updatedAt: string;
+  organizations?: {
+    organization: {
+      id: string;
+      name: string;
+      subscriptions: {
+        package: {
+          name: string;
+          plan: string;
+        };
+      }[];
+    };
+  }[];
 }
 
 interface UsersResponse {
@@ -75,6 +88,8 @@ export function UsersManagement() {
   const [verifiedFilter, setVerifiedFilter] = useState(searchParams.get('verified') || '');
   const [page, setPage] = useState(parseInt(searchParams.get('page') || '1'));
   const [createModalOpen, setCreateModalOpen] = useState(false);
+  const [editModalOpen, setEditModalOpen] = useState(false);
+  const [editUserId, setEditUserId] = useState<string | null>(null);
   const [pagination, setPagination] = useState({
     page: 1,
     limit: 10,
@@ -142,7 +157,7 @@ export function UsersManagement() {
   }, [page, search, roleFilter, verifiedFilter]);
 
   const handleDeleteUser = async (userId: string) => {
-    if (!confirm('Are you sure you want to delete this user?')) {
+    if (!confirm('Are you sure you want to delete this user? This action cannot be undone.')) {
       return;
     }
 
@@ -152,15 +167,21 @@ export function UsersManagement() {
       });
 
       if (!response.ok) {
-        throw new Error('Failed to delete user');
+        const error = await response.json();
+        throw new Error(error.error || 'Failed to delete user');
       }
 
       toast.success('User deleted successfully');
       fetchUsers(); // Refresh the list
     } catch (error) {
       console.error('Error deleting user:', error);
-      toast.error('Failed to delete user');
+      toast.error(error instanceof Error ? error.message : 'Failed to delete user');
     }
+  };
+
+  const handleEditUser = (userId: string) => {
+    setEditUserId(userId);
+    setEditModalOpen(true);
   };
 
   const formatDate = (dateString: string) => {
@@ -276,6 +297,7 @@ export function UsersManagement() {
                 <TableHead>User</TableHead>
                 <TableHead>Role</TableHead>
                 <TableHead>Status</TableHead>
+                <TableHead>Subscription</TableHead>
                 <TableHead>Speciality</TableHead>
                 <TableHead>Created</TableHead>
                 <TableHead className="text-right">Actions</TableHead>
@@ -284,13 +306,13 @@ export function UsersManagement() {
             <TableBody>
               {loading ? (
                 <TableRow>
-                  <TableCell colSpan={6} className="text-center py-8">
+                  <TableCell colSpan={7} className="text-center py-8">
                     Loading users...
                   </TableCell>
                 </TableRow>
               ) : users.length === 0 ? (
                 <TableRow>
-                  <TableCell colSpan={6} className="text-center py-8">
+                  <TableCell colSpan={7} className="text-center py-8">
                     No users found
                   </TableCell>
                 </TableRow>
@@ -320,6 +342,15 @@ export function UsersManagement() {
                       </Badge>
                     </TableCell>
                     <TableCell>
+                      {user.organizations?.[0]?.organization?.subscriptions?.[0] ? (
+                        <Badge className="bg-blue-100 text-blue-800">
+                          {user.organizations[0].organization.subscriptions[0].package.plan}
+                        </Badge>
+                      ) : (
+                        <span className="text-muted-foreground">-</span>
+                      )}
+                    </TableCell>
+                    <TableCell>
                       {user.speciality || '-'}
                     </TableCell>
                     <TableCell>
@@ -333,11 +364,7 @@ export function UsersManagement() {
                           </Button>
                         </DropdownMenuTrigger>
                         <DropdownMenuContent align="end">
-                          <DropdownMenuItem>
-                            <Eye className="h-4 w-4 mr-2" />
-                            View Details
-                          </DropdownMenuItem>
-                          <DropdownMenuItem>
+                          <DropdownMenuItem onClick={() => handleEditUser(user.id)}>
                             <Edit className="h-4 w-4 mr-2" />
                             Edit User
                           </DropdownMenuItem>
@@ -391,6 +418,14 @@ export function UsersManagement() {
         open={createModalOpen}
         onOpenChange={setCreateModalOpen}
         onUserCreated={fetchUsers}
+      />
+
+      {/* Edit User Modal */}
+      <EditUserModal
+        open={editModalOpen}
+        onOpenChange={setEditModalOpen}
+        userId={editUserId}
+        onUserUpdated={fetchUsers}
       />
     </div>
   );

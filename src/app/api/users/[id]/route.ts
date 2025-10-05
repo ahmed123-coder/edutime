@@ -5,55 +5,29 @@ import { z } from 'zod';
 import { authOptions } from '@/lib/auth';
 import { prisma } from '@/lib/db';
 
-// Validation schema for updates
 const updateUserSchema = z.object({
   name: z.string().min(1).optional(),
-  phone: z.string().optional(),
+  phone: z.string().regex(/^\+?[1-9]\d{1,14}$/, 'Invalid phone number').optional().or(z.literal('')),
   role: z.enum(['ADMIN', 'CENTER_OWNER', 'TRAINING_MANAGER', 'TEACHER', 'PARTNER']).optional(),
-  speciality: z.string().optional(),
+  speciality: z.string().max(100).optional().or(z.literal('')),
   verified: z.boolean().optional(),
 });
 
-// Helper function to check permissions
-function canAccessUser(userRole: string, targetUserId: string, sessionUserId: string, targetUserRole?: string) {
-  // Users can always access their own data
-  if (targetUserId === sessionUserId) {
-    return true;
-  }
-
-  switch (userRole) {
-    case 'ADMIN':
-      return true; // Admins can access all users
-    case 'CENTER_OWNER':
-    case 'TRAINING_MANAGER':
-      // Center owners can access teachers and partners in their organization
-      return targetUserRole === 'TEACHER' || targetUserRole === 'PARTNER';
-    case 'TEACHER':
-    case 'PARTNER':
-      // Teachers and partners can only access their own data
-      return false;
-    default:
-      return false;
-  }
-}
-
-// GET /api/users/[id] - Get specific user
+// GET /api/users/[id]
 export async function GET(
   request: NextRequest,
-  { params }: { params: { id: string } }
+  { params }: { params: Promise<{ id: string }> }
 ) {
   try {
+    const { id } = await params;
     const session = await getServerSession(authOptions);
     
     if (!session?.user) {
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
     }
 
-    const userId = params.id;
-
-    // Get user first to check permissions
     const user = await prisma.user.findUnique({
-      where: { id: userId },
+      where: { id },
       select: {
         id: true,
         email: true,
@@ -72,10 +46,6 @@ export async function GET(
       return NextResponse.json({ error: 'User not found' }, { status: 404 });
     }
 
-    if (!canAccessUser(session.user.role, userId, session.user.id, user.role)) {
-      return NextResponse.json({ error: 'Forbidden' }, { status: 403 });
-    }
-
     return NextResponse.json({ user });
   } catch (error) {
     console.error('Error fetching user:', error);
@@ -83,59 +53,51 @@ export async function GET(
   }
 }
 
-// PUT /api/users/[id] - Update user
+// PUT /api/users/[id]
 export async function PUT(
   request: NextRequest,
-  { params }: { params: { id: string } }
+  { params }: { params: Promise<{ id: string }> }
 ) {
   try {
+    const { id } = await params;
     const session = await getServerSession(authOptions);
     
     if (!session?.user) {
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
     }
 
-    const userId = params.id;
-
-    // Get user first to check permissions
-    const existingUser = await prisma.user.findUnique({
-      where: { id: userId },
-      select: { id: true, role: true },
-    });
-
-    if (!existingUser) {
-      return NextResponse.json({ error: 'User not found' }, { status: 404 });
-    }
-
-    if (!canAccessUser(session.user.role, userId, session.user.id, existingUser.role)) {
+    if (!['ADMIN', 'CENTER_OWNER', 'TRAINING_MANAGER'].includes(session.user.role)) {
       return NextResponse.json({ error: 'Forbidden' }, { status: 403 });
     }
 
     const body = await request.json();
     const validatedData = updateUserSchema.parse(body);
 
-    // Additional permission checks for specific fields
-    if (validatedData.role && session.user.role !== 'ADMIN') {
-      // Only admins can change roles
-      return NextResponse.json({ error: 'Forbidden: Only admins can change user roles' }, { status: 403 });
+    const existingUser = await prisma.user.findUnique({
+      where: { id },
+    });
+
+    if (!existingUser) {
+      return NextResponse.json({ error: 'User not found' }, { status: 404 });
     }
 
-    if (validatedData.verified !== undefined && session.user.role !== 'ADMIN') {
-      // Only admins can change verification status
-      return NextResponse.json({ error: 'Forbidden: Only admins can change verification status' }, { status: 403 });
+    // Center owners can only edit teachers and partners
+    if ((session.user.role === 'CENTER_OWNER' || session.user.role === 'TRAINING_MANAGER') && 
+        !['TEACHER', 'PARTNER'].includes(existingUser.role)) {
+      return NextResponse.json({ error: 'Forbidden: Can only edit teachers and partners' }, { status: 403 });
     }
 
-    // Center owners can only assign teacher/partner roles
-    if (validatedData.role && 
-        (session.user.role === 'CENTER_OWNER' || session.user.role === 'TRAINING_MANAGER') && 
-        !['TEACHER', 'PARTNER'].includes(validatedData.role)) {
-      return NextResponse.json({ error: 'Forbidden: Can only assign teacher or partner roles' }, { status: 403 });
-    }
+    // Clean up empty optional fields
+    const updateData: any = {};
+    if (validatedData.name !== undefined) updateData.name = validatedData.name;
+    if (validatedData.phone !== undefined) updateData.phone = validatedData.phone || null;
+    if (validatedData.role !== undefined) updateData.role = validatedData.role;
+    if (validatedData.speciality !== undefined) updateData.speciality = validatedData.speciality || null;
+    if (validatedData.verified !== undefined) updateData.verified = validatedData.verified;
 
-    // Update user
-    const updatedUser = await prisma.user.update({
-      where: { id: userId },
-      data: validatedData,
+    const user = await prisma.user.update({
+      where: { id },
+      data: updateData,
       select: {
         id: true,
         email: true,
@@ -150,7 +112,7 @@ export async function PUT(
       },
     });
 
-    return NextResponse.json({ user: updatedUser });
+    return NextResponse.json({ user });
   } catch (error) {
     if (error instanceof z.ZodError) {
       return NextResponse.json({ error: 'Validation error', details: error.errors }, { status: 400 });
@@ -161,42 +123,45 @@ export async function PUT(
   }
 }
 
-// DELETE /api/users/[id] - Delete user
+// DELETE /api/users/[id]
 export async function DELETE(
   request: NextRequest,
-  { params }: { params: { id: string } }
+  { params }: { params: Promise<{ id: string }> }
 ) {
   try {
+    const { id } = await params;
     const session = await getServerSession(authOptions);
     
     if (!session?.user) {
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
     }
 
-    const userId = params.id;
+    if (!['ADMIN', 'CENTER_OWNER', 'TRAINING_MANAGER'].includes(session.user.role)) {
+      return NextResponse.json({ error: 'Forbidden' }, { status: 403 });
+    }
 
-    // Get user first to check permissions
     const existingUser = await prisma.user.findUnique({
-      where: { id: userId },
-      select: { id: true, role: true },
+      where: { id },
     });
 
     if (!existingUser) {
       return NextResponse.json({ error: 'User not found' }, { status: 404 });
     }
 
-    // Only admins can delete users, and users cannot delete themselves
-    if (session.user.role !== 'ADMIN') {
-      return NextResponse.json({ error: 'Forbidden: Only admins can delete users' }, { status: 403 });
+    // Prevent self-deletion
+    if (existingUser.id === session.user.id) {
+      return NextResponse.json({ error: 'Cannot delete yourself' }, { status: 400 });
     }
 
-    if (userId === session.user.id) {
-      return NextResponse.json({ error: 'Cannot delete your own account' }, { status: 400 });
+    // Center owners can only delete teachers and partners
+    if ((session.user.role === 'CENTER_OWNER' || session.user.role === 'TRAINING_MANAGER') && 
+        !['TEACHER', 'PARTNER'].includes(existingUser.role)) {
+      return NextResponse.json({ error: 'Forbidden: Can only delete teachers and partners' }, { status: 403 });
     }
 
-    // Delete user (this will cascade delete related records)
+    // Hard delete for now (until migration is run)
     await prisma.user.delete({
-      where: { id: userId },
+      where: { id },
     });
 
     return NextResponse.json({ message: 'User deleted successfully' });

@@ -50,7 +50,7 @@ export function NavUser({
     }
   };
 
-  if (status === 'loading' || !currentUser) {
+  if (status === 'loading') {
     return (
       <SidebarMenu>
         <SidebarMenuItem>
@@ -68,6 +68,10 @@ export function NavUser({
         </SidebarMenuItem>
       </SidebarMenu>
     );
+  }
+
+  if (!currentUser) {
+    return null;
   }
 
   return (

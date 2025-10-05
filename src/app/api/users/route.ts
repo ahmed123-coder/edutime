@@ -118,6 +118,28 @@ export async function GET(request: NextRequest) {
           speciality: true,
           createdAt: true,
           updatedAt: true,
+          organizations: {
+            select: {
+              organization: {
+                select: {
+                  id: true,
+                  name: true,
+                  subscriptions: {
+                    where: { status: 'ACTIVE' },
+                    select: {
+                      package: {
+                        select: {
+                          name: true,
+                          plan: true,
+                        }
+                      }
+                    },
+                    take: 1,
+                  }
+                }
+              }
+            }
+          }
         },
         orderBy: { createdAt: 'desc' },
         skip,
