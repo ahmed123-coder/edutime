@@ -1,0 +1,5 @@
+- right top avatar/profile circle still loading, does not shows the real profile.
+- make all users cruds works: Admins,Center Owners,Teachers,Partners
+- make all organizations cruds works: Center Owners,Admins
+- make all rooms cruds works: Center Owners,Admins
+- make all bookings cruds works: Center Owners,Admins,Teachers

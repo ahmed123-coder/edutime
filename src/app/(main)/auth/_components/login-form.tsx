@@ -7,6 +7,7 @@ import { toast } from "sonner";
 import { z } from "zod";
 import { signIn, getSession } from "next-auth/react";
 import { useRouter, useSearchParams } from "next/navigation";
+import { getDefaultDashboardUrl } from '@/navigation/sidebar/get-sidebar-items';
 import { Loader2 } from "lucide-react";
 
 import { Button } from "@/components/ui/button";

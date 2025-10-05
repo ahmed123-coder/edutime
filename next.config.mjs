@@ -3,15 +3,7 @@ const nextConfig = {
   compiler: {
     removeConsole: process.env.NODE_ENV === "production",
   },
-  async redirects() {
-    return [
-      {
-        source: "/dashboard",
-        destination: "/dashboard/default",
-        permanent: false,
-      },
-    ];
-  },
+  // Removed hardcoded dashboard redirect - now handled by role-based routing
 }
 
 export default nextConfig

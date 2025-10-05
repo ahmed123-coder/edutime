@@ -1,6 +1,7 @@
 "use client";
 
 import Link from "next/link";
+import { useSession } from "next-auth/react";
 
 import { Settings, CircleHelp, Search, Database, ClipboardList, File, Command } from "lucide-react";
 
@@ -14,7 +15,7 @@ import {
   SidebarMenuItem,
 } from "@/components/ui/sidebar";
 import { APP_CONFIG } from "@/config/app-config";
-import { sidebarItems } from "@/navigation/sidebar/sidebar-items";
+import { getSidebarItems, getDefaultDashboardUrl } from "@/navigation/sidebar/get-sidebar-items";
 
 import { NavMain } from "./nav-main";
 import { NavUser } from "./nav-user";
@@ -57,13 +58,20 @@ const data = {
 };
 
 export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
+  const { data: session, status } = useSession();
+  const userRole = session?.user?.role;
+
+  // Show loading state or default items while session is loading
+  const roleBasedSidebarItems = status === 'loading' || !userRole ? [] : getSidebarItems(userRole);
+  const defaultDashboardUrl = status === 'loading' || !userRole ? '/dashboard' : getDefaultDashboardUrl(userRole);
+
   return (
     <Sidebar {...props}>
       <SidebarHeader>
         <SidebarMenu>
           <SidebarMenuItem>
             <SidebarMenuButton asChild className="data-[slot=sidebar-menu-button]:!p-1.5">
-              <Link href="/dashboard/default">
+              <Link href={defaultDashboardUrl}>
                 <Command />
                 <span className="text-base font-semibold">{APP_CONFIG.name}</span>
               </Link>
@@ -72,7 +80,13 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
         </SidebarMenu>
       </SidebarHeader>
       <SidebarContent>
-        <NavMain items={sidebarItems} />
+        {status === 'loading' || !userRole ? (
+          <div className="flex items-center justify-center p-4">
+            <div className="text-sm text-muted-foreground">Loading navigation...</div>
+          </div>
+        ) : (
+          <NavMain items={roleBasedSidebarItems} />
+        )}
         {/* <NavDocuments items={data.documents} /> */}
         {/* <NavSecondary items={data.navSecondary} className="mt-auto" /> */}
       </SidebarContent>

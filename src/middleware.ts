@@ -1,5 +1,6 @@
 import { withAuth } from 'next-auth/middleware';
 import { NextResponse } from 'next/server';
+import { getDefaultDashboardUrl } from '@/navigation/sidebar/get-sidebar-items';
 
 export default withAuth(
   function middleware(req) {
@@ -74,14 +75,24 @@ export default withAuth(
       // Admin dashboard
       if (pathname.startsWith('/dashboard/admin')) {
         if (userRole !== 'ADMIN') {
-          return NextResponse.redirect(new URL('/dashboard', req.url));
+          const userDashboard = getDefaultDashboardUrl(userRole);
+          return NextResponse.redirect(new URL(userDashboard, req.url));
         }
       }
 
       // Center owner/manager dashboard
-      if (pathname.startsWith('/dashboard/center')) {
+      if (pathname.startsWith('/dashboard/owner')) {
         if (!['CENTER_OWNER', 'TRAINING_MANAGER'].includes(userRole)) {
-          return NextResponse.redirect(new URL('/dashboard', req.url));
+          const userDashboard = getDefaultDashboardUrl(userRole);
+          return NextResponse.redirect(new URL(userDashboard, req.url));
+        }
+      }
+
+      // Teacher dashboard
+      if (pathname.startsWith('/dashboard/teacher')) {
+        if (userRole !== 'TEACHER') {
+          const userDashboard = getDefaultDashboardUrl(userRole);
+          return NextResponse.redirect(new URL(userDashboard, req.url));
         }
       }
 
