@@ -11,6 +11,7 @@ import {
   FileText,
   Database,
   Activity,
+  Package,
   type LucideIcon,
 } from "lucide-react";
 
@@ -85,6 +86,16 @@ export const adminSidebarItems: NavGroup[] = [
           { title: "All Centers", url: "/dashboard/admin/organizations" },
           { title: "Pending Approval", url: "/dashboard/admin/organizations?status=pending" },
           { title: "Verified Centers", url: "/dashboard/admin/organizations?status=verified" },
+        ],
+      },
+      {
+        title: "Subscriptions",
+        url: "/dashboard/admin/subscriptions",
+        icon: Package,
+        subItems: [
+          { title: "All Subscriptions", url: "/dashboard/admin/subscriptions" },
+          { title: "Packages", url: "/dashboard/admin/subscriptions?tab=packages" },
+          { title: "Expiring Soon", url: "/dashboard/admin/subscriptions?status=expiring" },
         ],
       },
       {

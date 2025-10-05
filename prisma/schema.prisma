@@ -121,6 +121,7 @@ model Organization {
   reviews         Review[]
   promotions      Promotion[]
   services        Service[]
+  subscriptions   Subscription[]
 
   @@map("organizations")
 }
@@ -134,6 +135,83 @@ enum SubscriptionPlan {
   ESSENTIAL
   PRO
   PREMIUM
+}
+
+// Subscription packages management
+model SubscriptionPackage {
+  id              String   @id @default(cuid())
+  name            String
+  plan            SubscriptionPlan
+  description     String?
+  price           Decimal  @db.Decimal(10,2)
+  currency        String   @default("TND")
+  billingPeriod   BillingPeriod
+  features        Json     // Array of features
+  limits          Json     // Usage limits (rooms, bookings, etc.)
+  active          Boolean  @default(true)
+  createdAt       DateTime @default(now())
+  updatedAt       DateTime @updatedAt
+
+  // Relations
+  subscriptions   Subscription[]
+
+  @@map("subscription_packages")
+}
+
+enum BillingPeriod {
+  MONTHLY
+  QUARTERLY
+  YEARLY
+}
+
+model Subscription {
+  id                String              @id @default(cuid())
+  organizationId    String
+  packageId         String
+  status            SubscriptionStatus
+  startDate         DateTime
+  endDate           DateTime
+  autoRenew         Boolean             @default(true)
+  paymentMethod     PaymentMethod?
+  lastPaymentDate   DateTime?
+  nextPaymentDate   DateTime?
+  cancelledAt       DateTime?
+  cancelReason      String?
+  createdAt         DateTime            @default(now())
+  updatedAt         DateTime            @updatedAt
+
+  // Relations
+  organization      Organization        @relation(fields: [organizationId], references: [id], onDelete: Cascade)
+  package           SubscriptionPackage @relation(fields: [packageId], references: [id])
+  payments          SubscriptionPayment[]
+
+  @@map("subscriptions")
+}
+
+enum SubscriptionStatus {
+  ACTIVE
+  EXPIRED
+  CANCELLED
+  SUSPENDED
+  TRIAL
+}
+
+model SubscriptionPayment {
+  id              String        @id @default(cuid())
+  subscriptionId  String
+  amount          Decimal       @db.Decimal(10,2)
+  currency        String        @default("TND")
+  status          PaymentStatus
+  method          PaymentMethod
+  transactionId   String?
+  paidAt          DateTime?
+  dueDate         DateTime
+  createdAt       DateTime      @default(now())
+
+  // Relations
+  subscription    Subscription  @relation(fields: [subscriptionId], references: [id], onDelete: Cascade)
+
+  @@map("subscription_payments")
 }
 
 model OrganizationMember {

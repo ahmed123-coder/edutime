@@ -234,6 +234,98 @@ async function main() {
     ],
   });
 
+  // Create default subscription packages
+  const essentialPackage = await prisma.subscriptionPackage.upsert({
+    where: { id: 'essential-monthly' },
+    update: {},
+    create: {
+      id: 'essential-monthly',
+      name: 'Essential Plan',
+      plan: 'ESSENTIAL',
+      description: 'Perfect for small training centers getting started',
+      price: 99,
+      billingPeriod: 'MONTHLY',
+      features: [
+        'Up to 5 rooms',
+        'Up to 50 bookings per month',
+        'Up to 3 team members',
+        'Basic analytics',
+        'Email support',
+      ],
+      limits: {
+        maxRooms: 5,
+        maxBookingsPerMonth: 50,
+        maxMembers: 3,
+      },
+    },
+  });
+
+  const proPackage = await prisma.subscriptionPackage.upsert({
+    where: { id: 'pro-monthly' },
+    update: {},
+    create: {
+      id: 'pro-monthly',
+      name: 'Pro Plan',
+      plan: 'PRO',
+      description: 'Ideal for growing training centers',
+      price: 199,
+      billingPeriod: 'MONTHLY',
+      features: [
+        'Up to 15 rooms',
+        'Up to 200 bookings per month',
+        'Up to 10 team members',
+        'Advanced analytics',
+        'Priority support',
+        'Custom branding',
+      ],
+      limits: {
+        maxRooms: 15,
+        maxBookingsPerMonth: 200,
+        maxMembers: 10,
+      },
+    },
+  });
+
+  const premiumPackage = await prisma.subscriptionPackage.upsert({
+    where: { id: 'premium-monthly' },
+    update: {},
+    create: {
+      id: 'premium-monthly',
+      name: 'Premium Plan',
+      plan: 'PREMIUM',
+      description: 'For large training centers with advanced needs',
+      price: 399,
+      billingPeriod: 'MONTHLY',
+      features: [
+        'Unlimited rooms',
+        'Unlimited bookings',
+        'Unlimited team members',
+        'Advanced analytics & reporting',
+        '24/7 priority support',
+        'Custom branding',
+        'API access',
+        'White-label solution',
+      ],
+      limits: {
+        maxRooms: 999,
+        maxBookingsPerMonth: 9999,
+        maxMembers: 999,
+      },
+    },
+  });
+
+  // Assign essential subscription to the training center
+  await prisma.subscription.create({
+    data: {
+      organizationId: trainingCenter.id,
+      packageId: essentialPackage.id,
+      status: 'ACTIVE',
+      startDate: new Date(),
+      endDate: new Date(Date.now() + 30 * 24 * 60 * 60 * 1000), // 30 days from now
+      autoRenew: true,
+    },
+  });
+
   console.log('✅ Database seeding completed successfully!');
   console.log('📧 Admin: admin@saasformation.com (password: admin123)');
   console.log('🏢 Center Owner: owner@trainingcenter.com (password: owner123)');
