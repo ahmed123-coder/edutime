@@ -8,7 +8,7 @@ Most admin templates I found, free or paid, felt cluttered, outdated, or too rig
 
 I’ve taken design inspiration from various sources. If you’d like credit for something specific, feel free to open an issue or reach out.
 
-> **View demo:** [studio admin](https://next-shadcn-admin-dashboard.vercel.app)
+> **Voir la démo :** [studio admin](https://next-shadcn-admin-dashboard.vercel.app)
 
 > [!TIP]
 > I’m also working on Nuxt.js, Svelte, and React (Vite + TanStack Router) versions of this dashboard. They’ll be live soon.
@@ -25,7 +25,7 @@ I’ve taken design inspiration from various sources. If you’d like credit for
 
 > [!NOTE]
 > The default dashboard uses the **shadcn neutral** theme.  
-> It also includes additional color presets inspired by [Tweakcn](https://tweakcn.com):  
+> Il inclut également des préréglages de couleurs supplémentaires inspirés par [Tweakcn](https://tweakcn.com) :  
 >
 > - Tangerine  
 > - Neo Brutalism  
@@ -33,9 +33,9 @@ I’ve taken design inspiration from various sources. If you’d like credit for
 >
 > You can create more presets by following the same structure as the existing ones.  
 
-> Looking for the **Next.js 14 + Tailwind CSS v3** version?  
-> Check out the [`archive/next14-tailwindv3`](https://github.com/arhamkhnz/next-shadcn-admin-dashboard/tree/archive/next14-tailwindv3) branch.  
-> It has a different color theme and is not actively maintained, but I try to keep it updated with major changes.  
+> Vous cherchez la version **Next.js 14 + Tailwind CSS v3** ?  
+> Consultez la branche [`archive/next14-tailwindv3`](https://github.com/arhamkhnz/next-shadcn-admin-dashboard/tree/archive/next14-tailwindv3).  
+> Elle a un thème de couleur différent et n'est pas activement maintenue, mais j'essaie de la maintenir à jour avec les changements majeurs.  
 
 ## Tech Stack
 
@@ -72,7 +72,7 @@ I’ve taken design inspiration from various sources. If you’d like credit for
 This project follows a **colocation-based architecture** each feature keeps its own pages, components, and logic inside its route folder.  
 Shared UI, hooks, and configuration live at the top level, making the codebase modular, scalable, and easier to maintain as the app grows.
 
-For a full breakdown of the structure with examples, see the [Next Colocation Template](https://github.com/arhamkhnz/next-colocation-template).
+Pour une description complète de la structure avec des exemples, consultez le [Modèle de Colocation Next](https://github.com/arhamkhnz/next-colocation-template).
 
 ## Getting Started
 
