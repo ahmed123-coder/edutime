@@ -5,7 +5,6 @@ import { z } from 'zod';
 import { authOptions } from '@/lib/auth';
 import { prisma } from '@/lib/db';
 
-// Validation schema for updates
 const updateOrganizationSchema = z.object({
   name: z.string().min(1).optional(),
   description: z.string().optional(),
@@ -25,57 +24,25 @@ const updateOrganizationSchema = z.object({
   phone: z.string().optional(),
   email: z.string().email().optional(),
   website: z.string().url().optional(),
-  hours: z.object({
-    monday: z.object({ open: z.string(), close: z.string() }).optional(),
-    tuesday: z.object({ open: z.string(), close: z.string() }).optional(),
-    wednesday: z.object({ open: z.string(), close: z.string() }).optional(),
-    thursday: z.object({ open: z.string(), close: z.string() }).optional(),
-    friday: z.object({ open: z.string(), close: z.string() }).optional(),
-    saturday: z.object({ open: z.string(), close: z.string() }).optional(),
-    sunday: z.object({ open: z.string(), close: z.string() }).optional(),
-  }).optional(),
   verified: z.boolean().optional(),
   active: z.boolean().optional(),
 });
 
-// Helper function to check permissions
-async function canAccessOrganization(userRole: string, userId: string, organizationId: string) {
-  if (userRole === 'ADMIN') {
-    return true; // Admins can access all organizations
-  }
-
-  // Check if user is a member of the organization
-  const membership = await prisma.organizationMember.findFirst({
-    where: {
-      userId,
-      organizationId,
-    },
-  });
-
-  return !!membership;
-}
-
-// GET /api/organizations/[id] - Get specific organization
+// GET /api/organizations/[id]
 export async function GET(
   request: NextRequest,
-  { params }: { params: { id: string } }
+  { params }: { params: Promise<{ id: string }> }
 ) {
   try {
+    const { id } = await params;
     const session = await getServerSession(authOptions);
     
     if (!session?.user) {
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
     }
 
-    const organizationId = params.id;
-
-    // Check permissions
-    if (!(await canAccessOrganization(session.user.role, session.user.id, organizationId))) {
-      return NextResponse.json({ error: 'Forbidden' }, { status: 403 });
-    }
-
     const organization = await prisma.organization.findUnique({
-      where: { id: organizationId },
+      where: { id },
       select: {
         id: true,
         name: true,
@@ -87,35 +54,14 @@ export async function GET(
         subscriptionEnd: true,
         address: true,
         coordinates: true,
-        hours: true,
         phone: true,
         email: true,
         website: true,
+        hours: true,
         verified: true,
         active: true,
         createdAt: true,
         updatedAt: true,
-        members: {
-          select: {
-            id: true,
-            role: true,
-            user: {
-              select: {
-                id: true,
-                name: true,
-                email: true,
-                avatar: true,
-              },
-            },
-          },
-        },
-        _count: {
-          select: {
-            rooms: true,
-            bookings: true,
-            reviews: true,
-          },
-        },
       },
     });
 
@@ -130,50 +76,56 @@ export async function GET(
   }
 }
 
-// PUT /api/organizations/[id] - Update organization
+// PUT /api/organizations/[id]
 export async function PUT(
   request: NextRequest,
-  { params }: { params: { id: string } }
+  { params }: { params: Promise<{ id: string }> }
 ) {
   try {
+    const { id } = await params;
     const session = await getServerSession(authOptions);
     
     if (!session?.user) {
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
     }
 
-    const organizationId = params.id;
-
-    // Check permissions
-    if (!(await canAccessOrganization(session.user.role, session.user.id, organizationId))) {
+    if (!['ADMIN', 'CENTER_OWNER', 'TRAINING_MANAGER'].includes(session.user.role)) {
       return NextResponse.json({ error: 'Forbidden' }, { status: 403 });
     }
 
+    const body = await request.json();
+    const validatedData = updateOrganizationSchema.parse(body);
+
     // Check if organization exists
     const existingOrg = await prisma.organization.findUnique({
-      where: { id: organizationId },
-      select: { id: true },
+      where: { id },
+      include: {
+        members: {
+          where: { userId: session.user.id },
+        },
+      },
     });
 
     if (!existingOrg) {
       return NextResponse.json({ error: 'Organization not found' }, { status: 404 });
     }
 
-    const body = await request.json();
-    const validatedData = updateOrganizationSchema.parse(body);
-
-    // Additional permission checks for specific fields
-    if ((validatedData.verified !== undefined || validatedData.active !== undefined) && 
-        session.user.role !== 'ADMIN') {
-      return NextResponse.json({ 
-        error: 'Forbidden: Only admins can change verification or active status' 
-      }, { status: 403 });
+    // Check permissions: Admin or organization member
+    if (session.user.role !== 'ADMIN' && existingOrg.members.length === 0) {
+      return NextResponse.json({ error: 'Forbidden: Not a member of this organization' }, { status: 403 });
     }
 
-    // Update organization
-    const updatedOrganization = await prisma.organization.update({
-      where: { id: organizationId },
-      data: validatedData,
+    // Clean up data
+    const updateData: any = {};
+    Object.keys(validatedData).forEach(key => {
+      if (validatedData[key as keyof typeof validatedData] !== undefined) {
+        updateData[key] = validatedData[key as keyof typeof validatedData];
+      }
+    });
+
+    const organization = await prisma.organization.update({
+      where: { id },
+      data: updateData,
       select: {
         id: true,
         name: true,
@@ -185,10 +137,10 @@ export async function PUT(
         subscriptionEnd: true,
         address: true,
         coordinates: true,
-        hours: true,
         phone: true,
         email: true,
         website: true,
+        hours: true,
         verified: true,
         active: true,
         createdAt: true,
@@ -196,7 +148,7 @@ export async function PUT(
       },
     });
 
-    return NextResponse.json({ organization: updatedOrganization });
+    return NextResponse.json({ organization });
   } catch (error) {
     if (error instanceof z.ZodError) {
       return NextResponse.json({ error: 'Validation error', details: error.errors }, { status: 400 });
@@ -207,38 +159,64 @@ export async function PUT(
   }
 }
 
-// DELETE /api/organizations/[id] - Delete organization
+// DELETE /api/organizations/[id]
 export async function DELETE(
   request: NextRequest,
-  { params }: { params: { id: string } }
+  { params }: { params: Promise<{ id: string }> }
 ) {
   try {
+    const { id } = await params;
     const session = await getServerSession(authOptions);
     
     if (!session?.user) {
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
     }
 
-    const organizationId = params.id;
-
-    // Only admins can delete organizations
     if (session.user.role !== 'ADMIN') {
       return NextResponse.json({ error: 'Forbidden: Only admins can delete organizations' }, { status: 403 });
     }
 
     // Check if organization exists
     const existingOrg = await prisma.organization.findUnique({
-      where: { id: organizationId },
-      select: { id: true, name: true },
+      where: { id },
+      include: {
+        _count: {
+          select: {
+            members: true,
+            rooms: true,
+            bookings: true,
+          },
+        },
+      },
     });
 
     if (!existingOrg) {
       return NextResponse.json({ error: 'Organization not found' }, { status: 404 });
     }
 
-    // Delete organization (this will cascade delete related records)
-    await prisma.organization.delete({
-      where: { id: organizationId },
+    // Check if organization has active bookings
+    if (existingOrg._count.bookings > 0) {
+      return NextResponse.json({ 
+        error: 'Cannot delete organization with existing bookings. Please cancel all bookings first.' 
+      }, { status: 400 });
+    }
+
+    // Delete organization and all related data
+    await prisma.$transaction(async (tx) => {
+      // Delete organization members
+      await tx.organizationMember.deleteMany({
+        where: { organizationId: id },
+      });
+
+      // Delete rooms
+      await tx.room.deleteMany({
+        where: { organizationId: id },
+      });
+
+      // Delete organization
+      await tx.organization.delete({
+        where: { id },
+      });
     });
 
     return NextResponse.json({ message: 'Organization deleted successfully' });

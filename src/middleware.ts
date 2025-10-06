@@ -1,6 +1,7 @@
 import { withAuth } from 'next-auth/middleware';
 import { NextResponse } from 'next/server';
 import { getDefaultDashboardUrl } from '@/navigation/sidebar/get-sidebar-items';
+// import { hasActiveSubscription } from '@/lib/subscription-check'; // Disabled for Edge Runtime compatibility
 
 export default withAuth(
   function middleware(req) {
@@ -18,6 +19,12 @@ export default withAuth(
       '/contact',
       '/pricing',
       '/search',
+      '/centers',
+      '/specialists',
+      '/partners',
+      '/privacy',
+      '/terms',
+      '/help',
       '/organizations',
     ];
 
@@ -68,6 +75,27 @@ export default withAuth(
       if (!token.verified) {
         return NextResponse.redirect(new URL('/auth/verify-email', req.url));
       }
+
+      // Check subscription status (except for admins)
+      // Temporarily disabled for Edge Runtime compatibility
+      // TODO: Move subscription check to server-side components
+      /*
+      if (token.role !== 'ADMIN') {
+        try {
+          const hasValidSubscription = await hasActiveSubscription(
+            token.sub as string,
+            token.role as string
+          );
+
+          if (!hasValidSubscription) {
+            return NextResponse.redirect(new URL('/subscription-expired', req.url));
+          }
+        } catch (error) {
+          console.error('Error checking subscription:', error);
+          // Continue if there's an error checking subscription
+        }
+      }
+      */
 
       // Role-based dashboard access
       const userRole = token.role as string;
@@ -125,6 +153,12 @@ export default withAuth(
           '/contact',
           '/pricing',
           '/search',
+          '/centers',
+          '/specialists',
+          '/partners',
+          '/privacy',
+          '/terms',
+          '/help',
           '/organizations',
         ];
 

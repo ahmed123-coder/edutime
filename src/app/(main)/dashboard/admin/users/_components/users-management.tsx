@@ -51,6 +51,7 @@ interface User {
       id: string;
       name: string;
       subscriptions: {
+        endDate: string;
         package: {
           name: string;
           plan: string;
@@ -343,9 +344,14 @@ export function UsersManagement() {
                     </TableCell>
                     <TableCell>
                       {user.organizations?.[0]?.organization?.subscriptions?.[0] ? (
-                        <Badge className="bg-blue-100 text-blue-800">
-                          {user.organizations[0].organization.subscriptions[0].package.plan}
-                        </Badge>
+                        <div>
+                          <Badge className="bg-blue-100 text-blue-800">
+                            {user.organizations[0].organization.subscriptions[0].package.plan}
+                          </Badge>
+                          <div className="text-xs text-muted-foreground mt-1">
+                            Until {formatDate(user.organizations[0].organization.subscriptions[0].endDate)}
+                          </div>
+                        </div>
                       ) : (
                         <span className="text-muted-foreground">-</span>
                       )}

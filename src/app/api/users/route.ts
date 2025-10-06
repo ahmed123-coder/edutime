@@ -127,6 +127,7 @@ export async function GET(request: NextRequest) {
                   subscriptions: {
                     where: { status: 'ACTIVE' },
                     select: {
+                      endDate: true,
                       package: {
                         select: {
                           name: true,

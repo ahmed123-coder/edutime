@@ -30,6 +30,7 @@ import {
   SelectValue,
 } from '@/components/ui/select';
 import { toast } from 'sonner';
+import { CreateOrganizationModal } from './create-organization-modal';
 
 interface Organization {
   id: string;
@@ -84,6 +85,7 @@ export function OrganizationsManagement() {
   const [verifiedFilter, setVerifiedFilter] = useState('');
   const [activeFilter, setActiveFilter] = useState('');
   const [page, setPage] = useState(1);
+  const [createModalOpen, setCreateModalOpen] = useState(false);
   const [pagination, setPagination] = useState({
     page: 1,
     limit: 10,
@@ -134,14 +136,15 @@ export function OrganizationsManagement() {
       });
 
       if (!response.ok) {
-        throw new Error('Failed to delete organization');
+        const error = await response.json();
+        throw new Error(error.error || 'Failed to delete organization');
       }
 
       toast.success('Organization deleted successfully');
       fetchOrganizations(); // Refresh the list
     } catch (error) {
       console.error('Error deleting organization:', error);
-      toast.error('Failed to delete organization');
+      toast.error(error instanceof Error ? error.message : 'Failed to delete organization');
     }
   };
 
@@ -168,7 +171,7 @@ export function OrganizationsManagement() {
             Manage training centers and partner organizations
           </p>
         </div>
-        <Button>
+        <Button onClick={() => setCreateModalOpen(true)}>
           <Plus className="h-4 w-4 mr-2" />
           Add Organization
         </Button>
@@ -378,6 +381,13 @@ export function OrganizationsManagement() {
           )}
         </CardContent>
       </Card>
+
+      {/* Create Organization Modal */}
+      <CreateOrganizationModal
+        open={createModalOpen}
+        onOpenChange={setCreateModalOpen}
+        onOrganizationCreated={fetchOrganizations}
+      />
     </div>
   );
 }
