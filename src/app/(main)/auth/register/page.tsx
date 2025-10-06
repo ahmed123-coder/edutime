@@ -1,11 +1,12 @@
-'use client';
+"use client";
 
-import { useEffect } from 'react';
-import { useSession } from 'next-auth/react';
-import { useRouter } from 'next/navigation';
+import { useEffect } from "react";
+
 import Link from "next/link";
+import { useRouter } from "next/navigation";
 
 import { Command } from "lucide-react";
+import { useSession } from "next-auth/react";
 
 import { RegisterForm } from "../_components/register-form";
 import { GoogleButton } from "../_components/social-auth/google-button";
@@ -15,20 +16,20 @@ export default function RegisterPage() {
   const router = useRouter();
 
   useEffect(() => {
-    if (status === 'authenticated' && session?.user?.verified) {
-      router.push('/dashboard');
+    if (status === "authenticated" && session?.user?.verified) {
+      router.push("/dashboard");
     }
   }, [session, status, router]);
 
-  if (status === 'loading') {
+  if (status === "loading") {
     return (
       <div className="flex h-dvh items-center justify-center">
-        <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary"></div>
+        <div className="border-primary h-8 w-8 animate-spin rounded-full border-b-2"></div>
       </div>
     );
   }
 
-  if (status === 'authenticated' && session?.user?.verified) {
+  if (status === "authenticated" && session?.user?.verified) {
     return null; // Will redirect
   }
 

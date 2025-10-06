@@ -1,15 +1,17 @@
-'use client';
+"use client";
 
-import { useState, useEffect } from 'react';
-import { Plus, Package, Users, Calendar, DollarSign } from 'lucide-react';
+import { useState, useEffect } from "react";
 
-import { Button } from '@/components/ui/button';
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
-import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
-import { PackageManagement } from './package-management';
-import { SubscriptionList } from './subscription-list';
-import { CreatePackageModal } from './create-package-modal';
-import { AssignSubscriptionModal } from './assign-subscription-modal';
+import { Plus, Package, Users, Calendar, DollarSign } from "lucide-react";
+
+import { Button } from "@/components/ui/button";
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+
+import { AssignSubscriptionModal } from "./assign-subscription-modal";
+import { CreatePackageModal } from "./create-package-modal";
+import { PackageManagement } from "./package-management";
+import { SubscriptionList } from "./subscription-list";
 
 interface Stats {
   totalPackages: number;
@@ -39,7 +41,7 @@ export function SubscriptionManagement() {
         expiringThisMonth: 5,
       });
     } catch (error) {
-      console.error('Error fetching stats:', error);
+      console.error("Error fetching stats:", error);
     }
   };
 
@@ -53,17 +55,15 @@ export function SubscriptionManagement() {
       <div className="flex items-center justify-between">
         <div>
           <h1 className="text-3xl font-bold tracking-tight">Subscription Management</h1>
-          <p className="text-muted-foreground">
-            Manage subscription packages and organization subscriptions
-          </p>
+          <p className="text-muted-foreground">Manage subscription packages and organization subscriptions</p>
         </div>
         <div className="flex gap-2">
           <Button variant="outline" onClick={() => setCreatePackageOpen(true)}>
-            <Package className="h-4 w-4 mr-2" />
+            <Package className="mr-2 h-4 w-4" />
             Create Package
           </Button>
           <Button onClick={() => setAssignSubscriptionOpen(true)}>
-            <Plus className="h-4 w-4 mr-2" />
+            <Plus className="mr-2 h-4 w-4" />
             Assign Subscription
           </Button>
         </div>
@@ -74,52 +74,44 @@ export function SubscriptionManagement() {
         <Card>
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
             <CardTitle className="text-sm font-medium">Total Packages</CardTitle>
-            <Package className="h-4 w-4 text-muted-foreground" />
+            <Package className="text-muted-foreground h-4 w-4" />
           </CardHeader>
           <CardContent>
             <div className="text-2xl font-bold">{stats.totalPackages}</div>
-            <p className="text-xs text-muted-foreground">
-              Available subscription plans
-            </p>
+            <p className="text-muted-foreground text-xs">Available subscription plans</p>
           </CardContent>
         </Card>
 
         <Card>
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
             <CardTitle className="text-sm font-medium">Active Subscriptions</CardTitle>
-            <Users className="h-4 w-4 text-muted-foreground" />
+            <Users className="text-muted-foreground h-4 w-4" />
           </CardHeader>
           <CardContent>
             <div className="text-2xl font-bold">{stats.activeSubscriptions}</div>
-            <p className="text-xs text-muted-foreground">
-              Currently active subscriptions
-            </p>
+            <p className="text-muted-foreground text-xs">Currently active subscriptions</p>
           </CardContent>
         </Card>
 
         <Card>
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
             <CardTitle className="text-sm font-medium">Monthly Revenue</CardTitle>
-            <DollarSign className="h-4 w-4 text-muted-foreground" />
+            <DollarSign className="text-muted-foreground h-4 w-4" />
           </CardHeader>
           <CardContent>
             <div className="text-2xl font-bold">{stats.monthlyRevenue.toLocaleString()} TND</div>
-            <p className="text-xs text-muted-foreground">
-              Total monthly recurring revenue
-            </p>
+            <p className="text-muted-foreground text-xs">Total monthly recurring revenue</p>
           </CardContent>
         </Card>
 
         <Card>
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
             <CardTitle className="text-sm font-medium">Expiring Soon</CardTitle>
-            <Calendar className="h-4 w-4 text-muted-foreground" />
+            <Calendar className="text-muted-foreground h-4 w-4" />
           </CardHeader>
           <CardContent>
             <div className="text-2xl font-bold">{stats.expiringThisMonth}</div>
-            <p className="text-xs text-muted-foreground">
-              Subscriptions expiring this month
-            </p>
+            <p className="text-muted-foreground text-xs">Subscriptions expiring this month</p>
           </CardContent>
         </Card>
       </div>
@@ -141,11 +133,7 @@ export function SubscriptionManagement() {
       </Tabs>
 
       {/* Modals */}
-      <CreatePackageModal
-        open={createPackageOpen}
-        onOpenChange={setCreatePackageOpen}
-        onPackageCreated={fetchStats}
-      />
+      <CreatePackageModal open={createPackageOpen} onOpenChange={setCreatePackageOpen} onPackageCreated={fetchStats} />
 
       <AssignSubscriptionModal
         open={assignSubscriptionOpen}

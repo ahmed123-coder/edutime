@@ -1,16 +1,17 @@
-import { NextRequest, NextResponse } from 'next/server';
-import { getServerSession } from 'next-auth';
-import { z } from 'zod';
+import { NextRequest, NextResponse } from "next/server";
 
-import { authOptions } from '@/lib/auth';
-import { prisma } from '@/lib/db';
+import { getServerSession } from "next-auth";
+import { z } from "zod";
+
+import { authOptions } from "@/lib/auth";
+import { prisma } from "@/lib/db";
 
 const createPackageSchema = z.object({
   name: z.string().min(1),
-  plan: z.enum(['ESSENTIAL', 'PRO', 'PREMIUM']),
+  plan: z.enum(["ESSENTIAL", "PRO", "PREMIUM"]),
   description: z.string().optional(),
   price: z.number().positive(),
-  billingPeriod: z.enum(['MONTHLY', 'QUARTERLY', 'YEARLY']),
+  billingPeriod: z.enum(["MONTHLY", "QUARTERLY", "YEARLY"]),
   features: z.array(z.string()),
   limits: z.object({
     maxRooms: z.number().positive(),
@@ -23,27 +24,24 @@ const createPackageSchema = z.object({
 export async function GET() {
   try {
     const session = await getServerSession(authOptions);
-    
-    if (!session?.user || session.user.role !== 'ADMIN') {
-      return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
+
+    if (!session?.user || session.user.role !== "ADMIN") {
+      return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
     }
 
     const packages = await prisma.subscriptionPackage.findMany({
-      orderBy: [
-        { plan: 'asc' },
-        { price: 'asc' }
-      ],
+      orderBy: [{ plan: "asc" }, { price: "asc" }],
       include: {
         _count: {
-          select: { subscriptions: true }
-        }
-      }
+          select: { subscriptions: true },
+        },
+      },
     });
 
     return NextResponse.json({ packages });
   } catch (error) {
-    console.error('Error fetching packages:', error);
-    return NextResponse.json({ error: 'Internal server error' }, { status: 500 });
+    console.error("Error fetching packages:", error);
+    return NextResponse.json({ error: "Internal server error" }, { status: 500 });
   }
 }
 
@@ -51,9 +49,9 @@ export async function GET() {
 export async function POST(request: NextRequest) {
   try {
     const session = await getServerSession(authOptions);
-    
-    if (!session?.user || session.user.role !== 'ADMIN') {
-      return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
+
+    if (!session?.user || session.user.role !== "ADMIN") {
+      return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
     }
 
     const body = await request.json();
@@ -74,10 +72,10 @@ export async function POST(request: NextRequest) {
     return NextResponse.json({ package: package_ }, { status: 201 });
   } catch (error) {
     if (error instanceof z.ZodError) {
-      return NextResponse.json({ error: 'Validation error', details: error.errors }, { status: 400 });
+      return NextResponse.json({ error: "Validation error", details: error.errors }, { status: 400 });
     }
-    
-    console.error('Error creating package:', error);
-    return NextResponse.json({ error: 'Internal server error' }, { status: 500 });
+
+    console.error("Error creating package:", error);
+    return NextResponse.json({ error: "Internal server error" }, { status: 500 });
   }
 }

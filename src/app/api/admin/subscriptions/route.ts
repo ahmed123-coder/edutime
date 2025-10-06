@@ -1,9 +1,10 @@
-import { NextRequest, NextResponse } from 'next/server';
-import { getServerSession } from 'next-auth';
-import { z } from 'zod';
+import { NextRequest, NextResponse } from "next/server";
 
-import { authOptions } from '@/lib/auth';
-import { prisma } from '@/lib/db';
+import { getServerSession } from "next-auth";
+import { z } from "zod";
+
+import { authOptions } from "@/lib/auth";
+import { prisma } from "@/lib/db";
 
 const assignSubscriptionSchema = z.object({
   organizationId: z.string().cuid(),
@@ -17,16 +18,16 @@ const assignSubscriptionSchema = z.object({
 export async function GET(request: NextRequest) {
   try {
     const session = await getServerSession(authOptions);
-    
-    if (!session?.user || session.user.role !== 'ADMIN') {
-      return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
+
+    if (!session?.user || session.user.role !== "ADMIN") {
+      return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
     }
 
     const { searchParams } = new URL(request.url);
-    const page = parseInt(searchParams.get('page') || '1');
-    const limit = parseInt(searchParams.get('limit') || '10');
-    const status = searchParams.get('status');
-    const organizationId = searchParams.get('organizationId');
+    const page = parseInt(searchParams.get("page") || "1");
+    const limit = parseInt(searchParams.get("limit") || "10");
+    const status = searchParams.get("status");
+    const organizationId = searchParams.get("organizationId");
 
     const skip = (page - 1) * limit;
 
@@ -44,7 +45,7 @@ export async function GET(request: NextRequest) {
               name: true,
               slug: true,
               type: true,
-            }
+            },
           },
           package: {
             select: {
@@ -53,10 +54,10 @@ export async function GET(request: NextRequest) {
               plan: true,
               price: true,
               billingPeriod: true,
-            }
-          }
+            },
+          },
         },
-        orderBy: { createdAt: 'desc' },
+        orderBy: { createdAt: "desc" },
         skip,
         take: limit,
       }),
@@ -73,8 +74,8 @@ export async function GET(request: NextRequest) {
       },
     });
   } catch (error) {
-    console.error('Error fetching subscriptions:', error);
-    return NextResponse.json({ error: 'Internal server error' }, { status: 500 });
+    console.error("Error fetching subscriptions:", error);
+    return NextResponse.json({ error: "Internal server error" }, { status: 500 });
   }
 }
 
@@ -82,9 +83,9 @@ export async function GET(request: NextRequest) {
 export async function POST(request: NextRequest) {
   try {
     const session = await getServerSession(authOptions);
-    
-    if (!session?.user || session.user.role !== 'ADMIN') {
-      return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
+
+    if (!session?.user || session.user.role !== "ADMIN") {
+      return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
     }
 
     const body = await request.json();
@@ -96,7 +97,7 @@ export async function POST(request: NextRequest) {
     });
 
     if (!organization) {
-      return NextResponse.json({ error: 'Organization not found' }, { status: 404 });
+      return NextResponse.json({ error: "Organization not found" }, { status: 404 });
     }
 
     // Check if package exists
@@ -105,19 +106,19 @@ export async function POST(request: NextRequest) {
     });
 
     if (!package_) {
-      return NextResponse.json({ error: 'Package not found' }, { status: 404 });
+      return NextResponse.json({ error: "Package not found" }, { status: 404 });
     }
 
     // Cancel any existing active subscription
     await prisma.subscription.updateMany({
       where: {
         organizationId: validatedData.organizationId,
-        status: 'ACTIVE',
+        status: "ACTIVE",
       },
       data: {
-        status: 'CANCELLED',
+        status: "CANCELLED",
         cancelledAt: new Date(),
-        cancelReason: 'Replaced by new subscription',
+        cancelReason: "Replaced by new subscription",
       },
     });
 
@@ -126,7 +127,7 @@ export async function POST(request: NextRequest) {
       data: {
         organizationId: validatedData.organizationId,
         packageId: validatedData.packageId,
-        status: 'ACTIVE',
+        status: "ACTIVE",
         startDate: new Date(validatedData.startDate),
         endDate: new Date(validatedData.endDate),
         autoRenew: validatedData.autoRenew,
@@ -138,7 +139,7 @@ export async function POST(request: NextRequest) {
             id: true,
             name: true,
             slug: true,
-          }
+          },
         },
         package: {
           select: {
@@ -146,8 +147,8 @@ export async function POST(request: NextRequest) {
             name: true,
             plan: true,
             price: true,
-          }
-        }
+          },
+        },
       },
     });
 
@@ -163,10 +164,10 @@ export async function POST(request: NextRequest) {
     return NextResponse.json({ subscription }, { status: 201 });
   } catch (error) {
     if (error instanceof z.ZodError) {
-      return NextResponse.json({ error: 'Validation error', details: error.errors }, { status: 400 });
+      return NextResponse.json({ error: "Validation error", details: error.errors }, { status: 400 });
     }
-    
-    console.error('Error creating subscription:', error);
-    return NextResponse.json({ error: 'Internal server error' }, { status: 500 });
+
+    console.error("Error creating subscription:", error);
+    return NextResponse.json({ error: "Internal server error" }, { status: 500 });
   }
 }

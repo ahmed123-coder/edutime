@@ -1,54 +1,34 @@
-'use client';
+"use client";
 
-import { useState, useEffect } from 'react';
-import { useForm } from 'react-hook-form';
-import { zodResolver } from '@hookform/resolvers/zod';
-import { z } from 'zod';
-import { toast } from 'sonner';
-import { CalendarIcon } from 'lucide-react';
-import { format } from 'date-fns';
+import { useState, useEffect } from "react";
 
-import {
-  Dialog,
-  DialogContent,
-  DialogDescription,
-  DialogHeader,
-  DialogTitle,
-} from '@/components/ui/dialog';
-import {
-  Form,
-  FormControl,
-  FormField,
-  FormItem,
-  FormLabel,
-  FormMessage,
-} from '@/components/ui/form';
-import { Button } from '@/components/ui/button';
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from '@/components/ui/select';
-import {
-  Popover,
-  PopoverContent,
-  PopoverTrigger,
-} from '@/components/ui/popover';
-import { Calendar } from '@/components/ui/calendar';
-import { cn } from '@/lib/utils';
+import { zodResolver } from "@hookform/resolvers/zod";
+import { format } from "date-fns";
+import { CalendarIcon } from "lucide-react";
+import { useForm } from "react-hook-form";
+import { toast } from "sonner";
+import { z } from "zod";
 
-const assignSubscriptionSchema = z.object({
-  organizationId: z.string().min(1, 'Organization is required'),
-  packageId: z.string().min(1, 'Package is required'),
-  startDate: z.date(),
-  endDate: z.date(),
-  autoRenew: z.boolean().default(true),
-}).refine((data) => data.endDate > data.startDate, {
-  message: "End date must be after start date",
-  path: ["endDate"],
-});
+import { Button } from "@/components/ui/button";
+import { Calendar } from "@/components/ui/calendar";
+import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle } from "@/components/ui/dialog";
+import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form";
+import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import { cn } from "@/lib/utils";
+
+const assignSubscriptionSchema = z
+  .object({
+    organizationId: z.string().min(1, "Organization is required"),
+    packageId: z.string().min(1, "Package is required"),
+    startDate: z.date(),
+    endDate: z.date(),
+    autoRenew: z.boolean().default(true),
+  })
+  .refine((data) => data.endDate > data.startDate, {
+    message: "End date must be after start date",
+    path: ["endDate"],
+  });
 
 type AssignSubscriptionFormData = z.infer<typeof assignSubscriptionSchema>;
 
@@ -81,8 +61,8 @@ export function AssignSubscriptionModal({ open, onOpenChange, onSubscriptionAssi
   const form = useForm<AssignSubscriptionFormData>({
     resolver: zodResolver(assignSubscriptionSchema),
     defaultValues: {
-      organizationId: '',
-      packageId: '',
+      organizationId: "",
+      packageId: "",
       startDate: new Date(),
       endDate: new Date(Date.now() + 30 * 24 * 60 * 60 * 1000), // 30 days from now
       autoRenew: true,
@@ -92,8 +72,8 @@ export function AssignSubscriptionModal({ open, onOpenChange, onSubscriptionAssi
   const fetchData = async () => {
     try {
       const [orgsResponse, packagesResponse] = await Promise.all([
-        fetch('/api/organizations'),
-        fetch('/api/admin/subscription-packages'),
+        fetch("/api/organizations"),
+        fetch("/api/admin/subscription-packages"),
       ]);
 
       if (orgsResponse.ok) {
@@ -106,7 +86,7 @@ export function AssignSubscriptionModal({ open, onOpenChange, onSubscriptionAssi
         setPackages(packagesData.packages || []);
       }
     } catch (error) {
-      console.error('Error fetching data:', error);
+      console.error("Error fetching data:", error);
     }
   };
 
@@ -128,26 +108,26 @@ export function AssignSubscriptionModal({ open, onOpenChange, onSubscriptionAssi
         autoRenew: data.autoRenew,
       };
 
-      const response = await fetch('/api/admin/subscriptions', {
-        method: 'POST',
+      const response = await fetch("/api/admin/subscriptions", {
+        method: "POST",
         headers: {
-          'Content-Type': 'application/json',
+          "Content-Type": "application/json",
         },
         body: JSON.stringify(subscriptionData),
       });
 
       if (!response.ok) {
         const error = await response.json();
-        throw new Error(error.error || 'Failed to assign subscription');
+        throw new Error(error.error || "Failed to assign subscription");
       }
 
-      toast.success('Subscription assigned successfully');
+      toast.success("Subscription assigned successfully");
       form.reset();
       onOpenChange(false);
       onSubscriptionAssigned();
     } catch (error) {
-      console.error('Error assigning subscription:', error);
-      toast.error(error instanceof Error ? error.message : 'Failed to assign subscription');
+      console.error("Error assigning subscription:", error);
+      toast.error(error instanceof Error ? error.message : "Failed to assign subscription");
     } finally {
       setIsLoading(false);
     }
@@ -158,9 +138,7 @@ export function AssignSubscriptionModal({ open, onOpenChange, onSubscriptionAssi
       <DialogContent className="sm:max-w-[500px]">
         <DialogHeader>
           <DialogTitle>Assign Subscription</DialogTitle>
-          <DialogDescription>
-            Assign a subscription package to a training center.
-          </DialogDescription>
+          <DialogDescription>Assign a subscription package to a training center.</DialogDescription>
         </DialogHeader>
 
         <Form {...form}>
@@ -227,16 +205,9 @@ export function AssignSubscriptionModal({ open, onOpenChange, onSubscriptionAssi
                         <FormControl>
                           <Button
                             variant="outline"
-                            className={cn(
-                              "w-full pl-3 text-left font-normal",
-                              !field.value && "text-muted-foreground"
-                            )}
+                            className={cn("w-full pl-3 text-left font-normal", !field.value && "text-muted-foreground")}
                           >
-                            {field.value ? (
-                              format(field.value, "PPP")
-                            ) : (
-                              <span>Pick a date</span>
-                            )}
+                            {field.value ? format(field.value, "PPP") : <span>Pick a date</span>}
                             <CalendarIcon className="ml-auto h-4 w-4 opacity-50" />
                           </Button>
                         </FormControl>
@@ -246,9 +217,7 @@ export function AssignSubscriptionModal({ open, onOpenChange, onSubscriptionAssi
                           mode="single"
                           selected={field.value}
                           onSelect={field.onChange}
-                          disabled={(date) =>
-                            date < new Date(new Date().setHours(0, 0, 0, 0))
-                          }
+                          disabled={(date) => date < new Date(new Date().setHours(0, 0, 0, 0))}
                           initialFocus
                         />
                       </PopoverContent>
@@ -269,16 +238,9 @@ export function AssignSubscriptionModal({ open, onOpenChange, onSubscriptionAssi
                         <FormControl>
                           <Button
                             variant="outline"
-                            className={cn(
-                              "w-full pl-3 text-left font-normal",
-                              !field.value && "text-muted-foreground"
-                            )}
+                            className={cn("w-full pl-3 text-left font-normal", !field.value && "text-muted-foreground")}
                           >
-                            {field.value ? (
-                              format(field.value, "PPP")
-                            ) : (
-                              <span>Pick a date</span>
-                            )}
+                            {field.value ? format(field.value, "PPP") : <span>Pick a date</span>}
                             <CalendarIcon className="ml-auto h-4 w-4 opacity-50" />
                           </Button>
                         </FormControl>
@@ -288,9 +250,7 @@ export function AssignSubscriptionModal({ open, onOpenChange, onSubscriptionAssi
                           mode="single"
                           selected={field.value}
                           onSelect={field.onChange}
-                          disabled={(date) =>
-                            date < new Date(new Date().setHours(0, 0, 0, 0))
-                          }
+                          disabled={(date) => date < new Date(new Date().setHours(0, 0, 0, 0))}
                           initialFocus
                         />
                       </PopoverContent>
@@ -302,16 +262,11 @@ export function AssignSubscriptionModal({ open, onOpenChange, onSubscriptionAssi
             </div>
 
             <div className="flex justify-end space-x-2 pt-4">
-              <Button
-                type="button"
-                variant="outline"
-                onClick={() => onOpenChange(false)}
-                disabled={isLoading}
-              >
+              <Button type="button" variant="outline" onClick={() => onOpenChange(false)} disabled={isLoading}>
                 Cancel
               </Button>
               <Button type="submit" disabled={isLoading}>
-                {isLoading ? 'Assigning...' : 'Assign Subscription'}
+                {isLoading ? "Assigning..." : "Assign Subscription"}
               </Button>
             </div>
           </form>

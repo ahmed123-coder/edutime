@@ -1,8 +1,10 @@
 import { Metadata } from "next";
-import { getServerSession } from "next-auth";
 import { redirect } from "next/navigation";
 
+import { getServerSession } from "next-auth";
+
 import { authOptions } from "@/lib/auth";
+
 import { AdminDashboard } from "./_components/admin-dashboard";
 
 export const metadata: Metadata = {
@@ -14,16 +16,16 @@ export default async function AdminDashboardPage() {
   const session = await getServerSession(authOptions);
 
   if (!session) {
-    redirect('/auth/login');
+    redirect("/auth/login");
   }
 
   if (!session.user.verified) {
-    redirect('/auth/verify-email');
+    redirect("/auth/verify-email");
   }
 
   // Check if user has admin role
-  if (session.user.role !== 'ADMIN') {
-    redirect('/dashboard'); // Redirect to their appropriate dashboard
+  if (session.user.role !== "ADMIN") {
+    redirect("/dashboard"); // Redirect to their appropriate dashboard
   }
 
   return <AdminDashboard />;

@@ -1,6 +1,7 @@
-import { prisma } from '../prisma';
-import { UserRole } from '../../generated/prisma';
-import bcrypt from 'bcryptjs';
+import bcrypt from "bcryptjs";
+
+import { UserRole } from "../../generated/prisma";
+import { prisma } from "../prisma";
 
 export interface CreateUserData {
   email: string;
@@ -13,9 +14,7 @@ export interface CreateUserData {
 }
 
 export async function createUser(data: CreateUserData) {
-  const hashedPassword = data.password 
-    ? await bcrypt.hash(data.password, 10)
-    : undefined;
+  const hashedPassword = data.password ? await bcrypt.hash(data.password, 10) : undefined;
 
   return await prisma.user.create({
     data: {
@@ -72,6 +71,6 @@ export async function verifyUser(id: string) {
 export async function getUsersByRole(role: UserRole) {
   return await prisma.user.findMany({
     where: { role },
-    orderBy: { createdAt: 'desc' },
+    orderBy: { createdAt: "desc" },
   });
 }

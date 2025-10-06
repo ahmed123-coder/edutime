@@ -1,12 +1,12 @@
-import { prisma } from '../prisma';
-import { OrganizationType, SubscriptionPlan, MemberRole } from '../../generated/prisma';
+import { OrganizationType, SubscriptionPlan, MemberRole } from "../../generated/prisma";
+import { prisma } from "../prisma";
 
 export interface CreateOrganizationData {
   name: string;
-  slug: string;
+  slug?: string; // Optional - will be generated from name if not provided
   description?: string;
   type: OrganizationType;
-  subscription: SubscriptionPlan;
+  subscription?: SubscriptionPlan; // Optional - defaults to ESSENTIAL
   address: any;
   coordinates?: any;
   hours?: any;
@@ -71,7 +71,7 @@ export async function getOrganizationById(id: string) {
             },
           },
         },
-        orderBy: { createdAt: 'desc' },
+        orderBy: { createdAt: "desc" },
         take: 10,
       },
       _count: {
@@ -100,7 +100,7 @@ export async function getOrganizationBySlug(slug: string) {
             },
           },
         },
-        orderBy: { createdAt: 'desc' },
+        orderBy: { createdAt: "desc" },
         take: 10,
       },
       _count: {
@@ -131,7 +131,7 @@ export async function getOrganizationsByType(type: OrganizationType) {
         },
       },
     },
-    orderBy: { createdAt: 'desc' },
+    orderBy: { createdAt: "desc" },
   });
 }
 
@@ -149,11 +149,7 @@ export async function verifyOrganization(id: string) {
   });
 }
 
-export async function addOrganizationMember(
-  organizationId: string,
-  userId: string,
-  role: MemberRole
-) {
+export async function addOrganizationMember(organizationId: string, userId: string, role: MemberRole) {
   return await prisma.organizationMember.create({
     data: {
       organizationId,
@@ -163,10 +159,7 @@ export async function addOrganizationMember(
   });
 }
 
-export async function removeOrganizationMember(
-  organizationId: string,
-  userId: string
-) {
+export async function removeOrganizationMember(organizationId: string, userId: string) {
   return await prisma.organizationMember.delete({
     where: {
       userId_organizationId: {

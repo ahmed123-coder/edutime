@@ -1,37 +1,26 @@
-'use client';
+"use client";
 
-import { useState, useEffect } from 'react';
-import { useSearchParams } from 'next/navigation';
-import { Plus, Search, MoreHorizontal, Edit, Trash2, Eye } from 'lucide-react';
+import { useState, useEffect } from "react";
 
-import { Button } from '@/components/ui/button';
-import { Input } from '@/components/ui/input';
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
-import { Badge } from '@/components/ui/badge';
-import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
-import {
-  Table,
-  TableBody,
-  TableCell,
-  TableHead,
-  TableHeader,
-  TableRow,
-} from '@/components/ui/table';
+import { useSearchParams } from "next/navigation";
+
+import { Plus, Search, MoreHorizontal, Edit, Trash2, Eye } from "lucide-react";
+import { toast } from "sonner";
+
+import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
+import { Badge } from "@/components/ui/badge";
+import { Button } from "@/components/ui/button";
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import {
   DropdownMenu,
   DropdownMenuContent,
   DropdownMenuItem,
   DropdownMenuTrigger,
-} from '@/components/ui/dropdown-menu';
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from '@/components/ui/select';
-import { toast } from 'sonner';
-import { getInitials } from '@/lib/utils';
+} from "@/components/ui/dropdown-menu";
+import { Input } from "@/components/ui/input";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
+import { getInitials } from "@/lib/utils";
 
 interface User {
   id: string;
@@ -57,17 +46,17 @@ interface UsersResponse {
 }
 
 const roleColors = {
-  TEACHER: 'bg-green-100 text-green-800',
-  PARTNER: 'bg-orange-100 text-orange-800',
+  TEACHER: "bg-green-100 text-green-800",
+  PARTNER: "bg-orange-100 text-orange-800",
 };
 
 export function UsersManagement() {
   const searchParams = useSearchParams();
   const [users, setUsers] = useState<User[]>([]);
   const [loading, setLoading] = useState(true);
-  const [search, setSearch] = useState('');
-  const [roleFilter, setRoleFilter] = useState('');
-  const [verifiedFilter, setVerifiedFilter] = useState('');
+  const [search, setSearch] = useState("");
+  const [roleFilter, setRoleFilter] = useState("");
+  const [verifiedFilter, setVerifiedFilter] = useState("");
   const [page, setPage] = useState(1);
   const [pagination, setPagination] = useState({
     page: 1,
@@ -81,7 +70,7 @@ export function UsersManagement() {
       setLoading(true);
       const params = new URLSearchParams({
         page: page.toString(),
-        limit: '10',
+        limit: "10",
         ...(search && { search }),
         ...(roleFilter && { role: roleFilter }),
         ...(verifiedFilter && { verified: verifiedFilter }),
@@ -89,15 +78,15 @@ export function UsersManagement() {
 
       const response = await fetch(`/api/users?${params}`);
       if (!response.ok) {
-        throw new Error('Failed to fetch users');
+        throw new Error("Failed to fetch users");
       }
 
       const data: UsersResponse = await response.json();
       setUsers(data.users);
       setPagination(data.pagination);
     } catch (error) {
-      console.error('Error fetching users:', error);
-      toast.error('Failed to fetch users');
+      console.error("Error fetching users:", error);
+      toast.error("Failed to fetch users");
     } finally {
       setLoading(false);
     }
@@ -105,10 +94,10 @@ export function UsersManagement() {
 
   // Update state when URL parameters change (for sidebar navigation)
   useEffect(() => {
-    const urlRole = searchParams.get('role') || '';
-    const urlSearch = searchParams.get('search') || '';
-    const urlVerified = searchParams.get('verified') || '';
-    const urlPage = parseInt(searchParams.get('page') || '1');
+    const urlRole = searchParams.get("role") || "";
+    const urlSearch = searchParams.get("search") || "";
+    const urlVerified = searchParams.get("verified") || "";
+    const urlPage = parseInt(searchParams.get("page") || "1");
 
     setRoleFilter(urlRole);
     setSearch(urlSearch);
@@ -128,17 +117,17 @@ export function UsersManagement() {
       ...(roleFilter && { role: roleFilter }),
       ...(verifiedFilter && { verified: verifiedFilter }),
     });
-    
+
     // Update URL without triggering navigation
     const newUrl = `/dashboard/owner/users?${params.toString()}`;
-    window.history.replaceState({}, '', newUrl);
+    window.history.replaceState({}, "", newUrl);
   }, [page, search, roleFilter, verifiedFilter]);
 
   const formatDate = (dateString: string) => {
-    return new Date(dateString).toLocaleDateString('en-US', {
-      year: 'numeric',
-      month: 'short',
-      day: 'numeric',
+    return new Date(dateString).toLocaleDateString("en-US", {
+      year: "numeric",
+      month: "short",
+      day: "numeric",
     });
   };
 
@@ -148,12 +137,10 @@ export function UsersManagement() {
       <div className="flex items-center justify-between">
         <div>
           <h1 className="text-3xl font-bold tracking-tight">Teachers & Partners</h1>
-          <p className="text-muted-foreground">
-            Manage teachers and partners in your organization
-          </p>
+          <p className="text-muted-foreground">Manage teachers and partners in your organization</p>
         </div>
         <Button>
-          <Plus className="h-4 w-4 mr-2" />
+          <Plus className="mr-2 h-4 w-4" />
           Add User
         </Button>
       </div>
@@ -175,8 +162,8 @@ export function UsersManagement() {
               />
             </div>
             <Select
-              value={roleFilter || 'all-roles'}
-              onValueChange={(value) => setRoleFilter(value === 'all-roles' ? '' : value)}
+              value={roleFilter || "all-roles"}
+              onValueChange={(value) => setRoleFilter(value === "all-roles" ? "" : value)}
             >
               <SelectTrigger className="w-[180px]">
                 <SelectValue placeholder="Filter by role" />
@@ -188,8 +175,8 @@ export function UsersManagement() {
               </SelectContent>
             </Select>
             <Select
-              value={verifiedFilter || 'all-statuses'}
-              onValueChange={(value) => setVerifiedFilter(value === 'all-statuses' ? '' : value)}
+              value={verifiedFilter || "all-statuses"}
+              onValueChange={(value) => setVerifiedFilter(value === "all-statuses" ? "" : value)}
             >
               <SelectTrigger className="w-[180px]">
                 <SelectValue placeholder="Filter by status" />
@@ -228,13 +215,13 @@ export function UsersManagement() {
             <TableBody>
               {loading ? (
                 <TableRow>
-                  <TableCell colSpan={7} className="text-center py-8">
+                  <TableCell colSpan={7} className="py-8 text-center">
                     Loading users...
                   </TableCell>
                 </TableRow>
               ) : users.length === 0 ? (
                 <TableRow>
-                  <TableCell colSpan={7} className="text-center py-8">
+                  <TableCell colSpan={7} className="py-8 text-center">
                     No users found
                   </TableCell>
                 </TableRow>
@@ -249,29 +236,21 @@ export function UsersManagement() {
                         </Avatar>
                         <div>
                           <div className="font-medium">{user.name}</div>
-                          <div className="text-sm text-muted-foreground">{user.email}</div>
+                          <div className="text-muted-foreground text-sm">{user.email}</div>
                         </div>
                       </div>
                     </TableCell>
                     <TableCell>
-                      <Badge className={roleColors[user.role as keyof typeof roleColors]}>
-                        {user.role}
+                      <Badge className={roleColors[user.role as keyof typeof roleColors]}>{user.role}</Badge>
+                    </TableCell>
+                    <TableCell>
+                      <Badge variant={user.verified ? "default" : "secondary"}>
+                        {user.verified ? "Verified" : "Unverified"}
                       </Badge>
                     </TableCell>
-                    <TableCell>
-                      <Badge variant={user.verified ? 'default' : 'secondary'}>
-                        {user.verified ? 'Verified' : 'Unverified'}
-                      </Badge>
-                    </TableCell>
-                    <TableCell>
-                      {user.speciality || '-'}
-                    </TableCell>
-                    <TableCell>
-                      {user.phone || '-'}
-                    </TableCell>
-                    <TableCell>
-                      {formatDate(user.createdAt)}
-                    </TableCell>
+                    <TableCell>{user.speciality || "-"}</TableCell>
+                    <TableCell>{user.phone || "-"}</TableCell>
+                    <TableCell>{formatDate(user.createdAt)}</TableCell>
                     <TableCell className="text-right">
                       <DropdownMenu>
                         <DropdownMenuTrigger asChild>
@@ -281,11 +260,11 @@ export function UsersManagement() {
                         </DropdownMenuTrigger>
                         <DropdownMenuContent align="end">
                           <DropdownMenuItem>
-                            <Eye className="h-4 w-4 mr-2" />
+                            <Eye className="mr-2 h-4 w-4" />
                             View Details
                           </DropdownMenuItem>
                           <DropdownMenuItem>
-                            <Edit className="h-4 w-4 mr-2" />
+                            <Edit className="mr-2 h-4 w-4" />
                             Edit User
                           </DropdownMenuItem>
                         </DropdownMenuContent>
@@ -299,17 +278,12 @@ export function UsersManagement() {
 
           {/* Pagination */}
           {pagination.pages > 1 && (
-            <div className="flex items-center justify-between mt-4">
-              <div className="text-sm text-muted-foreground">
+            <div className="mt-4 flex items-center justify-between">
+              <div className="text-muted-foreground text-sm">
                 Page {pagination.page} of {pagination.pages}
               </div>
               <div className="flex gap-2">
-                <Button
-                  variant="outline"
-                  size="sm"
-                  onClick={() => setPage(page - 1)}
-                  disabled={page === 1}
-                >
+                <Button variant="outline" size="sm" onClick={() => setPage(page - 1)} disabled={page === 1}>
                   Previous
                 </Button>
                 <Button

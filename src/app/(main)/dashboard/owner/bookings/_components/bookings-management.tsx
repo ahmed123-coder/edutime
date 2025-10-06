@@ -1,36 +1,36 @@
-'use client';
+"use client";
 
-import { useState, useEffect } from 'react';
-import { Plus, Search, MoreHorizontal, Edit, Eye, Calendar, Clock, DollarSign, User, CheckCircle, XCircle } from 'lucide-react';
+import { useState, useEffect } from "react";
 
-import { Button } from '@/components/ui/button';
-import { Input } from '@/components/ui/input';
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
-import { Badge } from '@/components/ui/badge';
-import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import {
-  Table,
-  TableBody,
-  TableCell,
-  TableHead,
-  TableHeader,
-  TableRow,
-} from '@/components/ui/table';
+  Plus,
+  Search,
+  MoreHorizontal,
+  Edit,
+  Eye,
+  Calendar,
+  Clock,
+  DollarSign,
+  User,
+  CheckCircle,
+  XCircle,
+} from "lucide-react";
+import { toast } from "sonner";
+
+import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
+import { Badge } from "@/components/ui/badge";
+import { Button } from "@/components/ui/button";
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import {
   DropdownMenu,
   DropdownMenuContent,
   DropdownMenuItem,
   DropdownMenuTrigger,
-} from '@/components/ui/dropdown-menu';
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from '@/components/ui/select';
-import { toast } from 'sonner';
-import { getInitials } from '@/lib/utils';
+} from "@/components/ui/dropdown-menu";
+import { Input } from "@/components/ui/input";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
+import { getInitials } from "@/lib/utils";
 
 interface Booking {
   id: string;
@@ -80,26 +80,26 @@ interface BookingsResponse {
 }
 
 const statusColors = {
-  PENDING: 'bg-yellow-100 text-yellow-800',
-  CONFIRMED: 'bg-blue-100 text-blue-800',
-  CANCELLED: 'bg-red-100 text-red-800',
-  COMPLETED: 'bg-green-100 text-green-800',
-  NO_SHOW: 'bg-gray-100 text-gray-800',
+  PENDING: "bg-yellow-100 text-yellow-800",
+  CONFIRMED: "bg-blue-100 text-blue-800",
+  CANCELLED: "bg-red-100 text-red-800",
+  COMPLETED: "bg-green-100 text-green-800",
+  NO_SHOW: "bg-gray-100 text-gray-800",
 };
 
 const paymentStatusColors = {
-  PENDING: 'bg-yellow-100 text-yellow-800',
-  PAID: 'bg-green-100 text-green-800',
-  FAILED: 'bg-red-100 text-red-800',
-  REFUNDED: 'bg-purple-100 text-purple-800',
-  PARTIAL_REFUND: 'bg-orange-100 text-orange-800',
+  PENDING: "bg-yellow-100 text-yellow-800",
+  PAID: "bg-green-100 text-green-800",
+  FAILED: "bg-red-100 text-red-800",
+  REFUNDED: "bg-purple-100 text-purple-800",
+  PARTIAL_REFUND: "bg-orange-100 text-orange-800",
 };
 
 export function BookingsManagement() {
   const [bookings, setBookings] = useState<Booking[]>([]);
   const [loading, setLoading] = useState(true);
-  const [statusFilter, setStatusFilter] = useState('');
-  const [paymentStatusFilter, setPaymentStatusFilter] = useState('');
+  const [statusFilter, setStatusFilter] = useState("");
+  const [paymentStatusFilter, setPaymentStatusFilter] = useState("");
   const [page, setPage] = useState(1);
   const [pagination, setPagination] = useState({
     page: 1,
@@ -113,22 +113,22 @@ export function BookingsManagement() {
       setLoading(true);
       const params = new URLSearchParams({
         page: page.toString(),
-        limit: '10',
+        limit: "10",
         ...(statusFilter && { status: statusFilter }),
         ...(paymentStatusFilter && { paymentStatus: paymentStatusFilter }),
       });
 
       const response = await fetch(`/api/bookings?${params}`);
       if (!response.ok) {
-        throw new Error('Failed to fetch bookings');
+        throw new Error("Failed to fetch bookings");
       }
 
       const data: BookingsResponse = await response.json();
       setBookings(data.bookings);
       setPagination(data.pagination);
     } catch (error) {
-      console.error('Error fetching bookings:', error);
-      toast.error('Failed to fetch bookings');
+      console.error("Error fetching bookings:", error);
+      toast.error("Failed to fetch bookings");
     } finally {
       setLoading(false);
     }
@@ -141,31 +141,31 @@ export function BookingsManagement() {
   const handleUpdateBookingStatus = async (bookingId: string, status: string) => {
     try {
       const response = await fetch(`/api/bookings/${bookingId}`, {
-        method: 'PUT',
+        method: "PUT",
         headers: {
-          'Content-Type': 'application/json',
+          "Content-Type": "application/json",
         },
         body: JSON.stringify({ status }),
       });
 
       if (!response.ok) {
         const errorData = await response.json();
-        throw new Error(errorData.error || 'Failed to update booking');
+        throw new Error(errorData.error || "Failed to update booking");
       }
 
       toast.success(`Booking ${status.toLowerCase()} successfully`);
       fetchBookings(); // Refresh the list
     } catch (error) {
-      console.error('Error updating booking:', error);
-      toast.error(error instanceof Error ? error.message : 'Failed to update booking');
+      console.error("Error updating booking:", error);
+      toast.error(error instanceof Error ? error.message : "Failed to update booking");
     }
   };
 
   const formatDate = (dateString: string) => {
-    return new Date(dateString).toLocaleDateString('en-US', {
-      year: 'numeric',
-      month: 'short',
-      day: 'numeric',
+    return new Date(dateString).toLocaleDateString("en-US", {
+      year: "numeric",
+      month: "short",
+      day: "numeric",
     });
   };
 
@@ -174,9 +174,9 @@ export function BookingsManagement() {
   };
 
   const formatCurrency = (amount: number) => {
-    return new Intl.NumberFormat('en-US', {
-      style: 'currency',
-      currency: 'USD',
+    return new Intl.NumberFormat("en-US", {
+      style: "currency",
+      currency: "USD",
     }).format(amount);
   };
 
@@ -186,9 +186,7 @@ export function BookingsManagement() {
       <div className="flex items-center justify-between">
         <div>
           <h1 className="text-3xl font-bold tracking-tight">Bookings Management</h1>
-          <p className="text-muted-foreground">
-            Manage bookings for your training centers
-          </p>
+          <p className="text-muted-foreground">Manage bookings for your training centers</p>
         </div>
       </div>
 
@@ -255,13 +253,13 @@ export function BookingsManagement() {
             <TableBody>
               {loading ? (
                 <TableRow>
-                  <TableCell colSpan={8} className="text-center py-8">
+                  <TableCell colSpan={8} className="py-8 text-center">
                     Loading bookings...
                   </TableCell>
                 </TableRow>
               ) : bookings.length === 0 ? (
                 <TableRow>
-                  <TableCell colSpan={8} className="text-center py-8">
+                  <TableCell colSpan={8} className="py-8 text-center">
                     No bookings found
                   </TableCell>
                 </TableRow>
@@ -276,24 +274,24 @@ export function BookingsManagement() {
                         </Avatar>
                         <div>
                           <div className="font-medium">{booking.user.name}</div>
-                          <div className="text-sm text-muted-foreground">{booking.user.email}</div>
+                          <div className="text-muted-foreground text-sm">{booking.user.email}</div>
                         </div>
                       </div>
                     </TableCell>
                     <TableCell>
                       <div>
                         <div className="font-medium">{booking.room.name}</div>
-                        <div className="text-sm text-muted-foreground">
+                        <div className="text-muted-foreground text-sm">
                           {booking.room.capacity} people • {formatCurrency(booking.room.hourlyRate)}/hr
                         </div>
                       </div>
                     </TableCell>
                     <TableCell>
                       <div className="flex items-center gap-1">
-                        <Calendar className="h-4 w-4 text-muted-foreground" />
+                        <Calendar className="text-muted-foreground h-4 w-4" />
                         <div>
                           <div className="font-medium">{formatDate(booking.date)}</div>
-                          <div className="text-sm text-muted-foreground flex items-center gap-1">
+                          <div className="text-muted-foreground flex items-center gap-1 text-sm">
                             <Clock className="h-3 w-3" />
                             {formatTime(booking.startTime)} - {formatTime(booking.endTime)}
                           </div>
@@ -302,10 +300,10 @@ export function BookingsManagement() {
                     </TableCell>
                     <TableCell>
                       <div className="flex items-center gap-1">
-                        <DollarSign className="h-4 w-4 text-muted-foreground" />
+                        <DollarSign className="text-muted-foreground h-4 w-4" />
                         <div>
                           <div className="font-medium">{formatCurrency(booking.totalAmount)}</div>
-                          <div className="text-sm text-muted-foreground">
+                          <div className="text-muted-foreground text-sm">
                             Commission: {formatCurrency(booking.commission)}
                           </div>
                         </div>
@@ -318,35 +316,33 @@ export function BookingsManagement() {
                     </TableCell>
                     <TableCell>
                       <Badge className={paymentStatusColors[booking.paymentStatus as keyof typeof paymentStatusColors]}>
-                        {booking.paymentStatus.replace('_', ' ')}
+                        {booking.paymentStatus.replace("_", " ")}
                       </Badge>
                     </TableCell>
                     <TableCell>
                       {booking.notes ? (
-                        <div className="text-sm text-muted-foreground line-clamp-2 max-w-[200px]">
-                          {booking.notes}
-                        </div>
+                        <div className="text-muted-foreground line-clamp-2 max-w-[200px] text-sm">{booking.notes}</div>
                       ) : (
-                        '-'
+                        "-"
                       )}
                     </TableCell>
                     <TableCell className="text-right">
                       <div className="flex items-center gap-2">
-                        {booking.status === 'PENDING' && (
+                        {booking.status === "PENDING" && (
                           <>
                             <Button
                               size="sm"
                               variant="outline"
-                              onClick={() => handleUpdateBookingStatus(booking.id, 'CONFIRMED')}
-                              className="text-green-600 border-green-600 hover:bg-green-50"
+                              onClick={() => handleUpdateBookingStatus(booking.id, "CONFIRMED")}
+                              className="border-green-600 text-green-600 hover:bg-green-50"
                             >
                               <CheckCircle className="h-4 w-4" />
                             </Button>
                             <Button
                               size="sm"
                               variant="outline"
-                              onClick={() => handleUpdateBookingStatus(booking.id, 'CANCELLED')}
-                              className="text-red-600 border-red-600 hover:bg-red-50"
+                              onClick={() => handleUpdateBookingStatus(booking.id, "CANCELLED")}
+                              className="border-red-600 text-red-600 hover:bg-red-50"
                             >
                               <XCircle className="h-4 w-4" />
                             </Button>
@@ -360,11 +356,11 @@ export function BookingsManagement() {
                           </DropdownMenuTrigger>
                           <DropdownMenuContent align="end">
                             <DropdownMenuItem>
-                              <Eye className="h-4 w-4 mr-2" />
+                              <Eye className="mr-2 h-4 w-4" />
                               View Details
                             </DropdownMenuItem>
                             <DropdownMenuItem>
-                              <Edit className="h-4 w-4 mr-2" />
+                              <Edit className="mr-2 h-4 w-4" />
                               Edit Booking
                             </DropdownMenuItem>
                           </DropdownMenuContent>
@@ -379,17 +375,12 @@ export function BookingsManagement() {
 
           {/* Pagination */}
           {pagination.pages > 1 && (
-            <div className="flex items-center justify-between mt-4">
-              <div className="text-sm text-muted-foreground">
+            <div className="mt-4 flex items-center justify-between">
+              <div className="text-muted-foreground text-sm">
                 Page {pagination.page} of {pagination.pages}
               </div>
               <div className="flex gap-2">
-                <Button
-                  variant="outline"
-                  size="sm"
-                  onClick={() => setPage(page - 1)}
-                  disabled={page === 1}
-                >
+                <Button variant="outline" size="sm" onClick={() => setPage(page - 1)} disabled={page === 1}>
                   Previous
                 </Button>
                 <Button

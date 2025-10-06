@@ -1,26 +1,20 @@
-'use client';
+"use client";
 
-import { useState, useEffect } from 'react';
-import { Edit, Trash2, Users } from 'lucide-react';
+import { useState, useEffect } from "react";
 
-import { Button } from '@/components/ui/button';
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
-import { Badge } from '@/components/ui/badge';
-import {
-  Table,
-  TableBody,
-  TableCell,
-  TableHead,
-  TableHeader,
-  TableRow,
-} from '@/components/ui/table';
+import { Edit, Trash2, Users } from "lucide-react";
+import { toast } from "sonner";
+
+import { Badge } from "@/components/ui/badge";
+import { Button } from "@/components/ui/button";
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import {
   DropdownMenu,
   DropdownMenuContent,
   DropdownMenuItem,
   DropdownMenuTrigger,
-} from '@/components/ui/dropdown-menu';
-import { toast } from 'sonner';
+} from "@/components/ui/dropdown-menu";
+import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 
 interface Package {
   id: string;
@@ -46,9 +40,9 @@ interface PackageManagementProps {
 }
 
 const planColors = {
-  ESSENTIAL: 'bg-green-100 text-green-800',
-  PRO: 'bg-blue-100 text-blue-800',
-  PREMIUM: 'bg-purple-100 text-purple-800',
+  ESSENTIAL: "bg-green-100 text-green-800",
+  PRO: "bg-blue-100 text-blue-800",
+  PREMIUM: "bg-purple-100 text-purple-800",
 };
 
 export function PackageManagement({ onPackageCreated }: PackageManagementProps) {
@@ -58,17 +52,17 @@ export function PackageManagement({ onPackageCreated }: PackageManagementProps) 
   const fetchPackages = async () => {
     try {
       setLoading(true);
-      const response = await fetch('/api/admin/subscription-packages');
-      
+      const response = await fetch("/api/admin/subscription-packages");
+
       if (!response.ok) {
-        throw new Error('Failed to fetch packages');
+        throw new Error("Failed to fetch packages");
       }
 
       const data = await response.json();
       setPackages(data.packages);
     } catch (error) {
-      console.error('Error fetching packages:', error);
-      toast.error('Failed to fetch packages');
+      console.error("Error fetching packages:", error);
+      toast.error("Failed to fetch packages");
     } finally {
       setLoading(false);
     }
@@ -79,7 +73,7 @@ export function PackageManagement({ onPackageCreated }: PackageManagementProps) 
   }, []);
 
   const formatPrice = (price: number, period: string) => {
-    const periodText = period.toLowerCase().replace('ly', '');
+    const periodText = period.toLowerCase().replace("ly", "");
     return `${price.toLocaleString()} TND/${periodText}`;
   };
 
@@ -87,9 +81,7 @@ export function PackageManagement({ onPackageCreated }: PackageManagementProps) 
     <Card>
       <CardHeader>
         <CardTitle>Subscription Packages</CardTitle>
-        <CardDescription>
-          Manage available subscription packages and their features
-        </CardDescription>
+        <CardDescription>Manage available subscription packages and their features</CardDescription>
       </CardHeader>
       <CardContent>
         <Table>
@@ -107,13 +99,13 @@ export function PackageManagement({ onPackageCreated }: PackageManagementProps) 
           <TableBody>
             {loading ? (
               <TableRow>
-                <TableCell colSpan={7} className="text-center py-8">
+                <TableCell colSpan={7} className="py-8 text-center">
                   Loading packages...
                 </TableCell>
               </TableRow>
             ) : packages.length === 0 ? (
               <TableRow>
-                <TableCell colSpan={7} className="text-center py-8">
+                <TableCell colSpan={7} className="py-8 text-center">
                   No packages found
                 </TableCell>
               </TableRow>
@@ -123,21 +115,13 @@ export function PackageManagement({ onPackageCreated }: PackageManagementProps) 
                   <TableCell>
                     <div>
                       <div className="font-medium">{pkg.name}</div>
-                      {pkg.description && (
-                        <div className="text-sm text-muted-foreground">
-                          {pkg.description}
-                        </div>
-                      )}
+                      {pkg.description && <div className="text-muted-foreground text-sm">{pkg.description}</div>}
                     </div>
                   </TableCell>
                   <TableCell>
-                    <Badge className={planColors[pkg.plan as keyof typeof planColors]}>
-                      {pkg.plan}
-                    </Badge>
+                    <Badge className={planColors[pkg.plan as keyof typeof planColors]}>{pkg.plan}</Badge>
                   </TableCell>
-                  <TableCell>
-                    {formatPrice(pkg.price, pkg.billingPeriod)}
-                  </TableCell>
+                  <TableCell>{formatPrice(pkg.price, pkg.billingPeriod)}</TableCell>
                   <TableCell>
                     <div className="text-sm">
                       <div>{pkg.limits.maxRooms} rooms</div>
@@ -147,14 +131,12 @@ export function PackageManagement({ onPackageCreated }: PackageManagementProps) 
                   </TableCell>
                   <TableCell>
                     <div className="flex items-center gap-1">
-                      <Users className="h-4 w-4 text-muted-foreground" />
+                      <Users className="text-muted-foreground h-4 w-4" />
                       {pkg._count.subscriptions}
                     </div>
                   </TableCell>
                   <TableCell>
-                    <Badge variant={pkg.active ? 'default' : 'secondary'}>
-                      {pkg.active ? 'Active' : 'Inactive'}
-                    </Badge>
+                    <Badge variant={pkg.active ? "default" : "secondary"}>{pkg.active ? "Active" : "Inactive"}</Badge>
                   </TableCell>
                   <TableCell className="text-right">
                     <DropdownMenu>
@@ -166,11 +148,11 @@ export function PackageManagement({ onPackageCreated }: PackageManagementProps) 
                       </DropdownMenuTrigger>
                       <DropdownMenuContent align="end">
                         <DropdownMenuItem>
-                          <Edit className="h-4 w-4 mr-2" />
+                          <Edit className="mr-2 h-4 w-4" />
                           Edit Package
                         </DropdownMenuItem>
                         <DropdownMenuItem className="text-red-600">
-                          <Trash2 className="h-4 w-4 mr-2" />
+                          <Trash2 className="mr-2 h-4 w-4" />
                           Delete Package
                         </DropdownMenuItem>
                       </DropdownMenuContent>

@@ -37,9 +37,15 @@ interface User {
   createdAt: string;
   updatedAt: string;
   organizations?: {
+    id: string;
+    role: string;
+    createdAt: string;
     organization: {
       id: string;
       name: string;
+      type: string;
+      verified: boolean;
+      active: boolean;
       subscriptions: {
         endDate: string;
         package: {
@@ -286,6 +292,7 @@ export function UsersManagement() {
                 <TableHead>User</TableHead>
                 <TableHead>Role</TableHead>
                 <TableHead>Status</TableHead>
+                <TableHead>Assigned Centers</TableHead>
                 <TableHead>Subscription</TableHead>
                 <TableHead>Speciality</TableHead>
                 <TableHead>Created</TableHead>
@@ -295,13 +302,13 @@ export function UsersManagement() {
             <TableBody>
               {loading ? (
                 <TableRow>
-                  <TableCell colSpan={7} className="py-8 text-center">
+                  <TableCell colSpan={8} className="py-8 text-center">
                     Loading users...
                   </TableCell>
                 </TableRow>
               ) : users.length === 0 ? (
                 <TableRow>
-                  <TableCell colSpan={7} className="py-8 text-center">
+                  <TableCell colSpan={8} className="py-8 text-center">
                     No users found
                   </TableCell>
                 </TableRow>
@@ -329,6 +336,27 @@ export function UsersManagement() {
                       <Badge variant={user.verified ? "default" : "secondary"}>
                         {user.verified ? "Verified" : "Unverified"}
                       </Badge>
+                    </TableCell>
+                    <TableCell>
+                      {user.organizations && user.organizations.length > 0 ? (
+                        <div className="space-y-1">
+                          {user.organizations.map((membership) => (
+                            <div key={membership.id} className="flex items-center gap-2">
+                              <Badge
+                                variant="outline"
+                                className={membership.role === "OWNER" ? "border-yellow-500 text-yellow-700" : ""}
+                              >
+                                {membership.organization.name}
+                              </Badge>
+                              <Badge variant="secondary" className="text-xs">
+                                {membership.role}
+                              </Badge>
+                            </div>
+                          ))}
+                        </div>
+                      ) : (
+                        <span className="text-muted-foreground text-sm">No assignments</span>
+                      )}
                     </TableCell>
                     <TableCell>
                       {user.organizations?.[0]?.organization?.subscriptions?.[0] ? (

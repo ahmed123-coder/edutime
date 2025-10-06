@@ -11,11 +11,11 @@ export interface EmailOptions {
 
 export async function sendEmail(options: EmailOptions): Promise<boolean> {
   // For development, we'll just log the email
-  console.log('📧 Email would be sent:');
-  console.log('To:', options.to);
-  console.log('Subject:', options.subject);
-  console.log('Content:', options.text || options.html);
-  
+  console.log("📧 Email would be sent:");
+  console.log("To:", options.to);
+  console.log("Subject:", options.subject);
+  console.log("Content:", options.text || options.html);
+
   // In production, implement actual email sending:
   /*
   try {
@@ -34,7 +34,7 @@ export async function sendEmail(options: EmailOptions): Promise<boolean> {
     return false;
   }
   */
-  
+
   return true; // Simulate success for development
 }
 
@@ -69,7 +69,7 @@ export function generateVerificationEmailHtml(verificationUrl: string, userName?
         </div>
         <div class="content">
           <h2>Verify Your Email Address</h2>
-          <p>Hello ${userName || 'there'},</p>
+          <p>Hello ${userName || "there"},</p>
           <p>Thank you for creating an account with Formation Space. To complete your registration, please verify your email address by clicking the button below:</p>
           <p style="text-align: center;">
             <a href="${verificationUrl}" class="button">Verify Email Address</a>
@@ -122,7 +122,9 @@ export function generateWelcomeEmailHtml(userName: string, userRole: string): st
           <p>Hello ${userName},</p>
           <p>Welcome to Formation Space! Your email has been verified and your account is now active.</p>
           <p>As a <strong>${userRole.toLowerCase()}</strong>, you can now:</p>
-          ${userRole === 'TEACHER' ? `
+          ${
+            userRole === "TEACHER"
+              ? `
             <ul>
               <li>Search and discover training centers</li>
               <li>Book rooms and spaces for your classes</li>
@@ -130,7 +132,9 @@ export function generateWelcomeEmailHtml(userName: string, userRole: string): st
               <li>Leave reviews for training centers</li>
               <li>Order additional services</li>
             </ul>
-          ` : userRole === 'CENTER_OWNER' ? `
+          `
+              : userRole === "CENTER_OWNER"
+                ? `
             <ul>
               <li>Manage your training center profile</li>
               <li>Add and manage rooms and spaces</li>
@@ -138,13 +142,15 @@ export function generateWelcomeEmailHtml(userName: string, userRole: string): st
               <li>Set pricing and availability</li>
               <li>View analytics and reports</li>
             </ul>
-          ` : `
+          `
+                : `
             <ul>
               <li>Access your dashboard</li>
               <li>Manage your profile</li>
               <li>Use all platform features</li>
             </ul>
-          `}
+          `
+          }
           <p style="text-align: center;">
             <a href="${process.env.NEXTAUTH_URL}/dashboard" class="button">Go to Dashboard</a>
           </p>

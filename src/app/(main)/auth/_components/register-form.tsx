@@ -1,12 +1,14 @@
 "use client";
 
 import { useState } from "react";
+
+import { useRouter } from "next/navigation";
+
 import { zodResolver } from "@hookform/resolvers/zod";
+import { Loader2 } from "lucide-react";
 import { useForm } from "react-hook-form";
 import { toast } from "sonner";
 import { z } from "zod";
-import { useRouter } from "next/navigation";
-import { Loader2 } from "lucide-react";
 
 import { Button } from "@/components/ui/button";
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form";
@@ -20,14 +22,14 @@ const FormSchema = z
     phone: z.string().optional(),
     password: z.string().min(6, { message: "Password must be at least 6 characters." }),
     confirmPassword: z.string().min(6, { message: "Confirm Password must be at least 6 characters." }),
-    role: z.enum(['TEACHER', 'CENTER_OWNER', 'PARTNER'], { message: "Please select a role." }),
+    role: z.enum(["TEACHER", "CENTER_OWNER", "PARTNER"], { message: "Please select a role." }),
     speciality: z.string().optional(),
   })
   .refine((data) => data.password === data.confirmPassword, {
     message: "Passwords do not match.",
     path: ["confirmPassword"],
   })
-  .refine((data) => data.role !== 'TEACHER' || data.speciality, {
+  .refine((data) => data.role !== "TEACHER" || data.speciality, {
     message: "Speciality is required for teachers.",
     path: ["speciality"],
   });
@@ -49,16 +51,16 @@ export function RegisterForm() {
     },
   });
 
-  const selectedRole = form.watch('role');
+  const selectedRole = form.watch("role");
 
   const onSubmit = async (data: z.infer<typeof FormSchema>) => {
     setIsLoading(true);
 
     try {
-      const response = await fetch('/api/auth/register', {
-        method: 'POST',
+      const response = await fetch("/api/auth/register", {
+        method: "POST",
         headers: {
-          'Content-Type': 'application/json',
+          "Content-Type": "application/json",
         },
         body: JSON.stringify({
           name: data.name,
@@ -66,25 +68,25 @@ export function RegisterForm() {
           phone: data.phone || undefined,
           password: data.password,
           role: data.role,
-          speciality: data.role === 'TEACHER' ? data.speciality : undefined,
+          speciality: data.role === "TEACHER" ? data.speciality : undefined,
         }),
       });
 
       const result = await response.json();
 
       if (response.ok) {
-        toast.success('Registration successful!', {
-          description: 'Please check your email to verify your account.',
+        toast.success("Registration successful!", {
+          description: "Please check your email to verify your account.",
         });
-        router.push('/auth/verify-email');
+        router.push("/auth/verify-email");
       } else {
-        toast.error('Registration failed', {
-          description: result.error || 'An error occurred during registration.',
+        toast.error("Registration failed", {
+          description: result.error || "An error occurred during registration.",
         });
       }
     } catch (error) {
-      toast.error('Registration failed', {
-        description: 'An error occurred. Please try again.',
+      toast.error("Registration failed", {
+        description: "An error occurred. Please try again.",
       });
     } finally {
       setIsLoading(false);
@@ -155,7 +157,7 @@ export function RegisterForm() {
             </FormItem>
           )}
         />
-        {selectedRole === 'TEACHER' && (
+        {selectedRole === "TEACHER" && (
           <FormField
             control={form.control}
             name="speciality"

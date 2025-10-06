@@ -1,10 +1,14 @@
-'use client';
+"use client";
 
-import { useSession } from 'next-auth/react';
-import { useRouter } from 'next/navigation';
-import { useEffect } from 'react';
-import { UserRole } from '@/generated/prisma';
-import { hasPermission, Permission } from './permissions';
+import { useEffect } from "react";
+
+import { useRouter } from "next/navigation";
+
+import { useSession } from "next-auth/react";
+
+import { UserRole } from "@/generated/prisma";
+
+import { hasPermission, Permission } from "./permissions";
 
 interface WithAuthOptions {
   requiredRoles?: UserRole[];
@@ -13,14 +17,11 @@ interface WithAuthOptions {
   requireVerification?: boolean;
 }
 
-export function withAuth<P extends object>(
-  WrappedComponent: React.ComponentType<P>,
-  options: WithAuthOptions = {}
-) {
+export function withAuth<P extends object>(WrappedComponent: React.ComponentType<P>, options: WithAuthOptions = {}) {
   const {
     requiredRoles = [],
     requiredPermissions = [],
-    redirectTo = '/auth/login',
+    redirectTo = "/auth/login",
     requireVerification = true,
   } = options;
 
@@ -29,7 +30,7 @@ export function withAuth<P extends object>(
     const router = useRouter();
 
     useEffect(() => {
-      if (status === 'loading') return; // Still loading
+      if (status === "loading") return; // Still loading
 
       // Not authenticated
       if (!session) {
@@ -39,34 +40,34 @@ export function withAuth<P extends object>(
 
       // Check email verification
       if (requireVerification && !session.user.verified) {
-        router.push('/auth/verify-email');
+        router.push("/auth/verify-email");
         return;
       }
 
       // Check required roles
       if (requiredRoles.length > 0 && !requiredRoles.includes(session.user.role)) {
-        router.push('/dashboard'); // Redirect to default dashboard
+        router.push("/dashboard"); // Redirect to default dashboard
         return;
       }
 
       // Check required permissions
       if (requiredPermissions.length > 0) {
-        const hasRequiredPermissions = requiredPermissions.every(permission =>
-          hasPermission(session.user.role, permission)
+        const hasRequiredPermissions = requiredPermissions.every((permission) =>
+          hasPermission(session.user.role, permission),
         );
 
         if (!hasRequiredPermissions) {
-          router.push('/dashboard'); // Redirect to default dashboard
+          router.push("/dashboard"); // Redirect to default dashboard
           return;
         }
       }
     }, [session, status, router]);
 
     // Show loading state
-    if (status === 'loading') {
+    if (status === "loading") {
       return (
-        <div className="flex items-center justify-center min-h-screen">
-          <div className="animate-spin rounded-full h-32 w-32 border-b-2 border-gray-900"></div>
+        <div className="flex min-h-screen items-center justify-center">
+          <div className="h-32 w-32 animate-spin rounded-full border-b-2 border-gray-900"></div>
         </div>
       );
     }
@@ -88,8 +89,8 @@ export function withAuth<P extends object>(
 
     // Check permissions
     if (requiredPermissions.length > 0) {
-      const hasRequiredPermissions = requiredPermissions.every(permission =>
-        hasPermission(session.user.role, permission)
+      const hasRequiredPermissions = requiredPermissions.every((permission) =>
+        hasPermission(session.user.role, permission),
       );
 
       if (!hasRequiredPermissions) {
@@ -102,23 +103,19 @@ export function withAuth<P extends object>(
 }
 
 // Convenience HOCs for specific roles
-export const withAdminAuth = <P extends object>(
-  WrappedComponent: React.ComponentType<P>
-) => withAuth(WrappedComponent, { requiredRoles: [UserRole.ADMIN] });
+export const withAdminAuth = <P extends object>(WrappedComponent: React.ComponentType<P>) =>
+  withAuth(WrappedComponent, { requiredRoles: [UserRole.ADMIN] });
 
-export const withCenterOwnerAuth = <P extends object>(
-  WrappedComponent: React.ComponentType<P>
-) => withAuth(WrappedComponent, { 
-  requiredRoles: [UserRole.CENTER_OWNER, UserRole.TRAINING_MANAGER] 
-});
+export const withCenterOwnerAuth = <P extends object>(WrappedComponent: React.ComponentType<P>) =>
+  withAuth(WrappedComponent, {
+    requiredRoles: [UserRole.CENTER_OWNER, UserRole.TRAINING_MANAGER],
+  });
 
-export const withTeacherAuth = <P extends object>(
-  WrappedComponent: React.ComponentType<P>
-) => withAuth(WrappedComponent, { requiredRoles: [UserRole.TEACHER] });
+export const withTeacherAuth = <P extends object>(WrappedComponent: React.ComponentType<P>) =>
+  withAuth(WrappedComponent, { requiredRoles: [UserRole.TEACHER] });
 
-export const withPartnerAuth = <P extends object>(
-  WrappedComponent: React.ComponentType<P>
-) => withAuth(WrappedComponent, { requiredRoles: [UserRole.PARTNER] });
+export const withPartnerAuth = <P extends object>(WrappedComponent: React.ComponentType<P>) =>
+  withAuth(WrappedComponent, { requiredRoles: [UserRole.PARTNER] });
 
 // Hook for checking permissions in components
 export function usePermissions() {

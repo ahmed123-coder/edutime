@@ -1,9 +1,9 @@
 "use client";
 
 import Link from "next/link";
-import { useSession } from "next-auth/react";
 
 import { Settings, CircleHelp, Search, Database, ClipboardList, File, Command } from "lucide-react";
+import { useSession } from "next-auth/react";
 
 import {
   Sidebar,
@@ -62,8 +62,8 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
   const userRole = session?.user?.role;
 
   // Show loading state or default items while session is loading
-  const roleBasedSidebarItems = status === 'loading' || !userRole ? [] : getSidebarItems(userRole);
-  const defaultDashboardUrl = status === 'loading' || !userRole ? '/dashboard' : getDefaultDashboardUrl(userRole);
+  const roleBasedSidebarItems = status === "loading" || !userRole ? [] : getSidebarItems(userRole);
+  const defaultDashboardUrl = status === "loading" || !userRole ? "/dashboard" : getDefaultDashboardUrl(userRole);
 
   return (
     <Sidebar {...props}>
@@ -80,9 +80,9 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
         </SidebarMenu>
       </SidebarHeader>
       <SidebarContent>
-        {status === 'loading' || !userRole ? (
+        {status === "loading" || !userRole ? (
           <div className="flex items-center justify-center p-4">
-            <div className="text-sm text-muted-foreground">Loading navigation...</div>
+            <div className="text-muted-foreground text-sm">Loading navigation...</div>
           </div>
         ) : (
           <NavMain items={roleBasedSidebarItems} />

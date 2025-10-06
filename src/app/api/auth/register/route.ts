@@ -1,34 +1,33 @@
-import { NextRequest, NextResponse } from 'next/server';
-import bcrypt from 'bcryptjs';
+import { NextRequest, NextResponse } from "next/server";
+
+import bcrypt from "bcryptjs";
+
+import { UserRole } from '@/generated/prisma';
 import { prisma } from '@/lib/prisma';
 import { createUserSchema } from '@/lib/validations';
-import { UserRole } from '@/generated/prisma';
-import { sendEmail, generateVerificationEmailHtml } from '@/lib/email';
+import { sendEmail, generateVerificationEmailHtml } from "@/lib/email";
 
 export async function POST(request: NextRequest) {
   try {
     const body = await request.json();
-    
+
     // Validate input
     const validatedData = createUserSchema.parse(body);
-    
+
     // Check if user already exists
     const existingUser = await prisma.user.findUnique({
-      where: { email: validatedData.email }
+      where: { email: validatedData.email },
     });
-    
+
     if (existingUser) {
-      return NextResponse.json(
-        { error: 'User with this email already exists' },
-        { status: 400 }
-      );
+      return NextResponse.json({ error: "User with this email already exists" }, { status: 400 });
     }
-    
+
     // Hash password
-    const hashedPassword = validatedData.password 
+    const hashedPassword = validatedData.password
       ? await bcrypt.hash(validatedData.password, 12)
       : undefined;
-    
+
     // Create user
     const user = await prisma.user.create({
       data: {
@@ -47,9 +46,9 @@ export async function POST(request: NextRequest) {
         role: true,
         verified: true,
         createdAt: true,
-      }
+      },
     });
-    
+
     // Generate verification token
     const verificationToken = crypto.randomUUID();
     const expires = new Date(Date.now() + 24 * 60 * 60 * 1000); // 24 hours
@@ -69,29 +68,25 @@ export async function POST(request: NextRequest) {
 
     await sendEmail({
       to: user.email,
-      subject: 'Verify your Formation Space account',
+      subject: "Verify your Formation Space account",
       html: emailHtml,
       text: `Please verify your email by visiting: ${verificationUrl}`,
     });
 
-    return NextResponse.json({
-      message: 'User created successfully. Please check your email for verification.',
-      user
-    }, { status: 201 });
-    
-  } catch (error: any) {
-    console.error('Registration error:', error);
-    
-    if (error.name === 'ZodError') {
-      return NextResponse.json(
-        { error: 'Invalid input data', details: error.errors },
-        { status: 400 }
-      );
-    }
-    
     return NextResponse.json(
-      { error: 'Internal server error' },
-      { status: 500 }
-    );
+      {
+        message: "User created successfully. Please check your email for verification.",
+        user,
+      },
+      { status: 201 },
+
+  } catch (error: any) {
+    console.error("Registration error:", error);
+
+    if (error.name === "ZodError") {
+      return NextResponse.json({ error: "Invalid input data", details: error.errors }, { status: 400 });
+    }
+
+    return NextResponse.json({ error: "Internal server error" }, { status: 500 });
   }
 }

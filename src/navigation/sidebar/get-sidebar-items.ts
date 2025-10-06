@@ -1,20 +1,20 @@
-import { adminSidebarItems } from './admin-sidebar-items';
-import { ownerSidebarItems } from './owner-sidebar-items';
-import { teacherSidebarItems } from './teacher-sidebar-items';
-import { sidebarItems } from './sidebar-items'; // Default/fallback items
+import { adminSidebarItems } from "./admin-sidebar-items";
+import { ownerSidebarItems } from "./owner-sidebar-items";
+import { sidebarItems } from "./sidebar-items"; // Default/fallback items
+import { teacherSidebarItems } from "./teacher-sidebar-items";
 
-export type UserRole = 'ADMIN' | 'CENTER_OWNER' | 'TRAINING_MANAGER' | 'TEACHER' | 'PARTNER';
+export type UserRole = "ADMIN" | "CENTER_OWNER" | "TRAINING_MANAGER" | "TEACHER" | "PARTNER";
 
 export function getSidebarItems(userRole?: UserRole | string) {
   switch (userRole) {
-    case 'ADMIN':
+    case "ADMIN":
       return adminSidebarItems;
-    case 'CENTER_OWNER':
-    case 'TRAINING_MANAGER':
+    case "CENTER_OWNER":
+    case "TRAINING_MANAGER":
       return ownerSidebarItems;
-    case 'TEACHER':
+    case "TEACHER":
       return teacherSidebarItems;
-    case 'PARTNER':
+    case "PARTNER":
       // Partners can use teacher navigation for now, or create separate partner navigation
       return teacherSidebarItems;
     default:
@@ -25,17 +25,17 @@ export function getSidebarItems(userRole?: UserRole | string) {
 
 export function getDefaultDashboardUrl(userRole?: UserRole | string): string {
   switch (userRole) {
-    case 'ADMIN':
-      return '/dashboard/admin';
-    case 'CENTER_OWNER':
-    case 'TRAINING_MANAGER':
-      return '/dashboard/owner';
-    case 'TEACHER':
-      return '/dashboard/teacher';
-    case 'PARTNER':
-      return '/dashboard/teacher'; // For now, partners use teacher dashboard
+    case "ADMIN":
+      return "/dashboard/admin";
+    case "CENTER_OWNER":
+    case "TRAINING_MANAGER":
+      return "/dashboard/owner";
+    case "TEACHER":
+      return "/dashboard/teacher";
+    case "PARTNER":
+      return "/dashboard/teacher"; // For now, partners use teacher dashboard
     default:
       // Fallback to teacher dashboard for unknown roles
-      return '/dashboard/teacher';
+      return "/dashboard/teacher";
   }
 }

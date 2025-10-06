@@ -121,10 +121,16 @@ export async function GET(request: NextRequest) {
           updatedAt: true,
           organizations: {
             select: {
+              id: true,
+              role: true,
+              createdAt: true,
               organization: {
                 select: {
                   id: true,
                   name: true,
+                  type: true,
+                  verified: true,
+                  active: true,
                   subscriptions: {
                     where: { status: "ACTIVE" },
                     select: {

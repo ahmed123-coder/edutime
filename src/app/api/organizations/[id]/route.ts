@@ -10,7 +10,6 @@ const updateOrganizationSchema = z.object({
   name: z.string().min(1).optional(),
   description: z.string().optional(),
   type: z.enum(["TRAINING_CENTER", "PARTNER_SERVICE"]).optional(),
-  subscription: z.enum(["ESSENTIAL", "PRO", "PREMIUM"]).optional(),
   address: z
     .object({
       street: z.string(),

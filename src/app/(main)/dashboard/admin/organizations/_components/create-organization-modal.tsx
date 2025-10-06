@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import React, { useState } from "react";
 
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
@@ -16,13 +16,8 @@ import { Textarea } from "@/components/ui/textarea";
 
 const createOrganizationSchema = z.object({
   name: z.string().min(1, "Name is required"),
-  slug: z
-    .string()
-    .min(1, "Slug is required")
-    .regex(/^[a-z0-9-]+$/, "Slug must contain only lowercase letters, numbers, and hyphens"),
   description: z.string().optional(),
   type: z.enum(["TRAINING_CENTER", "PARTNER_SERVICE"]),
-  subscription: z.enum(["ESSENTIAL", "PRO", "PREMIUM"]).default("ESSENTIAL"),
   street: z.string().min(1, "Street is required"),
   city: z.string().min(1, "City is required"),
   state: z.string().min(1, "State is required"),
@@ -32,6 +27,16 @@ const createOrganizationSchema = z.object({
   email: z.string().email().optional().or(z.literal("")),
   website: z.string().url().optional().or(z.literal("")),
 });
+
+// Function to generate slug from name
+const generateSlug = (name: string): string => {
+  return name
+    .toLowerCase()
+    .trim()
+    .replace(/[^\w\s-]/g, '') // Remove special characters
+    .replace(/[\s_-]+/g, '-') // Replace spaces and underscores with hyphens
+    .replace(/^-+|-+$/g, ''); // Remove leading/trailing hyphens
+};
 
 type CreateOrganizationFormData = z.infer<typeof createOrganizationSchema>;
 
@@ -43,15 +48,14 @@ interface CreateOrganizationModalProps {
 
 export function CreateOrganizationModal({ open, onOpenChange, onOrganizationCreated }: CreateOrganizationModalProps) {
   const [isLoading, setIsLoading] = useState(false);
+  const [previewSlug, setPreviewSlug] = useState("");
 
   const form = useForm<CreateOrganizationFormData>({
     resolver: zodResolver(createOrganizationSchema),
     defaultValues: {
       name: "",
-      slug: "",
       description: "",
       type: "TRAINING_CENTER",
-      subscription: "ESSENTIAL",
       street: "",
       city: "",
       state: "",
@@ -63,16 +67,30 @@ export function CreateOrganizationModal({ open, onOpenChange, onOrganizationCrea
     },
   });
 
+  // Watch name field to update slug preview
+  const watchedName = form.watch("name");
+
+  // Update preview slug when name changes
+  React.useEffect(() => {
+    if (watchedName) {
+      setPreviewSlug(generateSlug(watchedName));
+    } else {
+      setPreviewSlug("");
+    }
+  }, [watchedName]);
+
   const onSubmit = async (data: CreateOrganizationFormData) => {
     try {
       setIsLoading(true);
 
+      // Generate slug from name
+      const baseSlug = generateSlug(data.name);
+
       const organizationData = {
         name: data.name,
-        slug: data.slug,
+        slug: baseSlug, // Will be made unique by the API
         description: data.description,
         type: data.type,
-        subscription: data.subscription,
         address: {
           street: data.street,
           city: data.city,
@@ -120,35 +138,26 @@ export function CreateOrganizationModal({ open, onOpenChange, onOrganizationCrea
 
         <Form {...form}>
           <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
-            <div className="grid grid-cols-2 gap-4">
-              <FormField
-                control={form.control}
-                name="name"
-                render={({ field }) => (
-                  <FormItem>
-                    <FormLabel>Organization Name</FormLabel>
-                    <FormControl>
-                      <Input placeholder="e.g., Excellence Training Center" {...field} />
-                    </FormControl>
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
-
-              <FormField
-                control={form.control}
-                name="slug"
-                render={({ field }) => (
-                  <FormItem>
-                    <FormLabel>Slug</FormLabel>
-                    <FormControl>
-                      <Input placeholder="e.g., excellence-training" {...field} />
-                    </FormControl>
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
-            </div>
+            <FormField
+              control={form.control}
+              name="name"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>Organization Name</FormLabel>
+                  <FormControl>
+                    <Input placeholder="e.g., Excellence Training Center" {...field} />
+                  </FormControl>
+                  {previewSlug && (
+                    <p className="text-sm text-muted-foreground">
+                      URL slug will be: <code className="bg-muted px-1 py-0.5 rounded text-xs">{previewSlug}</code>
+                      <br />
+                      <span className="text-xs">Note: A number will be added if this slug already exists</span>
+                    </p>
+                  )}
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
 
             <FormField
               control={form.control}
@@ -187,28 +196,6 @@ export function CreateOrganizationModal({ open, onOpenChange, onOrganizationCrea
                 )}
               />
 
-              <FormField
-                control={form.control}
-                name="subscription"
-                render={({ field }) => (
-                  <FormItem>
-                    <FormLabel>Subscription Plan</FormLabel>
-                    <Select onValueChange={field.onChange} defaultValue={field.value}>
-                      <FormControl>
-                        <SelectTrigger>
-                          <SelectValue placeholder="Select plan" />
-                        </SelectTrigger>
-                      </FormControl>
-                      <SelectContent>
-                        <SelectItem value="ESSENTIAL">Essential</SelectItem>
-                        <SelectItem value="PRO">Pro</SelectItem>
-                        <SelectItem value="PREMIUM">Premium</SelectItem>
-                      </SelectContent>
-                    </Select>
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
             </div>
 
             <div className="space-y-4">

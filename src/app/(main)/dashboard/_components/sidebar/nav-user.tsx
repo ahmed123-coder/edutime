@@ -1,8 +1,9 @@
 "use client";
 
 import { useState } from "react";
-import { useSession, signOut } from "next-auth/react";
+
 import { EllipsisVertical, CircleUser, CreditCard, MessageSquareDot, LogOut, Loader2 } from "lucide-react";
+import { useSession, signOut } from "next-auth/react";
 
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import {
@@ -31,26 +32,28 @@ export function NavUser({
   const [isLoggingOut, setIsLoggingOut] = useState(false);
 
   // Use session data if available, otherwise fallback to user prop
-  const currentUser = session?.user ? {
-    name: session.user.name || 'User',
-    email: session.user.email || '',
-    avatar: session.user.image || ''
-  } : user;
+  const currentUser = session?.user
+    ? {
+        name: session.user.name || "User",
+        email: session.user.email || "",
+        avatar: session.user.image || "",
+      }
+    : user;
 
   const handleLogout = async () => {
     setIsLoggingOut(true);
     try {
       await signOut({
-        callbackUrl: '/auth/login',
-        redirect: true
+        callbackUrl: "/auth/login",
+        redirect: true,
       });
     } catch (error) {
-      console.error('Logout error:', error);
+      console.error("Logout error:", error);
       setIsLoggingOut(false);
     }
   };
 
-  if (status === 'loading') {
+  if (status === "loading") {
     return (
       <SidebarMenu>
         <SidebarMenuItem>
@@ -131,14 +134,10 @@ export function NavUser({
             <DropdownMenuItem
               onClick={handleLogout}
               disabled={isLoggingOut}
-              className="text-red-600 focus:text-red-600 focus:bg-red-50"
+              className="text-red-600 focus:bg-red-50 focus:text-red-600"
             >
-              {isLoggingOut ? (
-                <Loader2 className="h-4 w-4 animate-spin" />
-              ) : (
-                <LogOut />
-              )}
-              {isLoggingOut ? 'Logging out...' : 'Log out'}
+              {isLoggingOut ? <Loader2 className="h-4 w-4 animate-spin" /> : <LogOut />}
+              {isLoggingOut ? "Logging out..." : "Log out"}
             </DropdownMenuItem>
           </DropdownMenuContent>
         </DropdownMenu>

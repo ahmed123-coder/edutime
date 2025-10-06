@@ -1,35 +1,23 @@
-'use client';
+"use client";
 
-import { useState, useEffect } from 'react';
-import { Plus, Search, MoreHorizontal, Edit, Trash2, Eye, Building2, Users, DollarSign, MapPin } from 'lucide-react';
+import { useState, useEffect } from "react";
 
-import { Button } from '@/components/ui/button';
-import { Input } from '@/components/ui/input';
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
-import { Badge } from '@/components/ui/badge';
-import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
-import {
-  Table,
-  TableBody,
-  TableCell,
-  TableHead,
-  TableHeader,
-  TableRow,
-} from '@/components/ui/table';
+import { Plus, Search, MoreHorizontal, Edit, Trash2, Eye, Building2, Users, DollarSign, MapPin } from "lucide-react";
+import { toast } from "sonner";
+
+import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
+import { Badge } from "@/components/ui/badge";
+import { Button } from "@/components/ui/button";
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import {
   DropdownMenu,
   DropdownMenuContent,
   DropdownMenuItem,
   DropdownMenuTrigger,
-} from '@/components/ui/dropdown-menu';
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from '@/components/ui/select';
-import { toast } from 'sonner';
+} from "@/components/ui/dropdown-menu";
+import { Input } from "@/components/ui/input";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 
 interface Room {
   id: string;
@@ -69,9 +57,9 @@ interface RoomsResponse {
 export function RoomsManagement() {
   const [rooms, setRooms] = useState<Room[]>([]);
   const [loading, setLoading] = useState(true);
-  const [search, setSearch] = useState('');
-  const [organizationFilter, setOrganizationFilter] = useState('');
-  const [activeFilter, setActiveFilter] = useState('');
+  const [search, setSearch] = useState("");
+  const [organizationFilter, setOrganizationFilter] = useState("");
+  const [activeFilter, setActiveFilter] = useState("");
   const [page, setPage] = useState(1);
   const [pagination, setPagination] = useState({
     page: 1,
@@ -85,7 +73,7 @@ export function RoomsManagement() {
       setLoading(true);
       const params = new URLSearchParams({
         page: page.toString(),
-        limit: '10',
+        limit: "10",
         ...(search && { search }),
         ...(organizationFilter && { organizationId: organizationFilter }),
         ...(activeFilter && { active: activeFilter }),
@@ -93,15 +81,15 @@ export function RoomsManagement() {
 
       const response = await fetch(`/api/rooms?${params}`);
       if (!response.ok) {
-        throw new Error('Failed to fetch rooms');
+        throw new Error("Failed to fetch rooms");
       }
 
       const data: RoomsResponse = await response.json();
       setRooms(data.rooms);
       setPagination(data.pagination);
     } catch (error) {
-      console.error('Error fetching rooms:', error);
-      toast.error('Failed to fetch rooms');
+      console.error("Error fetching rooms:", error);
+      toast.error("Failed to fetch rooms");
     } finally {
       setLoading(false);
     }
@@ -112,40 +100,40 @@ export function RoomsManagement() {
   }, [page, search, organizationFilter, activeFilter]);
 
   const handleDeleteRoom = async (roomId: string) => {
-    if (!confirm('Are you sure you want to delete this room? This action cannot be undone.')) {
+    if (!confirm("Are you sure you want to delete this room? This action cannot be undone.")) {
       return;
     }
 
     try {
       const response = await fetch(`/api/rooms/${roomId}`, {
-        method: 'DELETE',
+        method: "DELETE",
       });
 
       if (!response.ok) {
         const errorData = await response.json();
-        throw new Error(errorData.error || 'Failed to delete room');
+        throw new Error(errorData.error || "Failed to delete room");
       }
 
-      toast.success('Room deleted successfully');
+      toast.success("Room deleted successfully");
       fetchRooms(); // Refresh the list
     } catch (error) {
-      console.error('Error deleting room:', error);
-      toast.error(error instanceof Error ? error.message : 'Failed to delete room');
+      console.error("Error deleting room:", error);
+      toast.error(error instanceof Error ? error.message : "Failed to delete room");
     }
   };
 
   const formatDate = (dateString: string) => {
-    return new Date(dateString).toLocaleDateString('en-US', {
-      year: 'numeric',
-      month: 'short',
-      day: 'numeric',
+    return new Date(dateString).toLocaleDateString("en-US", {
+      year: "numeric",
+      month: "short",
+      day: "numeric",
     });
   };
 
   const formatCurrency = (amount: number) => {
-    return new Intl.NumberFormat('en-US', {
-      style: 'currency',
-      currency: 'USD',
+    return new Intl.NumberFormat("en-US", {
+      style: "currency",
+      currency: "USD",
     }).format(amount);
   };
 
@@ -155,12 +143,10 @@ export function RoomsManagement() {
       <div className="flex items-center justify-between">
         <div>
           <h1 className="text-3xl font-bold tracking-tight">Rooms Management</h1>
-          <p className="text-muted-foreground">
-            Manage training rooms and spaces across all organizations
-          </p>
+          <p className="text-muted-foreground">Manage training rooms and spaces across all organizations</p>
         </div>
         <Button>
-          <Plus className="h-4 w-4 mr-2" />
+          <Plus className="mr-2 h-4 w-4" />
           Add Room
         </Button>
       </div>
@@ -230,13 +216,13 @@ export function RoomsManagement() {
             <TableBody>
               {loading ? (
                 <TableRow>
-                  <TableCell colSpan={9} className="text-center py-8">
+                  <TableCell colSpan={9} className="py-8 text-center">
                     Loading rooms...
                   </TableCell>
                 </TableRow>
               ) : rooms.length === 0 ? (
                 <TableRow>
-                  <TableCell colSpan={9} className="text-center py-8">
+                  <TableCell colSpan={9} className="py-8 text-center">
                     No rooms found
                   </TableCell>
                 </TableRow>
@@ -245,15 +231,13 @@ export function RoomsManagement() {
                   <TableRow key={room.id}>
                     <TableCell>
                       <div className="flex items-center gap-3">
-                        <div className="h-8 w-8 rounded bg-muted flex items-center justify-center">
+                        <div className="bg-muted flex h-8 w-8 items-center justify-center rounded">
                           <Building2 className="h-4 w-4" />
                         </div>
                         <div>
                           <div className="font-medium">{room.name}</div>
                           {room.description && (
-                            <div className="text-sm text-muted-foreground line-clamp-1">
-                              {room.description}
-                            </div>
+                            <div className="text-muted-foreground line-clamp-1 text-sm">{room.description}</div>
                           )}
                         </div>
                       </div>
@@ -267,46 +251,42 @@ export function RoomsManagement() {
                           </AvatarFallback>
                         </Avatar>
                         <div>
-                          <div className="font-medium text-sm">{room.organization.name}</div>
-                          <div className="text-xs text-muted-foreground">@{room.organization.slug}</div>
+                          <div className="text-sm font-medium">{room.organization.name}</div>
+                          <div className="text-muted-foreground text-xs">@{room.organization.slug}</div>
                         </div>
                       </div>
                     </TableCell>
                     <TableCell>
                       <div className="flex items-center gap-1">
-                        <Users className="h-4 w-4 text-muted-foreground" />
+                        <Users className="text-muted-foreground h-4 w-4" />
                         <span>{room.capacity}</span>
                       </div>
                     </TableCell>
                     <TableCell>
                       <div className="flex items-center gap-1">
-                        <DollarSign className="h-4 w-4 text-muted-foreground" />
+                        <DollarSign className="text-muted-foreground h-4 w-4" />
                         <span>{formatCurrency(room.hourlyRate)}/hr</span>
                       </div>
                     </TableCell>
                     <TableCell>
                       {room.area ? (
                         <div className="flex items-center gap-1">
-                          <MapPin className="h-4 w-4 text-muted-foreground" />
+                          <MapPin className="text-muted-foreground h-4 w-4" />
                           <span>{room.area}m²</span>
                         </div>
                       ) : (
-                        '-'
+                        "-"
                       )}
                     </TableCell>
                     <TableCell>
-                      <Badge variant="secondary">
-                        {room._count.bookings} bookings
-                      </Badge>
+                      <Badge variant="secondary">{room._count.bookings} bookings</Badge>
                     </TableCell>
                     <TableCell>
-                      <Badge variant={room.active ? 'default' : 'destructive'}>
-                        {room.active ? 'Active' : 'Inactive'}
+                      <Badge variant={room.active ? "default" : "destructive"}>
+                        {room.active ? "Active" : "Inactive"}
                       </Badge>
                     </TableCell>
-                    <TableCell>
-                      {formatDate(room.createdAt)}
-                    </TableCell>
+                    <TableCell>{formatDate(room.createdAt)}</TableCell>
                     <TableCell className="text-right">
                       <DropdownMenu>
                         <DropdownMenuTrigger asChild>
@@ -316,18 +296,15 @@ export function RoomsManagement() {
                         </DropdownMenuTrigger>
                         <DropdownMenuContent align="end">
                           <DropdownMenuItem>
-                            <Eye className="h-4 w-4 mr-2" />
+                            <Eye className="mr-2 h-4 w-4" />
                             View Details
                           </DropdownMenuItem>
                           <DropdownMenuItem>
-                            <Edit className="h-4 w-4 mr-2" />
+                            <Edit className="mr-2 h-4 w-4" />
                             Edit Room
                           </DropdownMenuItem>
-                          <DropdownMenuItem
-                            onClick={() => handleDeleteRoom(room.id)}
-                            className="text-red-600"
-                          >
-                            <Trash2 className="h-4 w-4 mr-2" />
+                          <DropdownMenuItem onClick={() => handleDeleteRoom(room.id)} className="text-red-600">
+                            <Trash2 className="mr-2 h-4 w-4" />
                             Delete Room
                           </DropdownMenuItem>
                         </DropdownMenuContent>
@@ -341,17 +318,12 @@ export function RoomsManagement() {
 
           {/* Pagination */}
           {pagination.pages > 1 && (
-            <div className="flex items-center justify-between mt-4">
-              <div className="text-sm text-muted-foreground">
+            <div className="mt-4 flex items-center justify-between">
+              <div className="text-muted-foreground text-sm">
                 Page {pagination.page} of {pagination.pages}
               </div>
               <div className="flex gap-2">
-                <Button
-                  variant="outline"
-                  size="sm"
-                  onClick={() => setPage(page - 1)}
-                  disabled={page === 1}
-                >
+                <Button variant="outline" size="sm" onClick={() => setPage(page - 1)} disabled={page === 1}>
                   Previous
                 </Button>
                 <Button

@@ -1,19 +1,21 @@
 "use client";
 
 import { useState } from "react";
+
+import { useRouter, useSearchParams } from "next/navigation";
+
 import { zodResolver } from "@hookform/resolvers/zod";
+import { Loader2 } from "lucide-react";
+import { signIn, getSession } from "next-auth/react";
 import { useForm } from "react-hook-form";
 import { toast } from "sonner";
 import { z } from "zod";
-import { signIn, getSession } from "next-auth/react";
-import { useRouter, useSearchParams } from "next/navigation";
-import { getDefaultDashboardUrl } from '@/navigation/sidebar/get-sidebar-items';
-import { Loader2 } from "lucide-react";
 
 import { Button } from "@/components/ui/button";
 import { Checkbox } from "@/components/ui/checkbox";
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
+import { getDefaultDashboardUrl } from "@/navigation/sidebar/get-sidebar-items";
 
 const FormSchema = z.object({
   email: z.string().email({ message: "Please enter a valid email address." }),
@@ -25,7 +27,7 @@ export function LoginForm() {
   const [isLoading, setIsLoading] = useState(false);
   const router = useRouter();
   const searchParams = useSearchParams();
-  const callbackUrl = searchParams.get('callbackUrl') || '/dashboard';
+  const callbackUrl = searchParams.get("callbackUrl") || "/dashboard";
 
   const form = useForm<z.infer<typeof FormSchema>>({
     resolver: zodResolver(FormSchema),
@@ -40,34 +42,34 @@ export function LoginForm() {
     setIsLoading(true);
 
     try {
-      const result = await signIn('credentials', {
+      const result = await signIn("credentials", {
         email: data.email,
         password: data.password,
         redirect: false,
       });
 
       if (result?.error) {
-        toast.error('Login failed', {
-          description: 'Invalid email or password. Please try again.',
+        toast.error("Login failed", {
+          description: "Invalid email or password. Please try again.",
         });
       } else {
         // Get updated session to check verification status
         const session = await getSession();
         if (session?.user?.verified) {
-          toast.success('Login successful', {
-            description: 'Welcome back!',
+          toast.success("Login successful", {
+            description: "Welcome back!",
           });
           router.push(callbackUrl);
         } else {
-          toast.warning('Email verification required', {
-            description: 'Please verify your email before accessing the dashboard.',
+          toast.warning("Email verification required", {
+            description: "Please verify your email before accessing the dashboard.",
           });
-          router.push('/auth/verify-email');
+          router.push("/auth/verify-email");
         }
       }
     } catch (error) {
-      toast.error('Login failed', {
-        description: 'An error occurred. Please try again.',
+      toast.error("Login failed", {
+        description: "An error occurred. Please try again.",
       });
     } finally {
       setIsLoading(false);

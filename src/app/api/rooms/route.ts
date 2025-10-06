@@ -1,9 +1,10 @@
-import { NextRequest, NextResponse } from 'next/server';
-import { getServerSession } from 'next-auth';
-import { z } from 'zod';
+import { NextRequest, NextResponse } from "next/server";
 
-import { authOptions } from '@/lib/auth';
-import { prisma } from '@/lib/db';
+import { getServerSession } from "next-auth";
+import { z } from "zod";
+
+import { authOptions } from "@/lib/auth";
+import { prisma } from "@/lib/db";
 
 // Validation schemas
 const createRoomSchema = z.object({
@@ -32,11 +33,11 @@ const updateRoomSchema = z.object({
 
 // Helper function to check permissions
 async function canAccessRooms(userRole: string, userId: string, organizationId?: string) {
-  if (userRole === 'ADMIN') {
+  if (userRole === "ADMIN") {
     return true; // Admins can access all rooms
   }
 
-  if (organizationId && ['CENTER_OWNER', 'TRAINING_MANAGER'].includes(userRole)) {
+  if (organizationId && ["CENTER_OWNER", "TRAINING_MANAGER"].includes(userRole)) {
     // Check if user is a member of the organization
     const membership = await prisma.organizationMember.findFirst({
       where: {
@@ -54,63 +55,63 @@ async function canAccessRooms(userRole: string, userId: string, organizationId?:
 export async function GET(request: NextRequest) {
   try {
     const session = await getServerSession(authOptions);
-    
+
     if (!session?.user) {
-      return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
+      return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
     }
 
     // Only admins and center owners can access rooms
-    if (!['ADMIN', 'CENTER_OWNER', 'TRAINING_MANAGER'].includes(session.user.role)) {
-      return NextResponse.json({ error: 'Forbidden' }, { status: 403 });
+    if (!["ADMIN", "CENTER_OWNER", "TRAINING_MANAGER"].includes(session.user.role)) {
+      return NextResponse.json({ error: "Forbidden" }, { status: 403 });
     }
 
     const { searchParams } = new URL(request.url);
-    const page = parseInt(searchParams.get('page') || '1');
-    const limit = parseInt(searchParams.get('limit') || '10');
-    const search = searchParams.get('search') || '';
-    const organizationId = searchParams.get('organizationId') || '';
-    const active = searchParams.get('active');
-    const minCapacity = searchParams.get('minCapacity');
-    const maxCapacity = searchParams.get('maxCapacity');
-    const minRate = searchParams.get('minRate');
-    const maxRate = searchParams.get('maxRate');
+    const page = parseInt(searchParams.get("page") || "1");
+    const limit = parseInt(searchParams.get("limit") || "10");
+    const search = searchParams.get("search") || "";
+    const organizationId = searchParams.get("organizationId") || "";
+    const active = searchParams.get("active");
+    const minCapacity = searchParams.get("minCapacity");
+    const maxCapacity = searchParams.get("maxCapacity");
+    const minRate = searchParams.get("minRate");
+    const maxRate = searchParams.get("maxRate");
 
     const skip = (page - 1) * limit;
 
     // Build where clause based on user permissions
-    let whereClause: any = {};
+    const whereClause: any = {};
 
     // Apply role-based filtering
-    if (session.user.role === 'CENTER_OWNER' || session.user.role === 'TRAINING_MANAGER') {
+    if (session.user.role === "CENTER_OWNER" || session.user.role === "TRAINING_MANAGER") {
       // Only show rooms from organizations where user is a member
       const userOrganizations = await prisma.organizationMember.findMany({
         where: { userId: session.user.id },
         select: { organizationId: true },
       });
-      
+
       whereClause.organizationId = {
-        in: userOrganizations.map(org => org.organizationId),
+        in: userOrganizations.map((org) => org.organizationId),
       };
     }
 
     // Apply search filters
     if (search) {
       whereClause.OR = [
-        { name: { contains: search, mode: 'insensitive' } },
-        { description: { contains: search, mode: 'insensitive' } },
+        { name: { contains: search, mode: "insensitive" } },
+        { description: { contains: search, mode: "insensitive" } },
       ];
     }
 
     if (organizationId) {
       // Check if user can access this organization
       if (!(await canAccessRooms(session.user.role, session.user.id, organizationId))) {
-        return NextResponse.json({ error: 'Forbidden' }, { status: 403 });
+        return NextResponse.json({ error: "Forbidden" }, { status: 403 });
       }
       whereClause.organizationId = organizationId;
     }
 
     if (active !== null && active !== undefined) {
-      whereClause.active = active === 'true';
+      whereClause.active = active === "true";
     }
 
     if (minCapacity) {
@@ -160,7 +161,7 @@ export async function GET(request: NextRequest) {
             },
           },
         },
-        orderBy: { createdAt: 'desc' },
+        orderBy: { createdAt: "desc" },
         skip,
         take: limit,
       }),
@@ -177,8 +178,8 @@ export async function GET(request: NextRequest) {
       },
     });
   } catch (error) {
-    console.error('Error fetching rooms:', error);
-    return NextResponse.json({ error: 'Internal server error' }, { status: 500 });
+    console.error("Error fetching rooms:", error);
+    return NextResponse.json({ error: "Internal server error" }, { status: 500 });
   }
 }
 
@@ -186,14 +187,14 @@ export async function GET(request: NextRequest) {
 export async function POST(request: NextRequest) {
   try {
     const session = await getServerSession(authOptions);
-    
+
     if (!session?.user) {
-      return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
+      return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
     }
 
     // Only admins and center owners can create rooms
-    if (!['ADMIN', 'CENTER_OWNER', 'TRAINING_MANAGER'].includes(session.user.role)) {
-      return NextResponse.json({ error: 'Forbidden' }, { status: 403 });
+    if (!["ADMIN", "CENTER_OWNER", "TRAINING_MANAGER"].includes(session.user.role)) {
+      return NextResponse.json({ error: "Forbidden" }, { status: 403 });
     }
 
     const body = await request.json();
@@ -201,7 +202,7 @@ export async function POST(request: NextRequest) {
 
     // Check if user can access the organization
     if (!(await canAccessRooms(session.user.role, session.user.id, validatedData.organizationId))) {
-      return NextResponse.json({ error: 'Forbidden: Cannot create room in this organization' }, { status: 403 });
+      return NextResponse.json({ error: "Forbidden: Cannot create room in this organization" }, { status: 403 });
     }
 
     // Verify organization exists
@@ -211,7 +212,7 @@ export async function POST(request: NextRequest) {
     });
 
     if (!organization) {
-      return NextResponse.json({ error: 'Organization not found' }, { status: 404 });
+      return NextResponse.json({ error: "Organization not found" }, { status: 404 });
     }
 
     // Create room
@@ -255,10 +256,10 @@ export async function POST(request: NextRequest) {
     return NextResponse.json({ room }, { status: 201 });
   } catch (error) {
     if (error instanceof z.ZodError) {
-      return NextResponse.json({ error: 'Validation error', details: error.errors }, { status: 400 });
+      return NextResponse.json({ error: "Validation error", details: error.errors }, { status: 400 });
     }
-    
-    console.error('Error creating room:', error);
-    return NextResponse.json({ error: 'Internal server error' }, { status: 500 });
+
+    console.error("Error creating room:", error);
+    return NextResponse.json({ error: "Internal server error" }, { status: 500 });
   }
 }

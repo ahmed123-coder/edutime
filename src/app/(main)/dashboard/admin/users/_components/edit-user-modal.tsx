@@ -1,42 +1,28 @@
-'use client';
+"use client";
 
-import { useState, useEffect } from 'react';
-import { useForm } from 'react-hook-form';
-import { zodResolver } from '@hookform/resolvers/zod';
-import { z } from 'zod';
-import { toast } from 'sonner';
+import { useState, useEffect } from "react";
 
-import {
-  Dialog,
-  DialogContent,
-  DialogDescription,
-  DialogHeader,
-  DialogTitle,
-} from '@/components/ui/dialog';
-import {
-  Form,
-  FormControl,
-  FormField,
-  FormItem,
-  FormLabel,
-  FormMessage,
-} from '@/components/ui/form';
-import { Input } from '@/components/ui/input';
-import { Button } from '@/components/ui/button';
-import { Switch } from '@/components/ui/switch';
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from '@/components/ui/select';
+import { zodResolver } from "@hookform/resolvers/zod";
+import { useForm } from "react-hook-form";
+import { toast } from "sonner";
+import { z } from "zod";
+
+import { Button } from "@/components/ui/button";
+import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle } from "@/components/ui/dialog";
+import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form";
+import { Input } from "@/components/ui/input";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import { Switch } from "@/components/ui/switch";
 
 const editUserSchema = z.object({
-  name: z.string().min(2, 'Name must be at least 2 characters').max(100),
-  phone: z.string().regex(/^\+?[1-9]\d{1,14}$/, 'Invalid phone number').optional().or(z.literal('')),
-  role: z.enum(['ADMIN', 'CENTER_OWNER', 'TRAINING_MANAGER', 'TEACHER', 'PARTNER']),
-  speciality: z.string().max(100).optional().or(z.literal('')),
+  name: z.string().min(2, "Name must be at least 2 characters").max(100),
+  phone: z
+    .string()
+    .regex(/^\+?[1-9]\d{1,14}$/, "Invalid phone number")
+    .optional()
+    .or(z.literal("")),
+  role: z.enum(["ADMIN", "CENTER_OWNER", "TRAINING_MANAGER", "TEACHER", "PARTNER"]),
+  speciality: z.string().max(100).optional().or(z.literal("")),
   verified: z.boolean(),
 });
 
@@ -56,10 +42,10 @@ export function EditUserModal({ open, onOpenChange, userId, onUserUpdated }: Edi
   const form = useForm<EditUserFormData>({
     resolver: zodResolver(editUserSchema),
     defaultValues: {
-      name: '',
-      phone: '',
-      role: 'TEACHER',
-      speciality: '',
+      name: "",
+      phone: "",
+      role: "TEACHER",
+      speciality: "",
       verified: false,
     },
   });
@@ -70,24 +56,24 @@ export function EditUserModal({ open, onOpenChange, userId, onUserUpdated }: Edi
     try {
       setFetchingUser(true);
       const response = await fetch(`/api/users/${userId}`);
-      
+
       if (!response.ok) {
-        throw new Error('Failed to fetch user');
+        throw new Error("Failed to fetch user");
       }
 
       const data = await response.json();
       const user = data.user;
 
       form.reset({
-        name: user.name || '',
-        phone: user.phone || '',
+        name: user.name || "",
+        phone: user.phone || "",
         role: user.role,
-        speciality: user.speciality || '',
+        speciality: user.speciality || "",
         verified: user.verified,
       });
     } catch (error) {
-      console.error('Error fetching user:', error);
-      toast.error('Failed to fetch user details');
+      console.error("Error fetching user:", error);
+      toast.error("Failed to fetch user details");
     } finally {
       setFetchingUser(false);
     }
@@ -112,24 +98,24 @@ export function EditUserModal({ open, onOpenChange, userId, onUserUpdated }: Edi
       };
 
       const response = await fetch(`/api/users/${userId}`, {
-        method: 'PUT',
+        method: "PUT",
         headers: {
-          'Content-Type': 'application/json',
+          "Content-Type": "application/json",
         },
         body: JSON.stringify(updateData),
       });
 
       if (!response.ok) {
         const error = await response.json();
-        throw new Error(error.error || 'Failed to update user');
+        throw new Error(error.error || "Failed to update user");
       }
 
-      toast.success('User updated successfully');
+      toast.success("User updated successfully");
       onOpenChange(false);
       onUserUpdated();
     } catch (error) {
-      console.error('Error updating user:', error);
-      toast.error(error instanceof Error ? error.message : 'Failed to update user');
+      console.error("Error updating user:", error);
+      toast.error(error instanceof Error ? error.message : "Failed to update user");
     } finally {
       setIsLoading(false);
     }
@@ -137,17 +123,15 @@ export function EditUserModal({ open, onOpenChange, userId, onUserUpdated }: Edi
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
-      <DialogContent className="sm:max-w-[600px] max-h-[90vh] overflow-y-auto">
+      <DialogContent className="max-h-[90vh] overflow-y-auto sm:max-w-[600px]">
         <DialogHeader>
           <DialogTitle>Edit User</DialogTitle>
-          <DialogDescription>
-            Update user information and permissions.
-          </DialogDescription>
+          <DialogDescription>Update user information and permissions.</DialogDescription>
         </DialogHeader>
 
         {fetchingUser ? (
           <div className="flex items-center justify-center py-8">
-            <div className="text-sm text-muted-foreground">Loading user details...</div>
+            <div className="text-muted-foreground text-sm">Loading user details...</div>
           </div>
         ) : (
           <Form {...form}>
@@ -230,31 +214,21 @@ export function EditUserModal({ open, onOpenChange, userId, onUserUpdated }: Edi
                   <FormItem className="flex flex-row items-center justify-between rounded-lg border p-4">
                     <div className="space-y-0.5">
                       <FormLabel className="text-base">Verified Status</FormLabel>
-                      <div className="text-sm text-muted-foreground">
-                        Mark user as verified to allow full access
-                      </div>
+                      <div className="text-muted-foreground text-sm">Mark user as verified to allow full access</div>
                     </div>
                     <FormControl>
-                      <Switch
-                        checked={field.value}
-                        onCheckedChange={field.onChange}
-                      />
+                      <Switch checked={field.value} onCheckedChange={field.onChange} />
                     </FormControl>
                   </FormItem>
                 )}
               />
 
               <div className="flex justify-end space-x-2 pt-4">
-                <Button
-                  type="button"
-                  variant="outline"
-                  onClick={() => onOpenChange(false)}
-                  disabled={isLoading}
-                >
+                <Button type="button" variant="outline" onClick={() => onOpenChange(false)} disabled={isLoading}>
                   Cancel
                 </Button>
                 <Button type="submit" disabled={isLoading || fetchingUser}>
-                  {isLoading ? 'Updating...' : 'Update User'}
+                  {isLoading ? "Updating..." : "Update User"}
                 </Button>
               </div>
             </form>

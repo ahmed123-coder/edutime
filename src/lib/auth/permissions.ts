@@ -1,4 +1,4 @@
-import { UserRole } from '@/generated/prisma';
+import { UserRole } from "@/generated/prisma";
 
 export interface Permission {
   resource: string;
@@ -7,51 +7,51 @@ export interface Permission {
 
 export const PERMISSIONS = {
   // Organization permissions
-  ORGANIZATION_READ: { resource: 'organization', action: 'read' },
-  ORGANIZATION_CREATE: { resource: 'organization', action: 'create' },
-  ORGANIZATION_UPDATE: { resource: 'organization', action: 'update' },
-  ORGANIZATION_DELETE: { resource: 'organization', action: 'delete' },
-  
+  ORGANIZATION_READ: { resource: "organization", action: "read" },
+  ORGANIZATION_CREATE: { resource: "organization", action: "create" },
+  ORGANIZATION_UPDATE: { resource: "organization", action: "update" },
+  ORGANIZATION_DELETE: { resource: "organization", action: "delete" },
+
   // Room permissions
-  ROOM_READ: { resource: 'room', action: 'read' },
-  ROOM_CREATE: { resource: 'room', action: 'create' },
-  ROOM_UPDATE: { resource: 'room', action: 'update' },
-  ROOM_DELETE: { resource: 'room', action: 'delete' },
-  
+  ROOM_READ: { resource: "room", action: "read" },
+  ROOM_CREATE: { resource: "room", action: "create" },
+  ROOM_UPDATE: { resource: "room", action: "update" },
+  ROOM_DELETE: { resource: "room", action: "delete" },
+
   // Booking permissions
-  BOOKING_READ: { resource: 'booking', action: 'read' },
-  BOOKING_CREATE: { resource: 'booking', action: 'create' },
-  BOOKING_UPDATE: { resource: 'booking', action: 'update' },
-  BOOKING_DELETE: { resource: 'booking', action: 'delete' },
-  BOOKING_CONFIRM: { resource: 'booking', action: 'confirm' },
-  BOOKING_CANCEL: { resource: 'booking', action: 'cancel' },
-  
+  BOOKING_READ: { resource: "booking", action: "read" },
+  BOOKING_CREATE: { resource: "booking", action: "create" },
+  BOOKING_UPDATE: { resource: "booking", action: "update" },
+  BOOKING_DELETE: { resource: "booking", action: "delete" },
+  BOOKING_CONFIRM: { resource: "booking", action: "confirm" },
+  BOOKING_CANCEL: { resource: "booking", action: "cancel" },
+
   // Review permissions
-  REVIEW_READ: { resource: 'review', action: 'read' },
-  REVIEW_CREATE: { resource: 'review', action: 'create' },
-  REVIEW_RESPOND: { resource: 'review', action: 'respond' },
-  REVIEW_MODERATE: { resource: 'review', action: 'moderate' },
-  
+  REVIEW_READ: { resource: "review", action: "read" },
+  REVIEW_CREATE: { resource: "review", action: "create" },
+  REVIEW_RESPOND: { resource: "review", action: "respond" },
+  REVIEW_MODERATE: { resource: "review", action: "moderate" },
+
   // Service permissions
-  SERVICE_READ: { resource: 'service', action: 'read' },
-  SERVICE_CREATE: { resource: 'service', action: 'create' },
-  SERVICE_UPDATE: { resource: 'service', action: 'update' },
-  SERVICE_DELETE: { resource: 'service', action: 'delete' },
-  SERVICE_ORDER: { resource: 'service', action: 'order' },
-  
+  SERVICE_READ: { resource: "service", action: "read" },
+  SERVICE_CREATE: { resource: "service", action: "create" },
+  SERVICE_UPDATE: { resource: "service", action: "update" },
+  SERVICE_DELETE: { resource: "service", action: "delete" },
+  SERVICE_ORDER: { resource: "service", action: "order" },
+
   // User permissions
-  USER_READ: { resource: 'user', action: 'read' },
-  USER_CREATE: { resource: 'user', action: 'create' },
-  USER_UPDATE: { resource: 'user', action: 'update' },
-  USER_DELETE: { resource: 'user', action: 'delete' },
-  
+  USER_READ: { resource: "user", action: "read" },
+  USER_CREATE: { resource: "user", action: "create" },
+  USER_UPDATE: { resource: "user", action: "update" },
+  USER_DELETE: { resource: "user", action: "delete" },
+
   // Payment permissions
-  PAYMENT_READ: { resource: 'payment', action: 'read' },
-  PAYMENT_PROCESS: { resource: 'payment', action: 'process' },
-  PAYMENT_REFUND: { resource: 'payment', action: 'refund' },
-  
+  PAYMENT_READ: { resource: "payment", action: "read" },
+  PAYMENT_PROCESS: { resource: "payment", action: "process" },
+  PAYMENT_REFUND: { resource: "payment", action: "refund" },
+
   // Analytics permissions
-  ANALYTICS_READ: { resource: 'analytics', action: 'read' },
+  ANALYTICS_READ: { resource: "analytics", action: "read" },
 } as const;
 
 // Role-based permission mapping
@@ -60,7 +60,7 @@ export const ROLE_PERMISSIONS: Record<UserRole, Permission[]> = {
     // Admins have all permissions
     ...Object.values(PERMISSIONS),
   ],
-  
+
   [UserRole.CENTER_OWNER]: [
     PERMISSIONS.ORGANIZATION_READ,
     PERMISSIONS.ORGANIZATION_UPDATE,
@@ -77,7 +77,7 @@ export const ROLE_PERMISSIONS: Record<UserRole, Permission[]> = {
     PERMISSIONS.ANALYTICS_READ,
     PERMISSIONS.USER_READ,
   ],
-  
+
   [UserRole.TRAINING_MANAGER]: [
     PERMISSIONS.ORGANIZATION_READ,
     PERMISSIONS.ROOM_READ,
@@ -88,7 +88,7 @@ export const ROLE_PERMISSIONS: Record<UserRole, Permission[]> = {
     PERMISSIONS.PAYMENT_READ,
     PERMISSIONS.USER_READ,
   ],
-  
+
   [UserRole.TEACHER]: [
     PERMISSIONS.ORGANIZATION_READ,
     PERMISSIONS.ROOM_READ,
@@ -101,7 +101,7 @@ export const ROLE_PERMISSIONS: Record<UserRole, Permission[]> = {
     PERMISSIONS.SERVICE_ORDER,
     PERMISSIONS.PAYMENT_READ,
   ],
-  
+
   [UserRole.PARTNER]: [
     PERMISSIONS.ORGANIZATION_READ,
     PERMISSIONS.SERVICE_READ,
@@ -119,23 +119,21 @@ export const ROLE_PERMISSIONS: Record<UserRole, Permission[]> = {
  */
 export function hasPermission(userRole: UserRole, permission: Permission): boolean {
   const rolePermissions = ROLE_PERMISSIONS[userRole] || [];
-  return rolePermissions.some(
-    p => p.resource === permission.resource && p.action === permission.action
-  );
+  return rolePermissions.some((p) => p.resource === permission.resource && p.action === permission.action);
 }
 
 /**
  * Check if a user role has any of the specified permissions
  */
 export function hasAnyPermission(userRole: UserRole, permissions: Permission[]): boolean {
-  return permissions.some(permission => hasPermission(userRole, permission));
+  return permissions.some((permission) => hasPermission(userRole, permission));
 }
 
 /**
  * Check if a user role has all of the specified permissions
  */
 export function hasAllPermissions(userRole: UserRole, permissions: Permission[]): boolean {
-  return permissions.every(permission => hasPermission(userRole, permission));
+  return permissions.every((permission) => hasPermission(userRole, permission));
 }
 
 /**
@@ -150,16 +148,12 @@ export function getRolePermissions(userRole: UserRole): Permission[] {
  */
 export function canAccessResource(userRole: UserRole, resource: string): boolean {
   const rolePermissions = ROLE_PERMISSIONS[userRole] || [];
-  return rolePermissions.some(p => p.resource === resource);
+  return rolePermissions.some((p) => p.resource === resource);
 }
 
 /**
  * Check if user can perform a specific action on a resource
  */
-export function canPerformAction(
-  userRole: UserRole, 
-  resource: string, 
-  action: string
-): boolean {
+export function canPerformAction(userRole: UserRole, resource: string, action: string): boolean {
   return hasPermission(userRole, { resource, action });
 }

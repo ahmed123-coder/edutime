@@ -1,9 +1,10 @@
-import { NextRequest, NextResponse } from 'next/server';
-import { getServerSession } from 'next-auth';
-import { z } from 'zod';
+import { NextRequest, NextResponse } from "next/server";
 
-import { authOptions } from '@/lib/auth';
-import { prisma } from '@/lib/db';
+import { getServerSession } from "next-auth";
+import { z } from "zod";
+
+import { authOptions } from "@/lib/auth";
+import { prisma } from "@/lib/db";
 
 // Validation schema for updates
 const updateRoomSchema = z.object({
@@ -20,7 +21,7 @@ const updateRoomSchema = z.object({
 
 // Helper function to check permissions
 async function canAccessRoom(userRole: string, userId: string, roomId: string) {
-  if (userRole === 'ADMIN') {
+  if (userRole === "ADMIN") {
     return true; // Admins can access all rooms
   }
 
@@ -46,22 +47,19 @@ async function canAccessRoom(userRole: string, userId: string, roomId: string) {
 }
 
 // GET /api/rooms/[id] - Get specific room
-export async function GET(
-  request: NextRequest,
-  { params }: { params: { id: string } }
-) {
+export async function GET(request: NextRequest, { params }: { params: { id: string } }) {
   try {
     const session = await getServerSession(authOptions);
-    
+
     if (!session?.user) {
-      return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
+      return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
     }
 
     const roomId = params.id;
 
     // Check permissions
     if (!(await canAccessRoom(session.user.role, session.user.id, roomId))) {
-      return NextResponse.json({ error: 'Forbidden' }, { status: 403 });
+      return NextResponse.json({ error: "Forbidden" }, { status: 403 });
     }
 
     const room = await prisma.room.findUnique({
@@ -111,7 +109,7 @@ export async function GET(
             },
           },
           orderBy: {
-            startTime: 'asc',
+            startTime: "asc",
           },
           take: 10,
         },
@@ -124,33 +122,30 @@ export async function GET(
     });
 
     if (!room) {
-      return NextResponse.json({ error: 'Room not found' }, { status: 404 });
+      return NextResponse.json({ error: "Room not found" }, { status: 404 });
     }
 
     return NextResponse.json({ room });
   } catch (error) {
-    console.error('Error fetching room:', error);
-    return NextResponse.json({ error: 'Internal server error' }, { status: 500 });
+    console.error("Error fetching room:", error);
+    return NextResponse.json({ error: "Internal server error" }, { status: 500 });
   }
 }
 
 // PUT /api/rooms/[id] - Update room
-export async function PUT(
-  request: NextRequest,
-  { params }: { params: { id: string } }
-) {
+export async function PUT(request: NextRequest, { params }: { params: { id: string } }) {
   try {
     const session = await getServerSession(authOptions);
-    
+
     if (!session?.user) {
-      return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
+      return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
     }
 
     const roomId = params.id;
 
     // Check permissions
     if (!(await canAccessRoom(session.user.role, session.user.id, roomId))) {
-      return NextResponse.json({ error: 'Forbidden' }, { status: 403 });
+      return NextResponse.json({ error: "Forbidden" }, { status: 403 });
     }
 
     // Check if room exists
@@ -160,7 +155,7 @@ export async function PUT(
     });
 
     if (!existingRoom) {
-      return NextResponse.json({ error: 'Room not found' }, { status: 404 });
+      return NextResponse.json({ error: "Room not found" }, { status: 404 });
     }
 
     const body = await request.json();
@@ -198,31 +193,28 @@ export async function PUT(
     return NextResponse.json({ room: updatedRoom });
   } catch (error) {
     if (error instanceof z.ZodError) {
-      return NextResponse.json({ error: 'Validation error', details: error.errors }, { status: 400 });
+      return NextResponse.json({ error: "Validation error", details: error.errors }, { status: 400 });
     }
-    
-    console.error('Error updating room:', error);
-    return NextResponse.json({ error: 'Internal server error' }, { status: 500 });
+
+    console.error("Error updating room:", error);
+    return NextResponse.json({ error: "Internal server error" }, { status: 500 });
   }
 }
 
 // DELETE /api/rooms/[id] - Delete room
-export async function DELETE(
-  request: NextRequest,
-  { params }: { params: { id: string } }
-) {
+export async function DELETE(request: NextRequest, { params }: { params: { id: string } }) {
   try {
     const session = await getServerSession(authOptions);
-    
+
     if (!session?.user) {
-      return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
+      return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
     }
 
     const roomId = params.id;
 
     // Only admins can delete rooms
-    if (session.user.role !== 'ADMIN') {
-      return NextResponse.json({ error: 'Forbidden: Only admins can delete rooms' }, { status: 403 });
+    if (session.user.role !== "ADMIN") {
+      return NextResponse.json({ error: "Forbidden: Only admins can delete rooms" }, { status: 403 });
     }
 
     // Check if room exists
@@ -232,7 +224,7 @@ export async function DELETE(
     });
 
     if (!existingRoom) {
-      return NextResponse.json({ error: 'Room not found' }, { status: 404 });
+      return NextResponse.json({ error: "Room not found" }, { status: 404 });
     }
 
     // Check if room has active bookings
@@ -243,15 +235,18 @@ export async function DELETE(
           gte: new Date(),
         },
         status: {
-          in: ['PENDING', 'CONFIRMED'],
+          in: ["PENDING", "CONFIRMED"],
         },
       },
     });
 
     if (activeBookings > 0) {
-      return NextResponse.json({ 
-        error: 'Cannot delete room with active bookings. Please cancel or complete all bookings first.' 
-      }, { status: 400 });
+      return NextResponse.json(
+        {
+          error: "Cannot delete room with active bookings. Please cancel or complete all bookings first.",
+        },
+        { status: 400 },
+      );
     }
 
     // Delete room (this will cascade delete related records)
@@ -259,9 +254,9 @@ export async function DELETE(
       where: { id: roomId },
     });
 
-    return NextResponse.json({ message: 'Room deleted successfully' });
+    return NextResponse.json({ message: "Room deleted successfully" });
   } catch (error) {
-    console.error('Error deleting room:', error);
-    return NextResponse.json({ error: 'Internal server error' }, { status: 500 });
+    console.error("Error deleting room:", error);
+    return NextResponse.json({ error: "Internal server error" }, { status: 500 });
   }
 }

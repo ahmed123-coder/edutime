@@ -1,5 +1,5 @@
-import { prisma } from '../prisma';
-import { BookingStatus, PaymentMethod, PaymentStatus } from '../../generated/prisma';
+import { BookingStatus, PaymentMethod, PaymentStatus } from "../../generated/prisma";
+import { prisma } from "../prisma";
 
 export interface CreateBookingData {
   organizationId: string;
@@ -18,7 +18,7 @@ export async function checkRoomAvailability(
   roomId: string,
   date: Date,
   startTime: string,
-  endTime: string
+  endTime: string,
 ): Promise<boolean> {
   const existingBookings = await prisma.booking.findMany({
     where: {
@@ -27,25 +27,16 @@ export async function checkRoomAvailability(
       status: { in: [BookingStatus.PENDING, BookingStatus.CONFIRMED] },
       OR: [
         {
-          AND: [
-            { startTime: { lte: startTime } },
-            { endTime: { gt: startTime } }
-          ]
+          AND: [{ startTime: { lte: startTime } }, { endTime: { gt: startTime } }],
         },
         {
-          AND: [
-            { startTime: { lt: endTime } },
-            { endTime: { gte: endTime } }
-          ]
+          AND: [{ startTime: { lt: endTime } }, { endTime: { gte: endTime } }],
         },
         {
-          AND: [
-            { startTime: { gte: startTime } },
-            { endTime: { lte: endTime } }
-          ]
-        }
-      ]
-    }
+          AND: [{ startTime: { gte: startTime } }, { endTime: { lte: endTime } }],
+        },
+      ],
+    },
   });
 
   return existingBookings.length === 0;
@@ -54,15 +45,10 @@ export async function checkRoomAvailability(
 export async function createBooking(data: CreateBookingData) {
   return await prisma.$transaction(async (tx) => {
     // Check availability again within transaction
-    const isAvailable = await checkRoomAvailability(
-      data.roomId,
-      data.date,
-      data.startTime,
-      data.endTime
-    );
+    const isAvailable = await checkRoomAvailability(data.roomId, data.date, data.startTime, data.endTime);
 
     if (!isAvailable) {
-      throw new Error('Time slot is no longer available');
+      throw new Error("Time slot is no longer available");
     }
 
     // Create booking
@@ -111,7 +97,7 @@ export async function getBookingsByUser(userId: string) {
       room: true,
       organization: true,
     },
-    orderBy: { createdAt: 'desc' },
+    orderBy: { createdAt: "desc" },
   });
 }
 
@@ -122,7 +108,7 @@ export async function getBookingsByOrganization(organizationId: string) {
       room: true,
       user: true,
     },
-    orderBy: { createdAt: 'desc' },
+    orderBy: { createdAt: "desc" },
   });
 }
 
@@ -142,7 +128,7 @@ export async function getBookingsByRoom(roomId: string, date?: Date) {
         },
       },
     },
-    orderBy: [{ date: 'asc' }, { startTime: 'asc' }],
+    orderBy: [{ date: "asc" }, { startTime: "asc" }],
   });
 }
 

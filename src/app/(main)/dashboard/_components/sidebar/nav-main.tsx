@@ -152,8 +152,8 @@ export function NavMain({ items }: NavMainProps) {
 
   // Check if a specific URL (including query params) is active
   const isUrlActive = (url: string) => {
-    const [urlPath, urlQuery] = url.split('?');
-    const currentUrl = `${path}${searchParams.toString() ? `?${searchParams.toString()}` : ''}`;
+    const [urlPath, urlQuery] = url.split("?");
+    const currentUrl = `${path}${searchParams.toString() ? `?${searchParams.toString()}` : ""}`;
 
     // Exact match for URLs with query parameters
     if (urlQuery) {
@@ -175,10 +175,12 @@ export function NavMain({ items }: NavMainProps) {
   };
 
   const isSubmenuOpen = (subItems?: NavMainItem["subItems"]) => {
-    return subItems?.some((sub) => {
-      const [subPath] = sub.url.split('?');
-      return path === subPath;
-    }) ?? false;
+    return (
+      subItems?.some((sub) => {
+        const [subPath] = sub.url.split("?");
+        return path === subPath;
+      }) ?? false
+    );
   };
 
   return (
@@ -232,11 +234,19 @@ export function NavMain({ items }: NavMainProps) {
                     );
                   }
                   // Otherwise, render the dropdown as before
-                  return <NavItemCollapsed key={item.title} item={item} isActive={isItemActive} isUrlActive={isUrlActive} />;
+                  return (
+                    <NavItemCollapsed key={item.title} item={item} isActive={isItemActive} isUrlActive={isUrlActive} />
+                  );
                 }
                 // Expanded view
                 return (
-                  <NavItemExpanded key={item.title} item={item} isActive={isItemActive} isSubmenuOpen={isSubmenuOpen} isUrlActive={isUrlActive} />
+                  <NavItemExpanded
+                    key={item.title}
+                    item={item}
+                    isActive={isItemActive}
+                    isSubmenuOpen={isSubmenuOpen}
+                    isUrlActive={isUrlActive}
+                  />
                 );
               })}
             </SidebarMenu>

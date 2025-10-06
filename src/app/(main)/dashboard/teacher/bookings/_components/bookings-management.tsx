@@ -1,27 +1,34 @@
-'use client';
+"use client";
 
-import { useState, useEffect } from 'react';
-import { Plus, Search, MoreHorizontal, Edit, Trash2, Eye, Calendar, Clock, DollarSign, MapPin, Building2 } from 'lucide-react';
+import { useState, useEffect } from "react";
 
-import { Button } from '@/components/ui/button';
-import { Input } from '@/components/ui/input';
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
-import { Badge } from '@/components/ui/badge';
-import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
+import {
+  Plus,
+  Search,
+  MoreHorizontal,
+  Edit,
+  Trash2,
+  Eye,
+  Calendar,
+  Clock,
+  DollarSign,
+  MapPin,
+  Building2,
+} from "lucide-react";
+import { toast } from "sonner";
+
+import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
+import { Badge } from "@/components/ui/badge";
+import { Button } from "@/components/ui/button";
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import {
   DropdownMenu,
   DropdownMenuContent,
   DropdownMenuItem,
   DropdownMenuTrigger,
-} from '@/components/ui/dropdown-menu';
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from '@/components/ui/select';
-import { toast } from 'sonner';
+} from "@/components/ui/dropdown-menu";
+import { Input } from "@/components/ui/input";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 
 interface Booking {
   id: string;
@@ -71,26 +78,26 @@ interface BookingsResponse {
 }
 
 const statusColors = {
-  PENDING: 'bg-yellow-100 text-yellow-800',
-  CONFIRMED: 'bg-blue-100 text-blue-800',
-  CANCELLED: 'bg-red-100 text-red-800',
-  COMPLETED: 'bg-green-100 text-green-800',
-  NO_SHOW: 'bg-gray-100 text-gray-800',
+  PENDING: "bg-yellow-100 text-yellow-800",
+  CONFIRMED: "bg-blue-100 text-blue-800",
+  CANCELLED: "bg-red-100 text-red-800",
+  COMPLETED: "bg-green-100 text-green-800",
+  NO_SHOW: "bg-gray-100 text-gray-800",
 };
 
 const paymentStatusColors = {
-  PENDING: 'bg-yellow-100 text-yellow-800',
-  PAID: 'bg-green-100 text-green-800',
-  FAILED: 'bg-red-100 text-red-800',
-  REFUNDED: 'bg-purple-100 text-purple-800',
-  PARTIAL_REFUND: 'bg-orange-100 text-orange-800',
+  PENDING: "bg-yellow-100 text-yellow-800",
+  PAID: "bg-green-100 text-green-800",
+  FAILED: "bg-red-100 text-red-800",
+  REFUNDED: "bg-purple-100 text-purple-800",
+  PARTIAL_REFUND: "bg-orange-100 text-orange-800",
 };
 
 export function BookingsManagement() {
   const [bookings, setBookings] = useState<Booking[]>([]);
   const [loading, setLoading] = useState(true);
-  const [statusFilter, setStatusFilter] = useState('');
-  const [paymentStatusFilter, setPaymentStatusFilter] = useState('');
+  const [statusFilter, setStatusFilter] = useState("");
+  const [paymentStatusFilter, setPaymentStatusFilter] = useState("");
   const [page, setPage] = useState(1);
   const [pagination, setPagination] = useState({
     page: 1,
@@ -104,22 +111,22 @@ export function BookingsManagement() {
       setLoading(true);
       const params = new URLSearchParams({
         page: page.toString(),
-        limit: '12',
+        limit: "12",
         ...(statusFilter && { status: statusFilter }),
         ...(paymentStatusFilter && { paymentStatus: paymentStatusFilter }),
       });
 
       const response = await fetch(`/api/bookings?${params}`);
       if (!response.ok) {
-        throw new Error('Failed to fetch bookings');
+        throw new Error("Failed to fetch bookings");
       }
 
       const data: BookingsResponse = await response.json();
       setBookings(data.bookings);
       setPagination(data.pagination);
     } catch (error) {
-      console.error('Error fetching bookings:', error);
-      toast.error('Failed to fetch bookings');
+      console.error("Error fetching bookings:", error);
+      toast.error("Failed to fetch bookings");
     } finally {
       setLoading(false);
     }
@@ -130,33 +137,33 @@ export function BookingsManagement() {
   }, [page, statusFilter, paymentStatusFilter]);
 
   const handleDeleteBooking = async (bookingId: string) => {
-    if (!confirm('Are you sure you want to cancel this booking?')) {
+    if (!confirm("Are you sure you want to cancel this booking?")) {
       return;
     }
 
     try {
       const response = await fetch(`/api/bookings/${bookingId}`, {
-        method: 'DELETE',
+        method: "DELETE",
       });
 
       if (!response.ok) {
         const errorData = await response.json();
-        throw new Error(errorData.error || 'Failed to cancel booking');
+        throw new Error(errorData.error || "Failed to cancel booking");
       }
 
-      toast.success('Booking cancelled successfully');
+      toast.success("Booking cancelled successfully");
       fetchBookings(); // Refresh the list
     } catch (error) {
-      console.error('Error cancelling booking:', error);
-      toast.error(error instanceof Error ? error.message : 'Failed to cancel booking');
+      console.error("Error cancelling booking:", error);
+      toast.error(error instanceof Error ? error.message : "Failed to cancel booking");
     }
   };
 
   const formatDate = (dateString: string) => {
-    return new Date(dateString).toLocaleDateString('en-US', {
-      year: 'numeric',
-      month: 'short',
-      day: 'numeric',
+    return new Date(dateString).toLocaleDateString("en-US", {
+      year: "numeric",
+      month: "short",
+      day: "numeric",
     });
   };
 
@@ -165,9 +172,9 @@ export function BookingsManagement() {
   };
 
   const formatCurrency = (amount: number) => {
-    return new Intl.NumberFormat('en-US', {
-      style: 'currency',
-      currency: 'USD',
+    return new Intl.NumberFormat("en-US", {
+      style: "currency",
+      currency: "USD",
     }).format(amount);
   };
 
@@ -182,12 +189,10 @@ export function BookingsManagement() {
       <div className="flex items-center justify-between">
         <div>
           <h1 className="text-3xl font-bold tracking-tight">My Bookings</h1>
-          <p className="text-muted-foreground">
-            Manage your training room bookings
-          </p>
+          <p className="text-muted-foreground">Manage your training room bookings</p>
         </div>
         <Button>
-          <Plus className="h-4 w-4 mr-2" />
+          <Plus className="mr-2 h-4 w-4" />
           New Booking
         </Button>
       </div>
@@ -233,16 +238,12 @@ export function BookingsManagement() {
       {/* Bookings Grid */}
       <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
         {loading ? (
-          <div className="col-span-full text-center py-8">
-            Loading bookings...
-          </div>
+          <div className="col-span-full py-8 text-center">Loading bookings...</div>
         ) : bookings.length === 0 ? (
-          <div className="col-span-full text-center py-8">
-            No bookings found
-          </div>
+          <div className="col-span-full py-8 text-center">No bookings found</div>
         ) : (
           bookings.map((booking) => (
-            <Card key={booking.id} className="hover:shadow-md transition-shadow">
+            <Card key={booking.id} className="transition-shadow hover:shadow-md">
               <CardHeader className="pb-3">
                 <div className="flex items-start justify-between">
                   <div className="flex items-center gap-3">
@@ -254,7 +255,7 @@ export function BookingsManagement() {
                     </Avatar>
                     <div>
                       <CardTitle className="text-lg">{booking.room.name}</CardTitle>
-                      <p className="text-sm text-muted-foreground">{booking.organization.name}</p>
+                      <p className="text-muted-foreground text-sm">{booking.organization.name}</p>
                     </div>
                   </div>
                   <DropdownMenu>
@@ -265,25 +266,22 @@ export function BookingsManagement() {
                     </DropdownMenuTrigger>
                     <DropdownMenuContent align="end">
                       <DropdownMenuItem>
-                        <Eye className="h-4 w-4 mr-2" />
+                        <Eye className="mr-2 h-4 w-4" />
                         View Details
                       </DropdownMenuItem>
-                      {booking.status === 'PENDING' && (
+                      {booking.status === "PENDING" && (
                         <DropdownMenuItem>
-                          <Edit className="h-4 w-4 mr-2" />
+                          <Edit className="mr-2 h-4 w-4" />
                           Edit Booking
                         </DropdownMenuItem>
                       )}
-                      {['PENDING', 'CONFIRMED'].includes(booking.status) && 
-                       isUpcoming(booking.date, booking.startTime) && (
-                        <DropdownMenuItem
-                          onClick={() => handleDeleteBooking(booking.id)}
-                          className="text-red-600"
-                        >
-                          <Trash2 className="h-4 w-4 mr-2" />
-                          Cancel Booking
-                        </DropdownMenuItem>
-                      )}
+                      {["PENDING", "CONFIRMED"].includes(booking.status) &&
+                        isUpcoming(booking.date, booking.startTime) && (
+                          <DropdownMenuItem onClick={() => handleDeleteBooking(booking.id)} className="text-red-600">
+                            <Trash2 className="mr-2 h-4 w-4" />
+                            Cancel Booking
+                          </DropdownMenuItem>
+                        )}
                     </DropdownMenuContent>
                   </DropdownMenu>
                 </div>
@@ -291,10 +289,10 @@ export function BookingsManagement() {
               <CardContent className="space-y-4">
                 {/* Date and Time */}
                 <div className="flex items-center gap-2">
-                  <Calendar className="h-4 w-4 text-muted-foreground" />
+                  <Calendar className="text-muted-foreground h-4 w-4" />
                   <div>
                     <div className="font-medium">{formatDate(booking.date)}</div>
-                    <div className="text-sm text-muted-foreground flex items-center gap-1">
+                    <div className="text-muted-foreground flex items-center gap-1 text-sm">
                       <Clock className="h-3 w-3" />
                       {formatTime(booking.startTime)} - {formatTime(booking.endTime)}
                     </div>
@@ -303,41 +301,39 @@ export function BookingsManagement() {
 
                 {/* Room Details */}
                 <div className="text-sm">
-                  <div className="flex items-center gap-2 mb-1">
-                    <MapPin className="h-4 w-4 text-muted-foreground" />
+                  <div className="mb-1 flex items-center gap-2">
+                    <MapPin className="text-muted-foreground h-4 w-4" />
                     <span>Capacity: {booking.room.capacity} people</span>
                   </div>
                   <div className="flex items-center gap-2">
-                    <DollarSign className="h-4 w-4 text-muted-foreground" />
+                    <DollarSign className="text-muted-foreground h-4 w-4" />
                     <span>Rate: {formatCurrency(booking.room.hourlyRate)}/hour</span>
                   </div>
                 </div>
 
                 {/* Amount */}
-                <div className="bg-muted/50 p-3 rounded-lg">
-                  <div className="flex justify-between items-center">
+                <div className="bg-muted/50 rounded-lg p-3">
+                  <div className="flex items-center justify-between">
                     <span className="text-sm font-medium">Total Amount:</span>
-                    <span className="font-bold text-lg">{formatCurrency(booking.totalAmount)}</span>
+                    <span className="text-lg font-bold">{formatCurrency(booking.totalAmount)}</span>
                   </div>
-                  <div className="flex justify-between items-center text-sm text-muted-foreground">
+                  <div className="text-muted-foreground flex items-center justify-between text-sm">
                     <span>Platform fee:</span>
                     <span>{formatCurrency(booking.commission)}</span>
                   </div>
                 </div>
 
                 {/* Status and Payment */}
-                <div className="flex justify-between items-center">
+                <div className="flex items-center justify-between">
                   <div className="flex gap-2">
                     <Badge className={statusColors[booking.status as keyof typeof statusColors]}>
                       {booking.status}
                     </Badge>
                     <Badge className={paymentStatusColors[booking.paymentStatus as keyof typeof paymentStatusColors]}>
-                      {booking.paymentStatus.replace('_', ' ')}
+                      {booking.paymentStatus.replace("_", " ")}
                     </Badge>
                   </div>
-                  <span className="text-xs text-muted-foreground">
-                    #{booking.id.slice(-8)}
-                  </span>
+                  <span className="text-muted-foreground text-xs">#{booking.id.slice(-8)}</span>
                 </div>
 
                 {/* Notes */}
@@ -364,24 +360,14 @@ export function BookingsManagement() {
       {/* Pagination */}
       {pagination.pages > 1 && (
         <div className="flex items-center justify-between">
-          <div className="text-sm text-muted-foreground">
+          <div className="text-muted-foreground text-sm">
             Page {pagination.page} of {pagination.pages}
           </div>
           <div className="flex gap-2">
-            <Button
-              variant="outline"
-              size="sm"
-              onClick={() => setPage(page - 1)}
-              disabled={page === 1}
-            >
+            <Button variant="outline" size="sm" onClick={() => setPage(page - 1)} disabled={page === 1}>
               Previous
             </Button>
-            <Button
-              variant="outline"
-              size="sm"
-              onClick={() => setPage(page + 1)}
-              disabled={page === pagination.pages}
-            >
+            <Button variant="outline" size="sm" onClick={() => setPage(page + 1)} disabled={page === pagination.pages}>
               Next
             </Button>
           </div>

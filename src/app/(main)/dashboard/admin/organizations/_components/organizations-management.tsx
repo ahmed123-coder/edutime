@@ -2,7 +2,7 @@
 
 import { useState, useEffect } from "react";
 
-import { Plus, Search, MoreHorizontal, Edit, Trash2, Eye, Building2, Users, Calendar } from "lucide-react";
+import { Plus, Search, MoreHorizontal, Edit, Trash2, Eye, Building2, Users, Calendar, Crown, UserPlus } from "lucide-react";
 import { toast } from "sonner";
 
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
@@ -19,6 +19,7 @@ import { Input } from "@/components/ui/input";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 
+import { AssignOwnerModal } from "./assign-owner-modal";
 import { CreateOrganizationModal } from "./create-organization-modal";
 
 interface Organization {
@@ -38,6 +39,17 @@ interface Organization {
   active: boolean;
   createdAt: string;
   updatedAt: string;
+  members: {
+    id: string;
+    role: string;
+    createdAt: string;
+    user: {
+      id: string;
+      name: string;
+      email: string;
+      avatar?: string;
+    };
+  }[];
   _count: {
     members: number;
     rooms: number;
@@ -75,6 +87,8 @@ export function OrganizationsManagement() {
   const [activeFilter, setActiveFilter] = useState("");
   const [page, setPage] = useState(1);
   const [createModalOpen, setCreateModalOpen] = useState(false);
+  const [assignOwnerModalOpen, setAssignOwnerModalOpen] = useState(false);
+  const [selectedOrganization, setSelectedOrganization] = useState<Organization | null>(null);
   const [pagination, setPagination] = useState({
     page: 1,
     limit: 10,
@@ -148,6 +162,15 @@ export function OrganizationsManagement() {
   const formatAddress = (address: any) => {
     if (!address) return "-";
     return `${address.city}, ${address.state}`;
+  };
+
+  const handleAssignOwner = (organization: Organization) => {
+    setSelectedOrganization(organization);
+    setAssignOwnerModalOpen(true);
+  };
+
+  const handleOwnerAssigned = () => {
+    fetchOrganizations(); // Refresh the list to show updated owner information
   };
 
   return (
@@ -229,6 +252,7 @@ export function OrganizationsManagement() {
                 <TableHead>Organization</TableHead>
                 <TableHead>Type</TableHead>
                 <TableHead>Subscription</TableHead>
+                <TableHead>Owners</TableHead>
                 <TableHead>Location</TableHead>
                 <TableHead>Stats</TableHead>
                 <TableHead>Status</TableHead>
@@ -239,13 +263,13 @@ export function OrganizationsManagement() {
             <TableBody>
               {loading ? (
                 <TableRow>
-                  <TableCell colSpan={8} className="py-8 text-center">
+                  <TableCell colSpan={9} className="py-8 text-center">
                     Loading organizations...
                   </TableCell>
                 </TableRow>
               ) : organizations.length === 0 ? (
                 <TableRow>
-                  <TableCell colSpan={8} className="py-8 text-center">
+                  <TableCell colSpan={9} className="py-8 text-center">
                     No organizations found
                   </TableCell>
                 </TableRow>
@@ -275,6 +299,29 @@ export function OrganizationsManagement() {
                       <Badge className={subscriptionColors[org.subscription as keyof typeof subscriptionColors]}>
                         {org.subscription}
                       </Badge>
+                    </TableCell>
+                    <TableCell>
+                      <div className="flex items-center gap-1">
+                        {org.members.length > 0 ? (
+                          <div className="flex -space-x-1">
+                            {org.members.slice(0, 3).map((member) => (
+                              <Avatar key={member.id} className="h-6 w-6 border-2 border-background">
+                                <AvatarImage src={member.user.avatar} alt={member.user.name} />
+                                <AvatarFallback className="text-xs">
+                                  {member.user.name?.charAt(0)?.toUpperCase()}
+                                </AvatarFallback>
+                              </Avatar>
+                            ))}
+                            {org.members.length > 3 && (
+                              <div className="flex h-6 w-6 items-center justify-center rounded-full border-2 border-background bg-muted text-xs">
+                                +{org.members.length - 3}
+                              </div>
+                            )}
+                          </div>
+                        ) : (
+                          <span className="text-muted-foreground text-sm">No owners</span>
+                        )}
+                      </div>
                     </TableCell>
                     <TableCell>{formatAddress(org.address)}</TableCell>
                     <TableCell>
@@ -320,6 +367,10 @@ export function OrganizationsManagement() {
                             <Edit className="mr-2 h-4 w-4" />
                             Edit Organization
                           </DropdownMenuItem>
+                          <DropdownMenuItem onClick={() => handleAssignOwner(org)}>
+                            <Crown className="mr-2 h-4 w-4" />
+                            Assign Owner
+                          </DropdownMenuItem>
                           <DropdownMenuItem onClick={() => handleDeleteOrganization(org.id)} className="text-red-600">
                             <Trash2 className="mr-2 h-4 w-4" />
                             Delete Organization
@@ -362,6 +413,14 @@ export function OrganizationsManagement() {
         open={createModalOpen}
         onOpenChange={setCreateModalOpen}
         onOrganizationCreated={fetchOrganizations}
+      />
+
+      {/* Assign Owner Modal */}
+      <AssignOwnerModal
+        open={assignOwnerModalOpen}
+        onOpenChange={setAssignOwnerModalOpen}
+        organization={selectedOrganization}
+        onOwnerAssigned={handleOwnerAssigned}
       />
     </div>
   );

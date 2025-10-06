@@ -1,47 +1,29 @@
-'use client';
+"use client";
 
-import { useState } from 'react';
-import { useForm } from 'react-hook-form';
-import { zodResolver } from '@hookform/resolvers/zod';
-import { z } from 'zod';
-import { toast } from 'sonner';
+import { useState } from "react";
 
-import {
-  Dialog,
-  DialogContent,
-  DialogDescription,
-  DialogHeader,
-  DialogTitle,
-} from '@/components/ui/dialog';
-import {
-  Form,
-  FormControl,
-  FormField,
-  FormItem,
-  FormLabel,
-  FormMessage,
-} from '@/components/ui/form';
-import { Input } from '@/components/ui/input';
-import { Button } from '@/components/ui/button';
-import { Textarea } from '@/components/ui/textarea';
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from '@/components/ui/select';
+import { zodResolver } from "@hookform/resolvers/zod";
+import { useForm } from "react-hook-form";
+import { toast } from "sonner";
+import { z } from "zod";
+
+import { Button } from "@/components/ui/button";
+import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle } from "@/components/ui/dialog";
+import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form";
+import { Input } from "@/components/ui/input";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import { Textarea } from "@/components/ui/textarea";
 
 const createPackageSchema = z.object({
-  name: z.string().min(1, 'Name is required'),
-  plan: z.enum(['ESSENTIAL', 'PRO', 'PREMIUM']),
+  name: z.string().min(1, "Name is required"),
+  plan: z.enum(["ESSENTIAL", "PRO", "PREMIUM"]),
   description: z.string().optional(),
-  price: z.number().positive('Price must be positive'),
-  billingPeriod: z.enum(['MONTHLY', 'QUARTERLY', 'YEARLY']),
-  maxRooms: z.number().positive('Max rooms must be positive'),
-  maxBookingsPerMonth: z.number().positive('Max bookings must be positive'),
-  maxMembers: z.number().positive('Max members must be positive'),
-  features: z.string().min(1, 'Features are required'),
+  price: z.number().positive("Price must be positive"),
+  billingPeriod: z.enum(["MONTHLY", "QUARTERLY", "YEARLY"]),
+  maxRooms: z.number().positive("Max rooms must be positive"),
+  maxBookingsPerMonth: z.number().positive("Max bookings must be positive"),
+  maxMembers: z.number().positive("Max members must be positive"),
+  features: z.string().min(1, "Features are required"),
 });
 
 type CreatePackageFormData = z.infer<typeof createPackageSchema>;
@@ -58,15 +40,15 @@ export function CreatePackageModal({ open, onOpenChange, onPackageCreated }: Cre
   const form = useForm<CreatePackageFormData>({
     resolver: zodResolver(createPackageSchema),
     defaultValues: {
-      name: '',
-      plan: 'ESSENTIAL',
-      description: '',
+      name: "",
+      plan: "ESSENTIAL",
+      description: "",
       price: 0,
-      billingPeriod: 'MONTHLY',
+      billingPeriod: "MONTHLY",
       maxRooms: 5,
       maxBookingsPerMonth: 50,
       maxMembers: 3,
-      features: '',
+      features: "",
     },
   });
 
@@ -76,7 +58,7 @@ export function CreatePackageModal({ open, onOpenChange, onPackageCreated }: Cre
 
       const packageData = {
         ...data,
-        features: data.features.split('\n').filter(f => f.trim()),
+        features: data.features.split("\n").filter((f) => f.trim()),
         limits: {
           maxRooms: data.maxRooms,
           maxBookingsPerMonth: data.maxBookingsPerMonth,
@@ -84,26 +66,26 @@ export function CreatePackageModal({ open, onOpenChange, onPackageCreated }: Cre
         },
       };
 
-      const response = await fetch('/api/admin/subscription-packages', {
-        method: 'POST',
+      const response = await fetch("/api/admin/subscription-packages", {
+        method: "POST",
         headers: {
-          'Content-Type': 'application/json',
+          "Content-Type": "application/json",
         },
         body: JSON.stringify(packageData),
       });
 
       if (!response.ok) {
         const error = await response.json();
-        throw new Error(error.error || 'Failed to create package');
+        throw new Error(error.error || "Failed to create package");
       }
 
-      toast.success('Package created successfully');
+      toast.success("Package created successfully");
       form.reset();
       onOpenChange(false);
       onPackageCreated();
     } catch (error) {
-      console.error('Error creating package:', error);
-      toast.error(error instanceof Error ? error.message : 'Failed to create package');
+      console.error("Error creating package:", error);
+      toast.error(error instanceof Error ? error.message : "Failed to create package");
     } finally {
       setIsLoading(false);
     }
@@ -111,12 +93,10 @@ export function CreatePackageModal({ open, onOpenChange, onPackageCreated }: Cre
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
-      <DialogContent className="sm:max-w-[600px] max-h-[90vh] overflow-y-auto">
+      <DialogContent className="max-h-[90vh] overflow-y-auto sm:max-w-[600px]">
         <DialogHeader>
           <DialogTitle>Create Subscription Package</DialogTitle>
-          <DialogDescription>
-            Create a new subscription package with features and limits.
-          </DialogDescription>
+          <DialogDescription>Create a new subscription package with features and limits.</DialogDescription>
         </DialogHeader>
 
         <Form {...form}>
@@ -227,11 +207,7 @@ export function CreatePackageModal({ open, onOpenChange, onPackageCreated }: Cre
                   <FormItem>
                     <FormLabel>Max Rooms</FormLabel>
                     <FormControl>
-                      <Input
-                        type="number"
-                        {...field}
-                        onChange={(e) => field.onChange(parseInt(e.target.value) || 0)}
-                      />
+                      <Input type="number" {...field} onChange={(e) => field.onChange(parseInt(e.target.value) || 0)} />
                     </FormControl>
                     <FormMessage />
                   </FormItem>
@@ -245,11 +221,7 @@ export function CreatePackageModal({ open, onOpenChange, onPackageCreated }: Cre
                   <FormItem>
                     <FormLabel>Max Bookings/Month</FormLabel>
                     <FormControl>
-                      <Input
-                        type="number"
-                        {...field}
-                        onChange={(e) => field.onChange(parseInt(e.target.value) || 0)}
-                      />
+                      <Input type="number" {...field} onChange={(e) => field.onChange(parseInt(e.target.value) || 0)} />
                     </FormControl>
                     <FormMessage />
                   </FormItem>
@@ -263,11 +235,7 @@ export function CreatePackageModal({ open, onOpenChange, onPackageCreated }: Cre
                   <FormItem>
                     <FormLabel>Max Members</FormLabel>
                     <FormControl>
-                      <Input
-                        type="number"
-                        {...field}
-                        onChange={(e) => field.onChange(parseInt(e.target.value) || 0)}
-                      />
+                      <Input type="number" {...field} onChange={(e) => field.onChange(parseInt(e.target.value) || 0)} />
                     </FormControl>
                     <FormMessage />
                   </FormItem>
@@ -294,16 +262,11 @@ export function CreatePackageModal({ open, onOpenChange, onPackageCreated }: Cre
             />
 
             <div className="flex justify-end space-x-2 pt-4">
-              <Button
-                type="button"
-                variant="outline"
-                onClick={() => onOpenChange(false)}
-                disabled={isLoading}
-              >
+              <Button type="button" variant="outline" onClick={() => onOpenChange(false)} disabled={isLoading}>
                 Cancel
               </Button>
               <Button type="submit" disabled={isLoading}>
-                {isLoading ? 'Creating...' : 'Create Package'}
+                {isLoading ? "Creating..." : "Create Package"}
               </Button>
             </div>
           </form>
