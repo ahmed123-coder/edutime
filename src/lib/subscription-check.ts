@@ -1,8 +1,8 @@
-import { prisma } from '@/lib/db';
+import { prisma } from "@/lib/db";
 
 export async function hasActiveSubscription(userId: string, userRole: string): Promise<boolean> {
   // Admins always have access
-  if (userRole === 'ADMIN') {
+  if (userRole === "ADMIN") {
     return true;
   }
 
@@ -14,7 +14,7 @@ export async function hasActiveSubscription(userId: string, userRole: string): P
         include: {
           subscriptions: {
             where: {
-              status: 'ACTIVE',
+              status: "ACTIVE",
               endDate: {
                 gt: new Date(), // Not expired
               },
@@ -26,7 +26,5 @@ export async function hasActiveSubscription(userId: string, userRole: string): P
   });
 
   // Return true if user has at least one organization with active subscription
-  return userOrganizations.some(
-    (member) => member.organization.subscriptions.length > 0
-  );
+  return userOrganizations.some((member) => member.organization.subscriptions.length > 0);
 }

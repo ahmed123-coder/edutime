@@ -1,9 +1,11 @@
-'use client';
+"use client";
 
-import { useEffect, useState } from 'react';
-import { AlertTriangle, X } from 'lucide-react';
-import { Alert, AlertDescription } from '@/components/ui/alert';
-import { Button } from '@/components/ui/button';
+import { useEffect, useState } from "react";
+
+import { AlertTriangle, X } from "lucide-react";
+
+import { Alert, AlertDescription } from "@/components/ui/alert";
+import { Button } from "@/components/ui/button";
 
 interface SubscriptionAlertProps {
   userRole: string;
@@ -16,7 +18,7 @@ export function SubscriptionAlert({ userRole, userId }: SubscriptionAlertProps) 
 
   useEffect(() => {
     // Only check for non-admin users
-    if (userRole === 'ADMIN') {
+    if (userRole === "ADMIN") {
       return;
     }
 
@@ -28,7 +30,7 @@ export function SubscriptionAlert({ userRole, userId }: SubscriptionAlertProps) 
           setHasActiveSubscription(data.hasActiveSubscription);
         }
       } catch (error) {
-        console.error('Error checking subscription:', error);
+        console.error("Error checking subscription:", error);
       }
     };
 
@@ -36,7 +38,7 @@ export function SubscriptionAlert({ userRole, userId }: SubscriptionAlertProps) 
   }, [userRole, userId]);
 
   // Don't show for admins or if dismissed or if has active subscription
-  if (userRole === 'ADMIN' || dismissed || hasActiveSubscription === true || hasActiveSubscription === null) {
+  if (userRole === "ADMIN" || dismissed || hasActiveSubscription === true || hasActiveSubscription === null) {
     return null;
   }
 
@@ -45,7 +47,7 @@ export function SubscriptionAlert({ userRole, userId }: SubscriptionAlertProps) 
       <AlertTriangle className="h-4 w-4 text-orange-600" />
       <AlertDescription className="flex items-center justify-between">
         <span className="text-orange-800">
-          <strong>Subscription Required:</strong> Your organization needs an active subscription to access all features. 
+          <strong>Subscription Required:</strong> Your organization needs an active subscription to access all features.
           Please contact support or subscribe to continue using the platform.
         </span>
         <Button

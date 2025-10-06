@@ -1,10 +1,11 @@
 import { Metadata } from "next";
 import { notFound } from "next/navigation";
+
+import { SpecialistContact } from "./_components/specialist-contact";
 import { SpecialistHeader } from "./_components/specialist-header";
 import { SpecialistProfile } from "./_components/specialist-profile";
-import { SpecialistSkills } from "./_components/specialist-skills";
 import { SpecialistReviews } from "./_components/specialist-reviews";
-import { SpecialistContact } from "./_components/specialist-contact";
+import { SpecialistSkills } from "./_components/specialist-skills";
 
 // Mock data
 const mockSpecialist = {
@@ -27,12 +28,7 @@ const mockSpecialist = {
     { name: "Google Ads", level: 94 },
     { name: "Analytics", level: 85 },
   ],
-  certifications: [
-    "Google Ads Certified",
-    "Facebook Blueprint",
-    "HubSpot Inbound Marketing",
-    "Google Analytics IQ",
-  ],
+  certifications: ["Google Ads Certified", "Facebook Blueprint", "HubSpot Inbound Marketing", "Google Analytics IQ"],
   languages: ["Français", "Anglais", "Arabe"],
   hourlyRate: 120,
   availability: "Disponible",
@@ -49,7 +45,7 @@ interface SpecialistPageProps {
 
 export async function generateMetadata({ params }: SpecialistPageProps): Promise<Metadata> {
   const specialist = mockSpecialist;
-  
+
   if (!specialist) {
     return {
       title: "Spécialiste non trouvé",
@@ -71,13 +67,13 @@ export default function SpecialistPage({ params }: SpecialistPageProps) {
   }
 
   return (
-    <div className="min-h-screen bg-background">
+    <div className="bg-background min-h-screen">
       <SpecialistHeader specialist={specialist} />
-      
+
       <div className="container mx-auto px-4 py-8">
-        <div className="grid lg:grid-cols-3 gap-8">
+        <div className="grid gap-8 lg:grid-cols-3">
           {/* Main Content */}
-          <div className="lg:col-span-2 space-y-8">
+          <div className="space-y-8 lg:col-span-2">
             <SpecialistProfile specialist={specialist} />
             <SpecialistSkills specialist={specialist} />
             <SpecialistReviews specialistId={specialist.id} />

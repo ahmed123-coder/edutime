@@ -1,15 +1,16 @@
 "use client";
 
 import { useState } from "react";
+
 import { Send, CheckCircle } from "lucide-react";
 
+import { Alert, AlertDescription } from "@/components/ui/alert";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { Textarea } from "@/components/ui/textarea";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-import { Alert, AlertDescription } from "@/components/ui/alert";
+import { Textarea } from "@/components/ui/textarea";
 
 const subjects = [
   "Question générale",
@@ -37,12 +38,12 @@ export function ContactForm() {
     setIsSubmitting(true);
 
     // Simulate API call
-    await new Promise(resolve => setTimeout(resolve, 1000));
+    await new Promise((resolve) => setTimeout(resolve, 1000));
 
     console.log("Contact form submitted:", formData);
     setIsSubmitted(true);
     setIsSubmitting(false);
-    
+
     // Reset form
     setFormData({
       name: "",
@@ -54,21 +55,19 @@ export function ContactForm() {
   };
 
   const handleChange = (field: string, value: string) => {
-    setFormData(prev => ({ ...prev, [field]: value }));
+    setFormData((prev) => ({ ...prev, [field]: value }));
   };
 
   if (isSubmitted) {
     return (
       <Card>
         <CardContent className="p-8 text-center">
-          <CheckCircle className="h-16 w-16 text-green-500 mx-auto mb-4" />
-          <h3 className="text-2xl font-bold mb-2">Message envoyé !</h3>
+          <CheckCircle className="mx-auto mb-4 h-16 w-16 text-green-500" />
+          <h3 className="mb-2 text-2xl font-bold">Message envoyé !</h3>
           <p className="text-muted-foreground mb-6">
             Merci pour votre message. Notre équipe vous répondra dans les plus brefs délais.
           </p>
-          <Button onClick={() => setIsSubmitted(false)}>
-            Envoyer un autre message
-          </Button>
+          <Button onClick={() => setIsSubmitted(false)}>Envoyer un autre message</Button>
         </CardContent>
       </Card>
     );
@@ -81,7 +80,7 @@ export function ContactForm() {
       </CardHeader>
       <CardContent>
         <form onSubmit={handleSubmit} className="space-y-6">
-          <div className="grid md:grid-cols-2 gap-4">
+          <div className="grid gap-4 md:grid-cols-2">
             <div>
               <Label htmlFor="name">Nom complet *</Label>
               <Input
@@ -146,14 +145,14 @@ export function ContactForm() {
 
           <Alert>
             <AlertDescription>
-              Les champs marqués d'un astérisque (*) sont obligatoires. 
-              Nous nous engageons à répondre dans un délai de 24 heures.
+              Les champs marqués d'un astérisque (*) sont obligatoires. Nous nous engageons à répondre dans un délai de
+              24 heures.
             </AlertDescription>
           </Alert>
 
-          <Button 
-            type="submit" 
-            className="w-full" 
+          <Button
+            type="submit"
+            className="w-full"
             size="lg"
             disabled={isSubmitting || !formData.name || !formData.email || !formData.subject || !formData.message}
           >
@@ -161,7 +160,7 @@ export function ContactForm() {
               "Envoi en cours..."
             ) : (
               <>
-                <Send className="h-4 w-4 mr-2" />
+                <Send className="mr-2 h-4 w-4" />
                 Envoyer le message
               </>
             )}

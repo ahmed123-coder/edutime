@@ -1,27 +1,33 @@
 "use client";
 
 import { useState } from "react";
+
 import { useRouter, useSearchParams } from "next/navigation";
+
 import { Search, MapPin, Filter, SlidersHorizontal } from "lucide-react";
 
+import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-import { Badge } from "@/components/ui/badge";
 
-const locations = [
-  "Tunis", "Sfax", "Sousse", "Monastir", "Bizerte", "Gabès", "Kairouan"
-];
+const locations = ["Tunis", "Sfax", "Sousse", "Monastir", "Bizerte", "Gabès", "Kairouan"];
 
 const categories = [
-  "Informatique", "Langues", "Management", "Marketing", "Finance", 
-  "Ressources Humaines", "Design", "Développement Personnel"
+  "Informatique",
+  "Langues",
+  "Management",
+  "Marketing",
+  "Finance",
+  "Ressources Humaines",
+  "Design",
+  "Développement Personnel",
 ];
 
 export function SearchHeader() {
   const router = useRouter();
   const searchParams = useSearchParams();
-  
+
   const [query, setQuery] = useState(searchParams.get("q") || "");
   const [location, setLocation] = useState(searchParams.get("location") || "all");
   const [category, setCategory] = useState(searchParams.get("category") || "all");
@@ -62,27 +68,27 @@ export function SearchHeader() {
   ].filter(Boolean).length;
 
   return (
-    <div className="bg-white border-b sticky top-16 z-40">
+    <div className="sticky top-16 z-40 border-b bg-white">
       <div className="container mx-auto px-4 py-4">
         {/* Main Search Bar */}
-        <div className="flex flex-col lg:flex-row gap-4 items-center">
+        <div className="flex flex-col items-center gap-4 lg:flex-row">
           {/* Search Input */}
-          <div className="flex-1 relative">
-            <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-muted-foreground" />
+          <div className="relative flex-1">
+            <Search className="text-muted-foreground absolute top-1/2 left-3 h-4 w-4 -translate-y-1/2 transform" />
             <Input
               placeholder="Rechercher des espaces, centres, spécialistes..."
               value={query}
               onChange={(e) => setQuery(e.target.value)}
-              className="pl-10 h-12"
+              className="h-12 pl-10"
               onKeyDown={(e) => e.key === "Enter" && handleSearch()}
             />
           </div>
 
           {/* Location Filter */}
           <Select value={location} onValueChange={setLocation}>
-            <SelectTrigger className="w-full lg:w-48 h-12">
+            <SelectTrigger className="h-12 w-full lg:w-48">
               <div className="flex items-center">
-                <MapPin className="h-4 w-4 mr-2 text-muted-foreground" />
+                <MapPin className="text-muted-foreground mr-2 h-4 w-4" />
                 <SelectValue placeholder="Localisation" />
               </div>
             </SelectTrigger>
@@ -98,9 +104,9 @@ export function SearchHeader() {
 
           {/* Category Filter */}
           <Select value={category} onValueChange={setCategory}>
-            <SelectTrigger className="w-full lg:w-48 h-12">
+            <SelectTrigger className="h-12 w-full lg:w-48">
               <div className="flex items-center">
-                <Filter className="h-4 w-4 mr-2 text-muted-foreground" />
+                <Filter className="text-muted-foreground mr-2 h-4 w-4" />
                 <SelectValue placeholder="Catégorie" />
               </div>
             </SelectTrigger>
@@ -115,45 +121,36 @@ export function SearchHeader() {
           </Select>
 
           {/* Search Button */}
-          <Button onClick={handleSearch} size="lg" className="w-full lg:w-auto px-8">
-            <Search className="h-4 w-4 mr-2" />
+          <Button onClick={handleSearch} size="lg" className="w-full px-8 lg:w-auto">
+            <Search className="mr-2 h-4 w-4" />
             Rechercher
           </Button>
         </div>
 
         {/* Active Filters & Actions */}
-        <div className="flex flex-wrap items-center justify-between mt-4 gap-4">
+        <div className="mt-4 flex flex-wrap items-center justify-between gap-4">
           <div className="flex flex-wrap items-center gap-2">
             {activeFiltersCount > 0 && (
               <>
-                <span className="text-sm text-muted-foreground">
-                  {activeFiltersCount} filtre{activeFiltersCount > 1 ? "s" : ""} actif{activeFiltersCount > 1 ? "s" : ""} :
+                <span className="text-muted-foreground text-sm">
+                  {activeFiltersCount} filtre{activeFiltersCount > 1 ? "s" : ""} actif
+                  {activeFiltersCount > 1 ? "s" : ""} :
                 </span>
-                
-                {searchParams.get("q") && (
-                  <Badge variant="secondary">
-                    Recherche: {searchParams.get("q")}
-                  </Badge>
-                )}
-                
+
+                {searchParams.get("q") && <Badge variant="secondary">Recherche: {searchParams.get("q")}</Badge>}
+
                 {searchParams.get("location") && (
-                  <Badge variant="secondary">
-                    Lieu: {searchParams.get("location")}
-                  </Badge>
+                  <Badge variant="secondary">Lieu: {searchParams.get("location")}</Badge>
                 )}
-                
+
                 {searchParams.get("category") && (
-                  <Badge variant="secondary">
-                    Catégorie: {searchParams.get("category")}
-                  </Badge>
+                  <Badge variant="secondary">Catégorie: {searchParams.get("category")}</Badge>
                 )}
-                
+
                 {searchParams.get("capacity") && (
-                  <Badge variant="secondary">
-                    Capacité: {searchParams.get("capacity")}
-                  </Badge>
+                  <Badge variant="secondary">Capacité: {searchParams.get("capacity")}</Badge>
                 )}
-                
+
                 <Button
                   variant="ghost"
                   size="sm"
@@ -168,7 +165,7 @@ export function SearchHeader() {
 
           <div className="flex items-center gap-2">
             <Button variant="outline" size="sm">
-              <SlidersHorizontal className="h-4 w-4 mr-2" />
+              <SlidersHorizontal className="mr-2 h-4 w-4" />
               Filtres avancés
             </Button>
           </div>

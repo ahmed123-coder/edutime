@@ -1,14 +1,16 @@
 "use client";
 
 import { useState } from "react";
+
 import { useRouter } from "next/navigation";
+
 import { Search, MapPin, Calendar, Users, Filter } from "lucide-react";
 
+import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
+import { Card, CardContent } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-import { Card, CardContent } from "@/components/ui/card";
-import { Badge } from "@/components/ui/badge";
 
 const popularSearches = [
   "Salle de formation Tunis",
@@ -18,15 +20,7 @@ const popularSearches = [
   "Salle de conférence",
 ];
 
-const locations = [
-  "Tunis",
-  "Sfax", 
-  "Sousse",
-  "Monastir",
-  "Bizerte",
-  "Gabès",
-  "Kairouan",
-];
+const locations = ["Tunis", "Sfax", "Sousse", "Monastir", "Bizerte", "Gabès", "Kairouan"];
 
 const categories = [
   "Informatique",
@@ -58,15 +52,13 @@ export function SearchSection() {
   };
 
   return (
-    <section className="py-16 bg-background">
+    <section className="bg-background py-16">
       <div className="container mx-auto px-4">
-        <div className="max-w-4xl mx-auto">
+        <div className="mx-auto max-w-4xl">
           {/* Section Header */}
-          <div className="text-center mb-12">
-            <h2 className="text-3xl lg:text-4xl font-bold mb-4">
-              Trouvez votre espace idéal
-            </h2>
-            <p className="text-lg text-muted-foreground">
+          <div className="mb-12 text-center">
+            <h2 className="mb-4 text-3xl font-bold lg:text-4xl">Trouvez votre espace idéal</h2>
+            <p className="text-muted-foreground text-lg">
               Recherchez parmi des centaines de centres et salles de formation
             </p>
           </div>
@@ -74,11 +66,11 @@ export function SearchSection() {
           {/* Search Form */}
           <Card className="shadow-lg">
             <CardContent className="p-6">
-              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-4">
+              <div className="grid grid-cols-1 gap-4 md:grid-cols-2 lg:grid-cols-5">
                 {/* Search Query */}
                 <div className="lg:col-span-2">
                   <div className="relative">
-                    <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-muted-foreground" />
+                    <Search className="text-muted-foreground absolute top-1/2 left-3 h-4 w-4 -translate-y-1/2 transform" />
                     <Input
                       placeholder="Que recherchez-vous ?"
                       value={searchQuery}
@@ -93,7 +85,7 @@ export function SearchSection() {
                   <Select value={location} onValueChange={setLocation}>
                     <SelectTrigger>
                       <div className="flex items-center">
-                        <MapPin className="h-4 w-4 mr-2 text-muted-foreground" />
+                        <MapPin className="text-muted-foreground mr-2 h-4 w-4" />
                         <SelectValue placeholder="Localisation" />
                       </div>
                     </SelectTrigger>
@@ -112,7 +104,7 @@ export function SearchSection() {
                   <Select value={category} onValueChange={setCategory}>
                     <SelectTrigger>
                       <div className="flex items-center">
-                        <Filter className="h-4 w-4 mr-2 text-muted-foreground" />
+                        <Filter className="text-muted-foreground mr-2 h-4 w-4" />
                         <SelectValue placeholder="Catégorie" />
                       </div>
                     </SelectTrigger>
@@ -129,19 +121,19 @@ export function SearchSection() {
                 {/* Search Button */}
                 <div>
                   <Button onClick={handleSearch} className="w-full" size="lg">
-                    <Search className="h-4 w-4 mr-2" />
+                    <Search className="mr-2 h-4 w-4" />
                     Rechercher
                   </Button>
                 </div>
               </div>
 
               {/* Advanced Filters */}
-              <div className="mt-4 pt-4 border-t">
-                <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+              <div className="mt-4 border-t pt-4">
+                <div className="grid grid-cols-1 gap-4 md:grid-cols-3">
                   <Select value={capacity} onValueChange={setCapacity}>
                     <SelectTrigger>
                       <div className="flex items-center">
-                        <Users className="h-4 w-4 mr-2 text-muted-foreground" />
+                        <Users className="text-muted-foreground mr-2 h-4 w-4" />
                         <SelectValue placeholder="Capacité" />
                       </div>
                     </SelectTrigger>
@@ -155,7 +147,7 @@ export function SearchSection() {
                   </Select>
 
                   <div className="flex items-center space-x-2">
-                    <Calendar className="h-4 w-4 text-muted-foreground" />
+                    <Calendar className="text-muted-foreground h-4 w-4" />
                     <Input type="date" placeholder="Date souhaitée" />
                   </div>
 
@@ -171,13 +163,13 @@ export function SearchSection() {
 
           {/* Popular Searches */}
           <div className="mt-8 text-center">
-            <p className="text-sm text-muted-foreground mb-4">Recherches populaires :</p>
+            <p className="text-muted-foreground mb-4 text-sm">Recherches populaires :</p>
             <div className="flex flex-wrap justify-center gap-2">
               {popularSearches.map((search) => (
                 <Badge
                   key={search}
                   variant="secondary"
-                  className="cursor-pointer hover:bg-primary hover:text-primary-foreground transition-colors"
+                  className="hover:bg-primary hover:text-primary-foreground cursor-pointer transition-colors"
                   onClick={() => setSearchQuery(search)}
                 >
                   {search}

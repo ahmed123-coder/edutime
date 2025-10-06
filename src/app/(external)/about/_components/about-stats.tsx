@@ -53,53 +53,46 @@ const stats = [
 
 export function AboutStats() {
   return (
-    <section className="py-20 bg-background">
+    <section className="bg-background py-20">
       <div className="container mx-auto px-4">
-        <div className="text-center mb-16">
-          <h2 className="text-3xl lg:text-4xl font-bold mb-6">
-            SaaS Formation en chiffres
-          </h2>
-          <p className="text-lg text-muted-foreground max-w-2xl mx-auto">
-            Découvrez l'impact de notre plateforme sur l'écosystème 
-            de formation en Tunisie.
+        <div className="mb-16 text-center">
+          <h2 className="mb-6 text-3xl font-bold lg:text-4xl">SaaS Formation en chiffres</h2>
+          <p className="text-muted-foreground mx-auto max-w-2xl text-lg">
+            Découvrez l'impact de notre plateforme sur l'écosystème de formation en Tunisie.
           </p>
         </div>
 
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+        <div className="grid grid-cols-1 gap-8 md:grid-cols-2 lg:grid-cols-3">
           {stats.map((stat, index) => (
-            <div key={index} className="text-center group">
+            <div key={index} className="group text-center">
               {/* Icon */}
-              <div className={`w-20 h-20 rounded-full ${stat.bgColor} flex items-center justify-center mx-auto mb-6 group-hover:scale-110 transition-transform duration-300`}>
+              <div
+                className={`h-20 w-20 rounded-full ${stat.bgColor} mx-auto mb-6 flex items-center justify-center transition-transform duration-300 group-hover:scale-110`}
+              >
                 <stat.icon className={`h-10 w-10 ${stat.color}`} />
               </div>
-              
+
               {/* Value */}
-              <div className="text-4xl lg:text-5xl font-bold mb-2">
-                {stat.value}
-              </div>
-              
+              <div className="mb-2 text-4xl font-bold lg:text-5xl">{stat.value}</div>
+
               {/* Label */}
-              <div className="text-xl font-semibold mb-2">
-                {stat.label}
-              </div>
-              
+              <div className="mb-2 text-xl font-semibold">{stat.label}</div>
+
               {/* Description */}
-              <div className="text-muted-foreground">
-                {stat.description}
-              </div>
+              <div className="text-muted-foreground">{stat.description}</div>
             </div>
           ))}
         </div>
 
         {/* Additional Info */}
         <div className="mt-16 text-center">
-          <div className="inline-flex items-center space-x-8 text-sm text-muted-foreground">
+          <div className="text-muted-foreground inline-flex items-center space-x-8 text-sm">
             <div className="flex items-center space-x-2">
-              <div className="w-2 h-2 bg-green-500 rounded-full animate-pulse" />
+              <div className="h-2 w-2 animate-pulse rounded-full bg-green-500" />
               <span>Données mises à jour en temps réel</span>
             </div>
             <div className="flex items-center space-x-2">
-              <div className="w-2 h-2 bg-blue-500 rounded-full animate-pulse" />
+              <div className="h-2 w-2 animate-pulse rounded-full bg-blue-500" />
               <span>Croissance continue depuis 2023</span>
             </div>
           </div>

@@ -1,36 +1,25 @@
-'use client';
+"use client";
 
-import { useState, useEffect } from 'react';
-import { Plus, Search, MoreHorizontal, Edit, Trash2, Eye, Building2, Users, Calendar } from 'lucide-react';
+import { useState, useEffect } from "react";
 
-import { Button } from '@/components/ui/button';
-import { Input } from '@/components/ui/input';
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
-import { Badge } from '@/components/ui/badge';
-import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
-import {
-  Table,
-  TableBody,
-  TableCell,
-  TableHead,
-  TableHeader,
-  TableRow,
-} from '@/components/ui/table';
+import { Plus, Search, MoreHorizontal, Edit, Trash2, Eye, Building2, Users, Calendar } from "lucide-react";
+import { toast } from "sonner";
+
+import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
+import { Badge } from "@/components/ui/badge";
+import { Button } from "@/components/ui/button";
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import {
   DropdownMenu,
   DropdownMenuContent,
   DropdownMenuItem,
   DropdownMenuTrigger,
-} from '@/components/ui/dropdown-menu';
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from '@/components/ui/select';
-import { toast } from 'sonner';
-import { CreateOrganizationModal } from './create-organization-modal';
+} from "@/components/ui/dropdown-menu";
+import { Input } from "@/components/ui/input";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
+
+import { CreateOrganizationModal } from "./create-organization-modal";
 
 interface Organization {
   id: string;
@@ -67,23 +56,23 @@ interface OrganizationsResponse {
 }
 
 const typeColors = {
-  TRAINING_CENTER: 'bg-blue-100 text-blue-800',
-  PARTNER_SERVICE: 'bg-purple-100 text-purple-800',
+  TRAINING_CENTER: "bg-blue-100 text-blue-800",
+  PARTNER_SERVICE: "bg-purple-100 text-purple-800",
 };
 
 const subscriptionColors = {
-  ESSENTIAL: 'bg-gray-100 text-gray-800',
-  PRO: 'bg-green-100 text-green-800',
-  PREMIUM: 'bg-yellow-100 text-yellow-800',
+  ESSENTIAL: "bg-gray-100 text-gray-800",
+  PRO: "bg-green-100 text-green-800",
+  PREMIUM: "bg-yellow-100 text-yellow-800",
 };
 
 export function OrganizationsManagement() {
   const [organizations, setOrganizations] = useState<Organization[]>([]);
   const [loading, setLoading] = useState(true);
-  const [search, setSearch] = useState('');
-  const [typeFilter, setTypeFilter] = useState('');
-  const [verifiedFilter, setVerifiedFilter] = useState('');
-  const [activeFilter, setActiveFilter] = useState('');
+  const [search, setSearch] = useState("");
+  const [typeFilter, setTypeFilter] = useState("");
+  const [verifiedFilter, setVerifiedFilter] = useState("");
+  const [activeFilter, setActiveFilter] = useState("");
   const [page, setPage] = useState(1);
   const [createModalOpen, setCreateModalOpen] = useState(false);
   const [pagination, setPagination] = useState({
@@ -98,7 +87,7 @@ export function OrganizationsManagement() {
       setLoading(true);
       const params = new URLSearchParams({
         page: page.toString(),
-        limit: '10',
+        limit: "10",
         ...(search && { search }),
         ...(typeFilter && { type: typeFilter }),
         ...(verifiedFilter && { verified: verifiedFilter }),
@@ -107,15 +96,15 @@ export function OrganizationsManagement() {
 
       const response = await fetch(`/api/organizations?${params}`);
       if (!response.ok) {
-        throw new Error('Failed to fetch organizations');
+        throw new Error("Failed to fetch organizations");
       }
 
       const data: OrganizationsResponse = await response.json();
       setOrganizations(data.organizations);
       setPagination(data.pagination);
     } catch (error) {
-      console.error('Error fetching organizations:', error);
-      toast.error('Failed to fetch organizations');
+      console.error("Error fetching organizations:", error);
+      toast.error("Failed to fetch organizations");
     } finally {
       setLoading(false);
     }
@@ -126,38 +115,38 @@ export function OrganizationsManagement() {
   }, [page, search, typeFilter, verifiedFilter, activeFilter]);
 
   const handleDeleteOrganization = async (organizationId: string) => {
-    if (!confirm('Are you sure you want to delete this organization? This action cannot be undone.')) {
+    if (!confirm("Are you sure you want to delete this organization? This action cannot be undone.")) {
       return;
     }
 
     try {
       const response = await fetch(`/api/organizations/${organizationId}`, {
-        method: 'DELETE',
+        method: "DELETE",
       });
 
       if (!response.ok) {
         const error = await response.json();
-        throw new Error(error.error || 'Failed to delete organization');
+        throw new Error(error.error || "Failed to delete organization");
       }
 
-      toast.success('Organization deleted successfully');
+      toast.success("Organization deleted successfully");
       fetchOrganizations(); // Refresh the list
     } catch (error) {
-      console.error('Error deleting organization:', error);
-      toast.error(error instanceof Error ? error.message : 'Failed to delete organization');
+      console.error("Error deleting organization:", error);
+      toast.error(error instanceof Error ? error.message : "Failed to delete organization");
     }
   };
 
   const formatDate = (dateString: string) => {
-    return new Date(dateString).toLocaleDateString('en-US', {
-      year: 'numeric',
-      month: 'short',
-      day: 'numeric',
+    return new Date(dateString).toLocaleDateString("en-US", {
+      year: "numeric",
+      month: "short",
+      day: "numeric",
     });
   };
 
   const formatAddress = (address: any) => {
-    if (!address) return '-';
+    if (!address) return "-";
     return `${address.city}, ${address.state}`;
   };
 
@@ -167,12 +156,10 @@ export function OrganizationsManagement() {
       <div className="flex items-center justify-between">
         <div>
           <h1 className="text-3xl font-bold tracking-tight">Organizations Management</h1>
-          <p className="text-muted-foreground">
-            Manage training centers and partner organizations
-          </p>
+          <p className="text-muted-foreground">Manage training centers and partner organizations</p>
         </div>
         <Button onClick={() => setCreateModalOpen(true)}>
-          <Plus className="h-4 w-4 mr-2" />
+          <Plus className="mr-2 h-4 w-4" />
           Add Organization
         </Button>
       </div>
@@ -252,13 +239,13 @@ export function OrganizationsManagement() {
             <TableBody>
               {loading ? (
                 <TableRow>
-                  <TableCell colSpan={8} className="text-center py-8">
+                  <TableCell colSpan={8} className="py-8 text-center">
                     Loading organizations...
                   </TableCell>
                 </TableRow>
               ) : organizations.length === 0 ? (
                 <TableRow>
-                  <TableCell colSpan={8} className="text-center py-8">
+                  <TableCell colSpan={8} className="py-8 text-center">
                     No organizations found
                   </TableCell>
                 </TableRow>
@@ -275,13 +262,13 @@ export function OrganizationsManagement() {
                         </Avatar>
                         <div>
                           <div className="font-medium">{org.name}</div>
-                          <div className="text-sm text-muted-foreground">@{org.slug}</div>
+                          <div className="text-muted-foreground text-sm">@{org.slug}</div>
                         </div>
                       </div>
                     </TableCell>
                     <TableCell>
                       <Badge className={typeColors[org.type as keyof typeof typeColors]}>
-                        {org.type.replace('_', ' ')}
+                        {org.type.replace("_", " ")}
                       </Badge>
                     </TableCell>
                     <TableCell>
@@ -289,9 +276,7 @@ export function OrganizationsManagement() {
                         {org.subscription}
                       </Badge>
                     </TableCell>
-                    <TableCell>
-                      {formatAddress(org.address)}
-                    </TableCell>
+                    <TableCell>{formatAddress(org.address)}</TableCell>
                     <TableCell>
                       <div className="flex gap-4 text-sm">
                         <div className="flex items-center gap-1">
@@ -310,17 +295,15 @@ export function OrganizationsManagement() {
                     </TableCell>
                     <TableCell>
                       <div className="flex gap-1">
-                        <Badge variant={org.verified ? 'default' : 'secondary'}>
-                          {org.verified ? 'Verified' : 'Unverified'}
+                        <Badge variant={org.verified ? "default" : "secondary"}>
+                          {org.verified ? "Verified" : "Unverified"}
                         </Badge>
-                        <Badge variant={org.active ? 'default' : 'destructive'}>
-                          {org.active ? 'Active' : 'Inactive'}
+                        <Badge variant={org.active ? "default" : "destructive"}>
+                          {org.active ? "Active" : "Inactive"}
                         </Badge>
                       </div>
                     </TableCell>
-                    <TableCell>
-                      {formatDate(org.createdAt)}
-                    </TableCell>
+                    <TableCell>{formatDate(org.createdAt)}</TableCell>
                     <TableCell className="text-right">
                       <DropdownMenu>
                         <DropdownMenuTrigger asChild>
@@ -330,18 +313,15 @@ export function OrganizationsManagement() {
                         </DropdownMenuTrigger>
                         <DropdownMenuContent align="end">
                           <DropdownMenuItem>
-                            <Eye className="h-4 w-4 mr-2" />
+                            <Eye className="mr-2 h-4 w-4" />
                             View Details
                           </DropdownMenuItem>
                           <DropdownMenuItem>
-                            <Edit className="h-4 w-4 mr-2" />
+                            <Edit className="mr-2 h-4 w-4" />
                             Edit Organization
                           </DropdownMenuItem>
-                          <DropdownMenuItem
-                            onClick={() => handleDeleteOrganization(org.id)}
-                            className="text-red-600"
-                          >
-                            <Trash2 className="h-4 w-4 mr-2" />
+                          <DropdownMenuItem onClick={() => handleDeleteOrganization(org.id)} className="text-red-600">
+                            <Trash2 className="mr-2 h-4 w-4" />
                             Delete Organization
                           </DropdownMenuItem>
                         </DropdownMenuContent>
@@ -355,17 +335,12 @@ export function OrganizationsManagement() {
 
           {/* Pagination */}
           {pagination.pages > 1 && (
-            <div className="flex items-center justify-between mt-4">
-              <div className="text-sm text-muted-foreground">
+            <div className="mt-4 flex items-center justify-between">
+              <div className="text-muted-foreground text-sm">
                 Page {pagination.page} of {pagination.pages}
               </div>
               <div className="flex gap-2">
-                <Button
-                  variant="outline"
-                  size="sm"
-                  onClick={() => setPage(page - 1)}
-                  disabled={page === 1}
-                >
+                <Button variant="outline" size="sm" onClick={() => setPage(page - 1)} disabled={page === 1}>
                   Previous
                 </Button>
                 <Button

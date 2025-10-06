@@ -1,20 +1,10 @@
 "use client";
 
 import { useState } from "react";
+
 import { useRouter, useSearchParams } from "next/navigation";
-import { 
-  Users, 
-  Calendar, 
-  DollarSign, 
-  Wifi, 
-  Car, 
-  Coffee, 
-  Monitor,
-  Mic,
-  Camera,
-  Shield,
-  X
-} from "lucide-react";
+
+import { Users, Calendar, DollarSign, Wifi, Car, Coffee, Monitor, Mic, Camera, Shield, X } from "lucide-react";
 
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
@@ -22,8 +12,8 @@ import { Checkbox } from "@/components/ui/checkbox";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-import { Slider } from "@/components/ui/slider";
 import { Separator } from "@/components/ui/separator";
+import { Slider } from "@/components/ui/slider";
 
 const amenities = [
   { id: "wifi", label: "WiFi", icon: Wifi },
@@ -50,22 +40,22 @@ interface SearchFiltersProps {
 export function SearchFilters({ searchParams }: SearchFiltersProps) {
   const router = useRouter();
   const currentSearchParams = useSearchParams();
-  
+
   const [capacity, setCapacity] = useState(searchParams.capacity || "all");
   const [date, setDate] = useState(searchParams.date || "");
   const [startTime, setStartTime] = useState(searchParams.startTime || "");
   const [endTime, setEndTime] = useState(searchParams.endTime || "");
   const [priceRange, setPriceRange] = useState([
     parseInt(searchParams.minPrice || "0"),
-    parseInt(searchParams.maxPrice || "500")
+    parseInt(searchParams.maxPrice || "500"),
   ]);
   const [selectedAmenities, setSelectedAmenities] = useState<string[]>(
-    searchParams.amenities ? searchParams.amenities.split(",") : []
+    searchParams.amenities ? searchParams.amenities.split(",") : [],
   );
 
   const updateSearchParams = (updates: Record<string, string | undefined>) => {
     const params = new URLSearchParams(currentSearchParams);
-    
+
     Object.entries(updates).forEach(([key, value]) => {
       if (value) {
         params.set(key, value);
@@ -73,7 +63,7 @@ export function SearchFilters({ searchParams }: SearchFiltersProps) {
         params.delete(key);
       }
     });
-    
+
     params.delete("page"); // Reset pagination
     router.push(`/search?${params.toString()}`);
   };
@@ -108,12 +98,12 @@ export function SearchFilters({ searchParams }: SearchFiltersProps) {
 
   const handleAmenityToggle = (amenityId: string) => {
     const newAmenities = selectedAmenities.includes(amenityId)
-      ? selectedAmenities.filter(id => id !== amenityId)
+      ? selectedAmenities.filter((id) => id !== amenityId)
       : [...selectedAmenities, amenityId];
-    
+
     setSelectedAmenities(newAmenities);
     updateSearchParams({
-      amenities: newAmenities.length > 0 ? newAmenities.join(",") : undefined
+      amenities: newAmenities.length > 0 ? newAmenities.join(",") : undefined,
     });
   };
 
@@ -133,7 +123,7 @@ export function SearchFilters({ searchParams }: SearchFiltersProps) {
       <div className="flex items-center justify-between">
         <h3 className="text-lg font-semibold">Filtres</h3>
         <Button variant="ghost" size="sm" onClick={clearAllFilters}>
-          <X className="h-4 w-4 mr-2" />
+          <X className="mr-2 h-4 w-4" />
           Effacer
         </Button>
       </div>
@@ -141,8 +131,8 @@ export function SearchFilters({ searchParams }: SearchFiltersProps) {
       {/* Capacity Filter */}
       <Card>
         <CardHeader className="pb-3">
-          <CardTitle className="text-sm flex items-center">
-            <Users className="h-4 w-4 mr-2" />
+          <CardTitle className="flex items-center text-sm">
+            <Users className="mr-2 h-4 w-4" />
             Capacité
           </CardTitle>
         </CardHeader>
@@ -166,26 +156,30 @@ export function SearchFilters({ searchParams }: SearchFiltersProps) {
       {/* Date & Time Filter */}
       <Card>
         <CardHeader className="pb-3">
-          <CardTitle className="text-sm flex items-center">
-            <Calendar className="h-4 w-4 mr-2" />
+          <CardTitle className="flex items-center text-sm">
+            <Calendar className="mr-2 h-4 w-4" />
             Date et Heure
           </CardTitle>
         </CardHeader>
         <CardContent className="space-y-4">
           <div>
-            <Label htmlFor="date" className="text-sm">Date</Label>
+            <Label htmlFor="date" className="text-sm">
+              Date
+            </Label>
             <Input
               id="date"
               type="date"
               value={date}
               onChange={(e) => handleDateChange(e.target.value)}
-              min={new Date().toISOString().split('T')[0]}
+              min={new Date().toISOString().split("T")[0]}
             />
           </div>
-          
+
           <div className="grid grid-cols-2 gap-2">
             <div>
-              <Label htmlFor="startTime" className="text-sm">De</Label>
+              <Label htmlFor="startTime" className="text-sm">
+                De
+              </Label>
               <Input
                 id="startTime"
                 type="time"
@@ -194,7 +188,9 @@ export function SearchFilters({ searchParams }: SearchFiltersProps) {
               />
             </div>
             <div>
-              <Label htmlFor="endTime" className="text-sm">À</Label>
+              <Label htmlFor="endTime" className="text-sm">
+                À
+              </Label>
               <Input
                 id="endTime"
                 type="time"
@@ -209,21 +205,14 @@ export function SearchFilters({ searchParams }: SearchFiltersProps) {
       {/* Price Range Filter */}
       <Card>
         <CardHeader className="pb-3">
-          <CardTitle className="text-sm flex items-center">
-            <DollarSign className="h-4 w-4 mr-2" />
+          <CardTitle className="flex items-center text-sm">
+            <DollarSign className="mr-2 h-4 w-4" />
             Prix par heure
           </CardTitle>
         </CardHeader>
         <CardContent className="space-y-4">
-          <Slider
-            value={priceRange}
-            onValueChange={handlePriceChange}
-            max={500}
-            min={0}
-            step={10}
-            className="w-full"
-          />
-          <div className="flex items-center justify-between text-sm text-muted-foreground">
+          <Slider value={priceRange} onValueChange={handlePriceChange} max={500} min={0} step={10} className="w-full" />
+          <div className="text-muted-foreground flex items-center justify-between text-sm">
             <span>{priceRange[0]} DT</span>
             <span>{priceRange[1] >= 500 ? "500+ DT" : `${priceRange[1]} DT`}</span>
           </div>
@@ -244,11 +233,8 @@ export function SearchFilters({ searchParams }: SearchFiltersProps) {
                   checked={selectedAmenities.includes(amenity.id)}
                   onCheckedChange={() => handleAmenityToggle(amenity.id)}
                 />
-                <Label
-                  htmlFor={amenity.id}
-                  className="text-sm flex items-center cursor-pointer"
-                >
-                  <amenity.icon className="h-4 w-4 mr-2 text-muted-foreground" />
+                <Label htmlFor={amenity.id} className="flex cursor-pointer items-center text-sm">
+                  <amenity.icon className="text-muted-foreground mr-2 h-4 w-4" />
                   {amenity.label}
                 </Label>
               </div>

@@ -1,14 +1,15 @@
 "use client";
 
 import { useState } from "react";
+
 import { Phone, Mail, Linkedin, MessageCircle, DollarSign } from "lucide-react";
 
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { Textarea } from "@/components/ui/textarea";
 import { Separator } from "@/components/ui/separator";
+import { Textarea } from "@/components/ui/textarea";
 
 interface SpecialistContactProps {
   specialist: {
@@ -36,16 +37,14 @@ export function SpecialistContact({ specialist }: SpecialistContactProps) {
       {/* Pricing */}
       <Card>
         <CardContent className="p-6 text-center">
-          <div className="flex items-center justify-center mb-2">
-            <DollarSign className="h-5 w-5 text-primary mr-2" />
+          <div className="mb-2 flex items-center justify-center">
+            <DollarSign className="text-primary mr-2 h-5 w-5" />
             <span className="text-2xl font-bold">{specialist.hourlyRate} DT</span>
             <span className="text-muted-foreground ml-1">/heure</span>
           </div>
-          <p className="text-sm text-muted-foreground mb-4">
-            Tarif de formation
-          </p>
+          <p className="text-muted-foreground mb-4 text-sm">Tarif de formation</p>
           <Button className="w-full" size="lg">
-            <MessageCircle className="h-4 w-4 mr-2" />
+            <MessageCircle className="mr-2 h-4 w-4" />
             Demander un devis
           </Button>
         </CardContent>
@@ -66,7 +65,7 @@ export function SpecialistContact({ specialist }: SpecialistContactProps) {
               onChange={(e) => setSubject(e.target.value)}
             />
           </div>
-          
+
           <div>
             <Label htmlFor="message">Message</Label>
             <Textarea
@@ -77,12 +76,8 @@ export function SpecialistContact({ specialist }: SpecialistContactProps) {
               rows={4}
             />
           </div>
-          
-          <Button 
-            onClick={handleContact} 
-            className="w-full"
-            disabled={!subject || !message}
-          >
+
+          <Button onClick={handleContact} className="w-full" disabled={!subject || !message}>
             Envoyer le message
           </Button>
         </CardContent>
@@ -95,39 +90,37 @@ export function SpecialistContact({ specialist }: SpecialistContactProps) {
         </CardHeader>
         <CardContent className="space-y-4">
           <div className="space-y-3">
-            <a 
+            <a
               href={`tel:${specialist.phone}`}
-              className="flex items-center space-x-3 text-sm hover:text-primary transition-colors"
+              className="hover:text-primary flex items-center space-x-3 text-sm transition-colors"
             >
               <Phone className="h-4 w-4" />
               <span>{specialist.phone}</span>
             </a>
-            
-            <a 
+
+            <a
               href={`mailto:${specialist.email}`}
-              className="flex items-center space-x-3 text-sm hover:text-primary transition-colors"
+              className="hover:text-primary flex items-center space-x-3 text-sm transition-colors"
             >
               <Mail className="h-4 w-4" />
               <span>{specialist.email}</span>
             </a>
-            
-            <a 
+
+            <a
               href={`https://${specialist.linkedin}`}
               target="_blank"
               rel="noopener noreferrer"
-              className="flex items-center space-x-3 text-sm hover:text-primary transition-colors"
+              className="hover:text-primary flex items-center space-x-3 text-sm transition-colors"
             >
               <Linkedin className="h-4 w-4" />
               <span>Profil LinkedIn</span>
             </a>
           </div>
-          
+
           <Separator />
-          
+
           <div className="text-center">
-            <p className="text-xs text-muted-foreground">
-              Temps de réponse moyen: 2-4 heures
-            </p>
+            <p className="text-muted-foreground text-xs">Temps de réponse moyen: 2-4 heures</p>
           </div>
         </CardContent>
       </Card>

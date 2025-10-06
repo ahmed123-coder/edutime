@@ -1,32 +1,68 @@
 "use client";
 
 import { useState } from "react";
+
 import { Filter, MapPin, DollarSign, Award, Clock } from "lucide-react";
 
+import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Checkbox } from "@/components/ui/checkbox";
-import { Slider } from "@/components/ui/slider";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-import { Button } from "@/components/ui/button";
 import { Separator } from "@/components/ui/separator";
+import { Slider } from "@/components/ui/slider";
 
 const locations = [
-  "Tunis", "Ariana", "Ben Arous", "Manouba", "Nabeul", "Zaghouan",
-  "Bizerte", "Béja", "Jendouba", "Kef", "Siliana", "Sousse",
-  "Monastir", "Mahdia", "Sfax", "Kairouan", "Kasserine", "Sidi Bouzid",
-  "Gabès", "Médenine", "Tataouine", "Gafsa", "Tozeur", "Kébili"
+  "Tunis",
+  "Ariana",
+  "Ben Arous",
+  "Manouba",
+  "Nabeul",
+  "Zaghouan",
+  "Bizerte",
+  "Béja",
+  "Jendouba",
+  "Kef",
+  "Siliana",
+  "Sousse",
+  "Monastir",
+  "Mahdia",
+  "Sfax",
+  "Kairouan",
+  "Kasserine",
+  "Sidi Bouzid",
+  "Gabès",
+  "Médenine",
+  "Tataouine",
+  "Gafsa",
+  "Tozeur",
+  "Kébili",
 ];
 
 const specialties = [
-  "Développement Web", "Marketing Digital", "Gestion de Projet",
-  "Design UX/UI", "Data Science", "Cybersécurité", "Intelligence Artificielle",
-  "Management", "Ressources Humaines", "Finance", "Communication",
-  "Langues", "Bureautique", "Entrepreneuriat"
+  "Développement Web",
+  "Marketing Digital",
+  "Gestion de Projet",
+  "Design UX/UI",
+  "Data Science",
+  "Cybersécurité",
+  "Intelligence Artificielle",
+  "Management",
+  "Ressources Humaines",
+  "Finance",
+  "Communication",
+  "Langues",
+  "Bureautique",
+  "Entrepreneuriat",
 ];
 
 const certifications = [
-  "Microsoft Certified", "Google Certified", "AWS Certified",
-  "Scrum Master", "PMP", "ITIL", "Cisco Certified"
+  "Microsoft Certified",
+  "Google Certified",
+  "AWS Certified",
+  "Scrum Master",
+  "PMP",
+  "ITIL",
+  "Cisco Certified",
 ];
 
 export function SpecialistsFilters() {
@@ -38,9 +74,9 @@ export function SpecialistsFilters() {
 
   const handleCertificationChange = (certId: string, checked: boolean) => {
     if (checked) {
-      setSelectedCertifications(prev => [...prev, certId]);
+      setSelectedCertifications((prev) => [...prev, certId]);
     } else {
-      setSelectedCertifications(prev => prev.filter(id => id !== certId));
+      setSelectedCertifications((prev) => prev.filter((id) => id !== certId));
     }
   };
 
@@ -56,15 +92,15 @@ export function SpecialistsFilters() {
     <Card>
       <CardHeader>
         <CardTitle className="flex items-center">
-          <Filter className="h-5 w-5 mr-2" />
+          <Filter className="mr-2 h-5 w-5" />
           Filtres
         </CardTitle>
       </CardHeader>
       <CardContent className="space-y-6">
         {/* Location */}
         <div>
-          <label className="text-sm font-medium mb-2 block">
-            <MapPin className="h-4 w-4 inline mr-1" />
+          <label className="mb-2 block text-sm font-medium">
+            <MapPin className="mr-1 inline h-4 w-4" />
             Localisation
           </label>
           <Select value={location} onValueChange={setLocation}>
@@ -85,9 +121,7 @@ export function SpecialistsFilters() {
 
         {/* Specialty */}
         <div>
-          <label className="text-sm font-medium mb-2 block">
-            Spécialité
-          </label>
+          <label className="mb-2 block text-sm font-medium">Spécialité</label>
           <Select value={specialty} onValueChange={setSpecialty}>
             <SelectTrigger>
               <SelectValue placeholder="Choisir une spécialité" />
@@ -106,8 +140,8 @@ export function SpecialistsFilters() {
 
         {/* Experience */}
         <div>
-          <label className="text-sm font-medium mb-2 block">
-            <Clock className="h-4 w-4 inline mr-1" />
+          <label className="mb-2 block text-sm font-medium">
+            <Clock className="mr-1 inline h-4 w-4" />
             Expérience
           </label>
           <Select value={experience} onValueChange={setExperience}>
@@ -127,20 +161,13 @@ export function SpecialistsFilters() {
 
         {/* Price Range */}
         <div>
-          <label className="text-sm font-medium mb-2 block">
-            <DollarSign className="h-4 w-4 inline mr-1" />
+          <label className="mb-2 block text-sm font-medium">
+            <DollarSign className="mr-1 inline h-4 w-4" />
             Tarif horaire
           </label>
           <div className="px-2">
-            <Slider
-              value={priceRange}
-              onValueChange={setPriceRange}
-              max={200}
-              min={0}
-              step={5}
-              className="mb-2"
-            />
-            <div className="flex justify-between text-sm text-muted-foreground">
+            <Slider value={priceRange} onValueChange={setPriceRange} max={200} min={0} step={5} className="mb-2" />
+            <div className="text-muted-foreground flex justify-between text-sm">
               <span>{priceRange[0]} DT</span>
               <span>{priceRange[1]} DT</span>
             </div>
@@ -151,8 +178,8 @@ export function SpecialistsFilters() {
 
         {/* Certifications */}
         <div>
-          <label className="text-sm font-medium mb-3 block">
-            <Award className="h-4 w-4 inline mr-1" />
+          <label className="mb-3 block text-sm font-medium">
+            <Award className="mr-1 inline h-4 w-4" />
             Certifications
           </label>
           <div className="space-y-3">
@@ -161,14 +188,9 @@ export function SpecialistsFilters() {
                 <Checkbox
                   id={cert}
                   checked={selectedCertifications.includes(cert)}
-                  onCheckedChange={(checked) => 
-                    handleCertificationChange(cert, checked as boolean)
-                  }
+                  onCheckedChange={(checked) => handleCertificationChange(cert, checked as boolean)}
                 />
-                <label 
-                  htmlFor={cert}
-                  className="text-sm cursor-pointer"
-                >
+                <label htmlFor={cert} className="cursor-pointer text-sm">
                   {cert}
                 </label>
               </div>

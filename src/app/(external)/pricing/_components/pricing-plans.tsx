@@ -1,11 +1,12 @@
 "use client";
 
 import { useState } from "react";
+
 import { Check, Star, Zap } from "lucide-react";
 
+import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader } from "@/components/ui/card";
-import { Badge } from "@/components/ui/badge";
 import { Switch } from "@/components/ui/switch";
 
 const plans = [
@@ -22,10 +23,7 @@ const plans = [
       "Paiements sécurisés",
       "Profil public",
     ],
-    limitations: [
-      "Pas d'analytics avancées",
-      "Pas de personnalisation",
-    ],
+    limitations: ["Pas d'analytics avancées", "Pas de personnalisation"],
     popular: false,
     color: "border-gray-200",
   },
@@ -78,93 +76,86 @@ export function PricingPlans() {
   const [isYearly, setIsYearly] = useState(false);
 
   return (
-    <section className="py-20 bg-background">
+    <section className="bg-background py-20">
       <div className="container mx-auto px-4">
         {/* Billing Toggle */}
-        <div className="text-center mb-12">
-          <div className="inline-flex items-center space-x-4 p-1 bg-muted rounded-lg">
-            <span className={`px-3 py-2 rounded-md transition-colors ${!isYearly ? 'bg-background shadow-sm' : ''}`}>
+        <div className="mb-12 text-center">
+          <div className="bg-muted inline-flex items-center space-x-4 rounded-lg p-1">
+            <span className={`rounded-md px-3 py-2 transition-colors ${!isYearly ? "bg-background shadow-sm" : ""}`}>
               Mensuel
             </span>
-            <Switch
-              checked={isYearly}
-              onCheckedChange={setIsYearly}
-            />
-            <span className={`px-3 py-2 rounded-md transition-colors ${isYearly ? 'bg-background shadow-sm' : ''}`}>
+            <Switch checked={isYearly} onCheckedChange={setIsYearly} />
+            <span className={`rounded-md px-3 py-2 transition-colors ${isYearly ? "bg-background shadow-sm" : ""}`}>
               Annuel
-              <Badge variant="secondary" className="ml-2">-17%</Badge>
+              <Badge variant="secondary" className="ml-2">
+                -17%
+              </Badge>
             </span>
           </div>
         </div>
 
         {/* Plans Grid */}
-        <div className="grid lg:grid-cols-3 gap-8 max-w-6xl mx-auto">
+        <div className="mx-auto grid max-w-6xl gap-8 lg:grid-cols-3">
           {plans.map((plan, index) => (
-            <Card key={index} className={`relative ${plan.color} ${plan.popular ? 'scale-105 shadow-lg' : ''}`}>
+            <Card key={index} className={`relative ${plan.color} ${plan.popular ? "scale-105 shadow-lg" : ""}`}>
               {plan.popular && (
-                <div className="absolute -top-4 left-1/2 transform -translate-x-1/2">
+                <div className="absolute -top-4 left-1/2 -translate-x-1/2 transform">
                   <Badge className="bg-primary text-primary-foreground px-4 py-1">
-                    <Star className="h-3 w-3 mr-1" />
+                    <Star className="mr-1 h-3 w-3" />
                     Plus populaire
                   </Badge>
                 </div>
               )}
-              
-              <CardHeader className="text-center pb-8">
+
+              <CardHeader className="pb-8 text-center">
                 <h3 className="text-2xl font-bold">{plan.name}</h3>
                 <p className="text-muted-foreground">{plan.description}</p>
-                
+
                 <div className="mt-4">
-                  <div className="text-4xl font-bold">
-                    {isYearly ? plan.yearlyPrice : plan.monthlyPrice} DT
-                  </div>
-                  <div className="text-muted-foreground">
-                    /{isYearly ? 'an' : 'mois'}
-                  </div>
+                  <div className="text-4xl font-bold">{isYearly ? plan.yearlyPrice : plan.monthlyPrice} DT</div>
+                  <div className="text-muted-foreground">/{isYearly ? "an" : "mois"}</div>
                   {isYearly && (
-                    <div className="text-sm text-green-600 mt-1">
-                      Économisez {(plan.monthlyPrice * 12 - plan.yearlyPrice)} DT/an
+                    <div className="mt-1 text-sm text-green-600">
+                      Économisez {plan.monthlyPrice * 12 - plan.yearlyPrice} DT/an
                     </div>
                   )}
                 </div>
               </CardHeader>
-              
+
               <CardContent className="space-y-6">
                 {/* Features */}
                 <div className="space-y-3">
                   {plan.features.map((feature, featureIndex) => (
                     <div key={featureIndex} className="flex items-center space-x-3">
-                      <Check className="h-4 w-4 text-green-500 flex-shrink-0" />
+                      <Check className="h-4 w-4 flex-shrink-0 text-green-500" />
                       <span className="text-sm">{feature}</span>
                     </div>
                   ))}
                 </div>
-                
+
                 {/* Limitations */}
                 {plan.limitations.length > 0 && (
-                  <div className="space-y-2 pt-4 border-t">
-                    <div className="text-sm font-medium text-muted-foreground">Limitations :</div>
+                  <div className="space-y-2 border-t pt-4">
+                    <div className="text-muted-foreground text-sm font-medium">Limitations :</div>
                     {plan.limitations.map((limitation, limitIndex) => (
-                      <div key={limitIndex} className="text-sm text-muted-foreground">
+                      <div key={limitIndex} className="text-muted-foreground text-sm">
                         • {limitation}
                       </div>
                     ))}
                   </div>
                 )}
-                
+
                 {/* CTA Button */}
-                <Button 
-                  className={`w-full ${plan.popular ? 'bg-primary' : ''}`}
-                  variant={plan.popular ? 'default' : 'outline'}
+                <Button
+                  className={`w-full ${plan.popular ? "bg-primary" : ""}`}
+                  variant={plan.popular ? "default" : "outline"}
                   size="lg"
                 >
-                  {plan.popular && <Zap className="h-4 w-4 mr-2" />}
+                  {plan.popular && <Zap className="mr-2 h-4 w-4" />}
                   Commencer l'essai gratuit
                 </Button>
-                
-                <p className="text-xs text-center text-muted-foreground">
-                  30 jours gratuits • Sans engagement
-                </p>
+
+                <p className="text-muted-foreground text-center text-xs">30 jours gratuits • Sans engagement</p>
               </CardContent>
             </Card>
           ))}
@@ -172,12 +163,12 @@ export function PricingPlans() {
 
         {/* Enterprise CTA */}
         <div className="mt-16 text-center">
-          <Card className="max-w-2xl mx-auto bg-gradient-to-br from-primary/5 to-secondary/5 border-0">
+          <Card className="from-primary/5 to-secondary/5 mx-auto max-w-2xl border-0 bg-gradient-to-br">
             <CardContent className="p-8">
-              <h3 className="text-2xl font-bold mb-4">Besoin d'une solution sur mesure ?</h3>
+              <h3 className="mb-4 text-2xl font-bold">Besoin d'une solution sur mesure ?</h3>
               <p className="text-muted-foreground mb-6">
-                Pour les grandes organisations avec des besoins spécifiques, 
-                nous proposons des solutions personnalisées.
+                Pour les grandes organisations avec des besoins spécifiques, nous proposons des solutions
+                personnalisées.
               </p>
               <Button variant="outline" size="lg">
                 Contactez notre équipe commerciale

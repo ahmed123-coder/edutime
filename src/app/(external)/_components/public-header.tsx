@@ -1,13 +1,15 @@
 "use client";
 
 import { useState } from "react";
+
 import Link from "next/link";
 import { usePathname } from "next/navigation";
+
 import { Menu, X, Search, User, Phone, Mail } from "lucide-react";
-import { IMAGES } from "@/lib/images";
 
 import { Button } from "@/components/ui/button";
 import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet";
+import { IMAGES } from "@/lib/images";
 import { cn } from "@/lib/utils";
 
 const navigation = [
@@ -26,11 +28,11 @@ export function PublicHeader() {
   const pathname = usePathname();
 
   return (
-    <header className="sticky top-0 z-50 w-full border-b bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60">
+    <header className="bg-background/95 supports-[backdrop-filter]:bg-background/60 sticky top-0 z-50 w-full border-b backdrop-blur">
       {/* Top bar with contact info */}
-      <div className="hidden md:block bg-muted/50 border-b">
+      <div className="bg-muted/50 hidden border-b md:block">
         <div className="container mx-auto px-4 py-2">
-          <div className="flex justify-between items-center text-sm text-muted-foreground">
+          <div className="text-muted-foreground flex items-center justify-between text-sm">
             <div className="flex items-center space-x-6">
               <div className="flex items-center space-x-2">
                 <Phone className="h-4 w-4" />
@@ -58,24 +60,18 @@ export function PublicHeader() {
         <div className="flex h-16 items-center justify-between">
           {/* Logo */}
           <Link href="/" className="flex items-center space-x-2">
-            <img
-              src={IMAGES.LOGO_RECTANGLE}
-              alt="SaaS Formation"
-              className="h-8 w-auto"
-            />
+            <img src={IMAGES.LOGO_RECTANGLE} alt="SaaS Formation" className="h-8 w-auto" />
           </Link>
 
           {/* Desktop Navigation */}
-          <nav className="hidden md:flex items-center space-x-6">
+          <nav className="hidden items-center space-x-6 md:flex">
             {navigation.map((item) => (
               <Link
                 key={item.name}
                 href={item.href}
                 className={cn(
-                  "text-sm font-medium transition-colors hover:text-primary",
-                  pathname === item.href
-                    ? "text-primary"
-                    : "text-muted-foreground"
+                  "hover:text-primary text-sm font-medium transition-colors",
+                  pathname === item.href ? "text-primary" : "text-muted-foreground",
                 )}
               >
                 {item.name}
@@ -89,11 +85,11 @@ export function PublicHeader() {
               <Search className="h-4 w-4" />
               <span className="sr-only">Rechercher</span>
             </Button>
-            
-            <div className="hidden md:flex items-center space-x-2">
+
+            <div className="hidden items-center space-x-2 md:flex">
               <Button variant="ghost" asChild>
                 <Link href="/auth/login">
-                  <User className="h-4 w-4 mr-2" />
+                  <User className="mr-2 h-4 w-4" />
                   Connexion
                 </Link>
               </Button>
@@ -111,27 +107,25 @@ export function PublicHeader() {
                 </Button>
               </SheetTrigger>
               <SheetContent side="right" className="w-[300px] sm:w-[400px]">
-                <div className="flex flex-col space-y-4 mt-6">
+                <div className="mt-6 flex flex-col space-y-4">
                   {navigation.map((item) => (
                     <Link
                       key={item.name}
                       href={item.href}
                       onClick={() => setIsOpen(false)}
                       className={cn(
-                        "text-lg font-medium transition-colors hover:text-primary",
-                        pathname === item.href
-                          ? "text-primary"
-                          : "text-muted-foreground"
+                        "hover:text-primary text-lg font-medium transition-colors",
+                        pathname === item.href ? "text-primary" : "text-muted-foreground",
                       )}
                     >
                       {item.name}
                     </Link>
                   ))}
-                  
-                  <div className="pt-4 border-t space-y-2">
+
+                  <div className="space-y-2 border-t pt-4">
                     <Button variant="ghost" className="w-full justify-start" asChild>
                       <Link href="/auth/login" onClick={() => setIsOpen(false)}>
-                        <User className="h-4 w-4 mr-2" />
+                        <User className="mr-2 h-4 w-4" />
                         Connexion
                       </Link>
                     </Button>

@@ -1,39 +1,29 @@
-'use client';
+"use client";
 
-import { useState, useEffect } from 'react';
-import { useSearchParams, useRouter } from 'next/navigation';
-import { Plus, Search, Filter, MoreHorizontal, Edit, Trash2, Eye } from 'lucide-react';
+import { useState, useEffect } from "react";
 
-import { Button } from '@/components/ui/button';
-import { Input } from '@/components/ui/input';
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
-import { Badge } from '@/components/ui/badge';
-import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
-import {
-  Table,
-  TableBody,
-  TableCell,
-  TableHead,
-  TableHeader,
-  TableRow,
-} from '@/components/ui/table';
+import { useSearchParams, useRouter } from "next/navigation";
+
+import { Plus, Search, Filter, MoreHorizontal, Edit, Trash2, Eye } from "lucide-react";
+import { toast } from "sonner";
+
+import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
+import { Badge } from "@/components/ui/badge";
+import { Button } from "@/components/ui/button";
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import {
   DropdownMenu,
   DropdownMenuContent,
   DropdownMenuItem,
   DropdownMenuTrigger,
-} from '@/components/ui/dropdown-menu';
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from '@/components/ui/select';
-import { toast } from 'sonner';
-import { getInitials } from '@/lib/utils';
-import { CreateUserModal } from './create-user-modal';
-import { EditUserModal } from './edit-user-modal';
+} from "@/components/ui/dropdown-menu";
+import { Input } from "@/components/ui/input";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
+import { getInitials } from "@/lib/utils";
+
+import { CreateUserModal } from "./create-user-modal";
+import { EditUserModal } from "./edit-user-modal";
 
 interface User {
   id: string;
@@ -72,11 +62,11 @@ interface UsersResponse {
 }
 
 const roleColors = {
-  ADMIN: 'bg-red-100 text-red-800',
-  CENTER_OWNER: 'bg-blue-100 text-blue-800',
-  TRAINING_MANAGER: 'bg-purple-100 text-purple-800',
-  TEACHER: 'bg-green-100 text-green-800',
-  PARTNER: 'bg-orange-100 text-orange-800',
+  ADMIN: "bg-red-100 text-red-800",
+  CENTER_OWNER: "bg-blue-100 text-blue-800",
+  TRAINING_MANAGER: "bg-purple-100 text-purple-800",
+  TEACHER: "bg-green-100 text-green-800",
+  PARTNER: "bg-orange-100 text-orange-800",
 };
 
 export function UsersManagement() {
@@ -84,10 +74,10 @@ export function UsersManagement() {
   const router = useRouter();
   const [users, setUsers] = useState<User[]>([]);
   const [loading, setLoading] = useState(true);
-  const [search, setSearch] = useState(searchParams.get('search') || '');
-  const [roleFilter, setRoleFilter] = useState(searchParams.get('role') || '');
-  const [verifiedFilter, setVerifiedFilter] = useState(searchParams.get('verified') || '');
-  const [page, setPage] = useState(parseInt(searchParams.get('page') || '1'));
+  const [search, setSearch] = useState(searchParams.get("search") || "");
+  const [roleFilter, setRoleFilter] = useState(searchParams.get("role") || "");
+  const [verifiedFilter, setVerifiedFilter] = useState(searchParams.get("verified") || "");
+  const [page, setPage] = useState(parseInt(searchParams.get("page") || "1"));
   const [createModalOpen, setCreateModalOpen] = useState(false);
   const [editModalOpen, setEditModalOpen] = useState(false);
   const [editUserId, setEditUserId] = useState<string | null>(null);
@@ -103,7 +93,7 @@ export function UsersManagement() {
       setLoading(true);
       const params = new URLSearchParams({
         page: page.toString(),
-        limit: '10',
+        limit: "10",
         ...(search && { search }),
         ...(roleFilter && { role: roleFilter }),
         ...(verifiedFilter && { verified: verifiedFilter }),
@@ -111,15 +101,15 @@ export function UsersManagement() {
 
       const response = await fetch(`/api/users?${params}`);
       if (!response.ok) {
-        throw new Error('Failed to fetch users');
+        throw new Error("Failed to fetch users");
       }
 
       const data: UsersResponse = await response.json();
       setUsers(data.users);
       setPagination(data.pagination);
     } catch (error) {
-      console.error('Error fetching users:', error);
-      toast.error('Failed to fetch users');
+      console.error("Error fetching users:", error);
+      toast.error("Failed to fetch users");
     } finally {
       setLoading(false);
     }
@@ -127,10 +117,10 @@ export function UsersManagement() {
 
   // Update state when URL parameters change (for sidebar navigation)
   useEffect(() => {
-    const urlRole = searchParams.get('role') || '';
-    const urlSearch = searchParams.get('search') || '';
-    const urlVerified = searchParams.get('verified') || '';
-    const urlPage = parseInt(searchParams.get('page') || '1');
+    const urlRole = searchParams.get("role") || "";
+    const urlSearch = searchParams.get("search") || "";
+    const urlVerified = searchParams.get("verified") || "";
+    const urlPage = parseInt(searchParams.get("page") || "1");
 
     setRoleFilter(urlRole);
     setSearch(urlSearch);
@@ -147,36 +137,36 @@ export function UsersManagement() {
   useEffect(() => {
     const params = new URLSearchParams();
 
-    if (page > 1) params.set('page', page.toString());
-    if (search) params.set('search', search);
-    if (roleFilter) params.set('role', roleFilter);
-    if (verifiedFilter) params.set('verified', verifiedFilter);
+    if (page > 1) params.set("page", page.toString());
+    if (search) params.set("search", search);
+    if (roleFilter) params.set("role", roleFilter);
+    if (verifiedFilter) params.set("verified", verifiedFilter);
 
     // Update URL without triggering navigation
-    const newUrl = `/dashboard/admin/users${params.toString() ? `?${params.toString()}` : ''}`;
-    window.history.replaceState({}, '', newUrl);
+    const newUrl = `/dashboard/admin/users${params.toString() ? `?${params.toString()}` : ""}`;
+    window.history.replaceState({}, "", newUrl);
   }, [page, search, roleFilter, verifiedFilter]);
 
   const handleDeleteUser = async (userId: string) => {
-    if (!confirm('Are you sure you want to delete this user? This action cannot be undone.')) {
+    if (!confirm("Are you sure you want to delete this user? This action cannot be undone.")) {
       return;
     }
 
     try {
       const response = await fetch(`/api/users/${userId}`, {
-        method: 'DELETE',
+        method: "DELETE",
       });
 
       if (!response.ok) {
         const error = await response.json();
-        throw new Error(error.error || 'Failed to delete user');
+        throw new Error(error.error || "Failed to delete user");
       }
 
-      toast.success('User deleted successfully');
+      toast.success("User deleted successfully");
       fetchUsers(); // Refresh the list
     } catch (error) {
-      console.error('Error deleting user:', error);
-      toast.error(error instanceof Error ? error.message : 'Failed to delete user');
+      console.error("Error deleting user:", error);
+      toast.error(error instanceof Error ? error.message : "Failed to delete user");
     }
   };
 
@@ -186,10 +176,10 @@ export function UsersManagement() {
   };
 
   const formatDate = (dateString: string) => {
-    return new Date(dateString).toLocaleDateString('en-US', {
-      year: 'numeric',
-      month: 'short',
-      day: 'numeric',
+    return new Date(dateString).toLocaleDateString("en-US", {
+      year: "numeric",
+      month: "short",
+      day: "numeric",
     });
   };
 
@@ -199,12 +189,10 @@ export function UsersManagement() {
       <div className="flex items-center justify-between">
         <div>
           <h1 className="text-3xl font-bold tracking-tight">Users Management</h1>
-          <p className="text-muted-foreground">
-            Manage platform users, roles, and permissions
-          </p>
+          <p className="text-muted-foreground">Manage platform users, roles, and permissions</p>
         </div>
         <Button onClick={() => setCreateModalOpen(true)}>
-          <Plus className="h-4 w-4 mr-2" />
+          <Plus className="mr-2 h-4 w-4" />
           Add User
         </Button>
       </div>
@@ -226,8 +214,8 @@ export function UsersManagement() {
               />
             </div>
             <Select
-              value={roleFilter || 'all-roles'}
-              onValueChange={(value) => setRoleFilter(value === 'all-roles' ? '' : value)}
+              value={roleFilter || "all-roles"}
+              onValueChange={(value) => setRoleFilter(value === "all-roles" ? "" : value)}
             >
               <SelectTrigger className="w-[180px]">
                 <SelectValue placeholder="Filter by role" />
@@ -242,8 +230,8 @@ export function UsersManagement() {
               </SelectContent>
             </Select>
             <Select
-              value={verifiedFilter || 'all-statuses'}
-              onValueChange={(value) => setVerifiedFilter(value === 'all-statuses' ? '' : value)}
+              value={verifiedFilter || "all-statuses"}
+              onValueChange={(value) => setVerifiedFilter(value === "all-statuses" ? "" : value)}
             >
               <SelectTrigger className="w-[180px]">
                 <SelectValue placeholder="Filter by status" />
@@ -268,9 +256,9 @@ export function UsersManagement() {
                 Showing {users.length} of {pagination.total} users
                 {(roleFilter || search || verifiedFilter) && (
                   <span className="ml-2 text-xs">
-                    • Filtered: {roleFilter && `Role: ${roleFilter.replace('_', ' ')}`}
+                    • Filtered: {roleFilter && `Role: ${roleFilter.replace("_", " ")}`}
                     {search && ` • Search: ${search}`}
-                    {verifiedFilter && ` • Status: ${verifiedFilter === 'true' ? 'Verified' : 'Unverified'}`}
+                    {verifiedFilter && ` • Status: ${verifiedFilter === "true" ? "Verified" : "Unverified"}`}
                   </span>
                 )}
               </CardDescription>
@@ -280,9 +268,9 @@ export function UsersManagement() {
                 variant="outline"
                 size="sm"
                 onClick={() => {
-                  setSearch('');
-                  setRoleFilter('');
-                  setVerifiedFilter('');
+                  setSearch("");
+                  setRoleFilter("");
+                  setVerifiedFilter("");
                   setPage(1);
                 }}
               >
@@ -307,13 +295,13 @@ export function UsersManagement() {
             <TableBody>
               {loading ? (
                 <TableRow>
-                  <TableCell colSpan={7} className="text-center py-8">
+                  <TableCell colSpan={7} className="py-8 text-center">
                     Loading users...
                   </TableCell>
                 </TableRow>
               ) : users.length === 0 ? (
                 <TableRow>
-                  <TableCell colSpan={7} className="text-center py-8">
+                  <TableCell colSpan={7} className="py-8 text-center">
                     No users found
                   </TableCell>
                 </TableRow>
@@ -328,18 +316,18 @@ export function UsersManagement() {
                         </Avatar>
                         <div>
                           <div className="font-medium">{user.name}</div>
-                          <div className="text-sm text-muted-foreground">{user.email}</div>
+                          <div className="text-muted-foreground text-sm">{user.email}</div>
                         </div>
                       </div>
                     </TableCell>
                     <TableCell>
                       <Badge className={roleColors[user.role as keyof typeof roleColors]}>
-                        {user.role.replace('_', ' ')}
+                        {user.role.replace("_", " ")}
                       </Badge>
                     </TableCell>
                     <TableCell>
-                      <Badge variant={user.verified ? 'default' : 'secondary'}>
-                        {user.verified ? 'Verified' : 'Unverified'}
+                      <Badge variant={user.verified ? "default" : "secondary"}>
+                        {user.verified ? "Verified" : "Unverified"}
                       </Badge>
                     </TableCell>
                     <TableCell>
@@ -348,7 +336,7 @@ export function UsersManagement() {
                           <Badge className="bg-blue-100 text-blue-800">
                             {user.organizations[0].organization.subscriptions[0].package.plan}
                           </Badge>
-                          <div className="text-xs text-muted-foreground mt-1">
+                          <div className="text-muted-foreground mt-1 text-xs">
                             Until {formatDate(user.organizations[0].organization.subscriptions[0].endDate)}
                           </div>
                         </div>
@@ -356,12 +344,8 @@ export function UsersManagement() {
                         <span className="text-muted-foreground">-</span>
                       )}
                     </TableCell>
-                    <TableCell>
-                      {user.speciality || '-'}
-                    </TableCell>
-                    <TableCell>
-                      {formatDate(user.createdAt)}
-                    </TableCell>
+                    <TableCell>{user.speciality || "-"}</TableCell>
+                    <TableCell>{formatDate(user.createdAt)}</TableCell>
                     <TableCell className="text-right">
                       <DropdownMenu>
                         <DropdownMenuTrigger asChild>
@@ -371,14 +355,11 @@ export function UsersManagement() {
                         </DropdownMenuTrigger>
                         <DropdownMenuContent align="end">
                           <DropdownMenuItem onClick={() => handleEditUser(user.id)}>
-                            <Edit className="h-4 w-4 mr-2" />
+                            <Edit className="mr-2 h-4 w-4" />
                             Edit User
                           </DropdownMenuItem>
-                          <DropdownMenuItem
-                            onClick={() => handleDeleteUser(user.id)}
-                            className="text-red-600"
-                          >
-                            <Trash2 className="h-4 w-4 mr-2" />
+                          <DropdownMenuItem onClick={() => handleDeleteUser(user.id)} className="text-red-600">
+                            <Trash2 className="mr-2 h-4 w-4" />
                             Delete User
                           </DropdownMenuItem>
                         </DropdownMenuContent>
@@ -392,17 +373,12 @@ export function UsersManagement() {
 
           {/* Pagination */}
           {pagination.pages > 1 && (
-            <div className="flex items-center justify-between mt-4">
-              <div className="text-sm text-muted-foreground">
+            <div className="mt-4 flex items-center justify-between">
+              <div className="text-muted-foreground text-sm">
                 Page {pagination.page} of {pagination.pages}
               </div>
               <div className="flex gap-2">
-                <Button
-                  variant="outline"
-                  size="sm"
-                  onClick={() => setPage(page - 1)}
-                  disabled={page === 1}
-                >
+                <Button variant="outline" size="sm" onClick={() => setPage(page - 1)} disabled={page === 1}>
                   Previous
                 </Button>
                 <Button
@@ -420,11 +396,7 @@ export function UsersManagement() {
       </Card>
 
       {/* Create User Modal */}
-      <CreateUserModal
-        open={createModalOpen}
-        onOpenChange={setCreateModalOpen}
-        onUserCreated={fetchUsers}
-      />
+      <CreateUserModal open={createModalOpen} onOpenChange={setCreateModalOpen} onUserCreated={fetchUsers} />
 
       {/* Edit User Modal */}
       <EditUserModal

@@ -1,20 +1,41 @@
 "use client";
 
 import { useState } from "react";
+
 import { Filter, MapPin, DollarSign, Users, Wifi, Car, Coffee } from "lucide-react";
 
+import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Checkbox } from "@/components/ui/checkbox";
-import { Slider } from "@/components/ui/slider";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-import { Button } from "@/components/ui/button";
 import { Separator } from "@/components/ui/separator";
+import { Slider } from "@/components/ui/slider";
 
 const locations = [
-  "Tunis", "Ariana", "Ben Arous", "Manouba", "Nabeul", "Zaghouan",
-  "Bizerte", "Béja", "Jendouba", "Kef", "Siliana", "Sousse",
-  "Monastir", "Mahdia", "Sfax", "Kairouan", "Kasserine", "Sidi Bouzid",
-  "Gabès", "Médenine", "Tataouine", "Gafsa", "Tozeur", "Kébili"
+  "Tunis",
+  "Ariana",
+  "Ben Arous",
+  "Manouba",
+  "Nabeul",
+  "Zaghouan",
+  "Bizerte",
+  "Béja",
+  "Jendouba",
+  "Kef",
+  "Siliana",
+  "Sousse",
+  "Monastir",
+  "Mahdia",
+  "Sfax",
+  "Kairouan",
+  "Kasserine",
+  "Sidi Bouzid",
+  "Gabès",
+  "Médenine",
+  "Tataouine",
+  "Gafsa",
+  "Tozeur",
+  "Kébili",
 ];
 
 const amenities = [
@@ -33,9 +54,9 @@ export function CentersFilters() {
 
   const handleAmenityChange = (amenityId: string, checked: boolean) => {
     if (checked) {
-      setSelectedAmenities(prev => [...prev, amenityId]);
+      setSelectedAmenities((prev) => [...prev, amenityId]);
     } else {
-      setSelectedAmenities(prev => prev.filter(id => id !== amenityId));
+      setSelectedAmenities((prev) => prev.filter((id) => id !== amenityId));
     }
   };
 
@@ -49,15 +70,15 @@ export function CentersFilters() {
     <Card>
       <CardHeader>
         <CardTitle className="flex items-center">
-          <Filter className="h-5 w-5 mr-2" />
+          <Filter className="mr-2 h-5 w-5" />
           Filtres
         </CardTitle>
       </CardHeader>
       <CardContent className="space-y-6">
         {/* Location */}
         <div>
-          <label className="text-sm font-medium mb-2 block">
-            <MapPin className="h-4 w-4 inline mr-1" />
+          <label className="mb-2 block text-sm font-medium">
+            <MapPin className="mr-1 inline h-4 w-4" />
             Localisation
           </label>
           <Select value={location} onValueChange={setLocation}>
@@ -78,20 +99,13 @@ export function CentersFilters() {
 
         {/* Price Range */}
         <div>
-          <label className="text-sm font-medium mb-2 block">
-            <DollarSign className="h-4 w-4 inline mr-1" />
+          <label className="mb-2 block text-sm font-medium">
+            <DollarSign className="mr-1 inline h-4 w-4" />
             Prix par heure
           </label>
           <div className="px-2">
-            <Slider
-              value={priceRange}
-              onValueChange={setPriceRange}
-              max={500}
-              min={0}
-              step={10}
-              className="mb-2"
-            />
-            <div className="flex justify-between text-sm text-muted-foreground">
+            <Slider value={priceRange} onValueChange={setPriceRange} max={500} min={0} step={10} className="mb-2" />
+            <div className="text-muted-foreground flex justify-between text-sm">
               <span>{priceRange[0]} DT</span>
               <span>{priceRange[1]} DT</span>
             </div>
@@ -102,23 +116,16 @@ export function CentersFilters() {
 
         {/* Amenities */}
         <div>
-          <label className="text-sm font-medium mb-3 block">
-            Équipements
-          </label>
+          <label className="mb-3 block text-sm font-medium">Équipements</label>
           <div className="space-y-3">
             {amenities.map((amenity) => (
               <div key={amenity.id} className="flex items-center space-x-2">
                 <Checkbox
                   id={amenity.id}
                   checked={selectedAmenities.includes(amenity.id)}
-                  onCheckedChange={(checked) => 
-                    handleAmenityChange(amenity.id, checked as boolean)
-                  }
+                  onCheckedChange={(checked) => handleAmenityChange(amenity.id, checked as boolean)}
                 />
-                <label 
-                  htmlFor={amenity.id}
-                  className="text-sm flex items-center space-x-2 cursor-pointer"
-                >
+                <label htmlFor={amenity.id} className="flex cursor-pointer items-center space-x-2 text-sm">
                   <amenity.icon className="h-4 w-4" />
                   <span>{amenity.label}</span>
                 </label>

@@ -1,7 +1,7 @@
 import { Award, Globe, Languages } from "lucide-react";
 
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 
 interface SpecialistProfileProps {
   specialist: {
@@ -20,9 +20,7 @@ export function SpecialistProfile({ specialist }: SpecialistProfileProps) {
           <CardTitle>À propos</CardTitle>
         </CardHeader>
         <CardContent>
-          <p className="text-muted-foreground leading-relaxed">
-            {specialist.bio}
-          </p>
+          <p className="text-muted-foreground leading-relaxed">{specialist.bio}</p>
         </CardContent>
       </Card>
 
@@ -30,7 +28,7 @@ export function SpecialistProfile({ specialist }: SpecialistProfileProps) {
       <Card>
         <CardHeader>
           <CardTitle className="flex items-center">
-            <Award className="h-5 w-5 mr-2" />
+            <Award className="mr-2 h-5 w-5" />
             Certifications
           </CardTitle>
         </CardHeader>
@@ -49,7 +47,7 @@ export function SpecialistProfile({ specialist }: SpecialistProfileProps) {
       <Card>
         <CardHeader>
           <CardTitle className="flex items-center">
-            <Languages className="h-5 w-5 mr-2" />
+            <Languages className="mr-2 h-5 w-5" />
             Langues
           </CardTitle>
         </CardHeader>

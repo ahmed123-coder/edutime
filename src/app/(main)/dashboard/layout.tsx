@@ -1,13 +1,15 @@
 import { ReactNode } from "react";
-import { redirect } from "next/navigation";
 
 import { cookies } from "next/headers";
+import { redirect } from "next/navigation";
+
 import { getServerSession } from "next-auth/next";
-import { authOptions } from "@/lib/auth";
 
 import { AppSidebar } from "@/app/(main)/dashboard/_components/sidebar/app-sidebar";
+import { SubscriptionAlert } from "@/components/subscription-alert";
 import { Separator } from "@/components/ui/separator";
 import { SidebarInset, SidebarProvider, SidebarTrigger } from "@/components/ui/sidebar";
+import { authOptions } from "@/lib/auth";
 import { cn } from "@/lib/utils";
 import { getPreference } from "@/server/server-actions";
 import {
@@ -24,18 +26,17 @@ import {
 import { LayoutControls } from "./_components/sidebar/layout-controls";
 import { SearchDialog } from "./_components/sidebar/search-dialog";
 import { ThemeSwitcher } from "./_components/sidebar/theme-switcher";
-import { SubscriptionAlert } from "@/components/subscription-alert";
 
 export default async function Layout({ children }: Readonly<{ children: ReactNode }>) {
   // Check authentication
   const session = await getServerSession(authOptions);
 
   if (!session) {
-    redirect('/auth/login');
+    redirect("/auth/login");
   }
 
   if (!session.user.verified) {
-    redirect('/auth/verify-email');
+    redirect("/auth/verify-email");
   }
 
   const cookieStore = await cookies();

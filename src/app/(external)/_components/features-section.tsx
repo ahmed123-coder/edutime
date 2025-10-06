@@ -1,14 +1,4 @@
-import { 
-  Search, 
-  Calendar, 
-  CreditCard, 
-  Shield, 
-  Users, 
-  MapPin,
-  Clock,
-  Star,
-  Headphones
-} from "lucide-react";
+import { Search, Calendar, CreditCard, Shield, Users, MapPin, Clock, Star, Headphones } from "lucide-react";
 
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 
@@ -16,7 +6,8 @@ const features = [
   {
     icon: Search,
     title: "Recherche intelligente",
-    description: "Trouvez rapidement l'espace parfait grâce à nos filtres avancés et notre algorithme de recommandation.",
+    description:
+      "Trouvez rapidement l'espace parfait grâce à nos filtres avancés et notre algorithme de recommandation.",
     color: "text-blue-600",
     bgColor: "bg-blue-50",
   },
@@ -80,41 +71,37 @@ const features = [
 
 export function FeaturesSection() {
   return (
-    <section className="py-20 bg-muted/30">
+    <section className="bg-muted/30 py-20">
       <div className="container mx-auto px-4">
         {/* Section Header */}
-        <div className="text-center mb-16">
-          <h2 className="text-3xl lg:text-4xl font-bold mb-4">
-            Pourquoi choisir notre plateforme ?
-          </h2>
-          <p className="text-lg text-muted-foreground max-w-2xl mx-auto">
-            Découvrez les fonctionnalités qui font de nous la solution de référence 
-            pour la gestion d'espaces de formation en Tunisie.
+        <div className="mb-16 text-center">
+          <h2 className="mb-4 text-3xl font-bold lg:text-4xl">Pourquoi choisir notre plateforme ?</h2>
+          <p className="text-muted-foreground mx-auto max-w-2xl text-lg">
+            Découvrez les fonctionnalités qui font de nous la solution de référence pour la gestion d'espaces de
+            formation en Tunisie.
           </p>
         </div>
 
         {/* Features Grid */}
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+        <div className="grid grid-cols-1 gap-8 md:grid-cols-2 lg:grid-cols-3">
           {features.map((feature, index) => (
-            <Card key={index} className="border-0 shadow-md hover:shadow-lg transition-shadow duration-300">
+            <Card key={index} className="border-0 shadow-md transition-shadow duration-300 hover:shadow-lg">
               <CardHeader className="pb-4">
-                <div className={`w-12 h-12 rounded-lg ${feature.bgColor} flex items-center justify-center mb-4`}>
+                <div className={`h-12 w-12 rounded-lg ${feature.bgColor} mb-4 flex items-center justify-center`}>
                   <feature.icon className={`h-6 w-6 ${feature.color}`} />
                 </div>
                 <CardTitle className="text-xl">{feature.title}</CardTitle>
               </CardHeader>
               <CardContent>
-                <p className="text-muted-foreground leading-relaxed">
-                  {feature.description}
-                </p>
+                <p className="text-muted-foreground leading-relaxed">{feature.description}</p>
               </CardContent>
             </Card>
           ))}
         </div>
 
         {/* Bottom CTA */}
-        <div className="text-center mt-16">
-          <div className="inline-flex items-center space-x-2 text-sm text-muted-foreground">
+        <div className="mt-16 text-center">
+          <div className="text-muted-foreground inline-flex items-center space-x-2 text-sm">
             <Shield className="h-4 w-4" />
             <span>Plateforme sécurisée et certifiée</span>
           </div>

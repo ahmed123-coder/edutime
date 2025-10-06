@@ -1,7 +1,7 @@
 import { Phone, Mail, MapPin, Clock, MessageCircle, Headphones } from "lucide-react";
 
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 
 const contactMethods = [
   {
@@ -43,26 +43,26 @@ export function ContactInfo() {
       <Card>
         <CardHeader>
           <CardTitle className="flex items-center">
-            <Headphones className="h-5 w-5 mr-2" />
+            <Headphones className="mr-2 h-5 w-5" />
             Moyens de contact
           </CardTitle>
         </CardHeader>
         <CardContent className="space-y-4">
           {contactMethods.map((method, index) => (
-            <div key={index} className="flex items-start space-x-4 p-4 border rounded-lg hover:bg-muted/50 transition-colors">
-              <div className="w-10 h-10 bg-primary/10 rounded-lg flex items-center justify-center flex-shrink-0">
-                <method.icon className="h-5 w-5 text-primary" />
+            <div
+              key={index}
+              className="hover:bg-muted/50 flex items-start space-x-4 rounded-lg border p-4 transition-colors"
+            >
+              <div className="bg-primary/10 flex h-10 w-10 flex-shrink-0 items-center justify-center rounded-lg">
+                <method.icon className="text-primary h-5 w-5" />
               </div>
               <div className="flex-1">
-                <h3 className="font-medium mb-1">{method.title}</h3>
-                <p className="text-sm text-muted-foreground mb-2">{method.description}</p>
-                <a 
-                  href={method.action}
-                  className="text-primary hover:underline font-medium"
-                >
+                <h3 className="mb-1 font-medium">{method.title}</h3>
+                <p className="text-muted-foreground mb-2 text-sm">{method.description}</p>
+                <a href={method.action} className="text-primary font-medium hover:underline">
                   {method.value}
                 </a>
-                <p className="text-xs text-muted-foreground mt-1">{method.available}</p>
+                <p className="text-muted-foreground mt-1 text-xs">{method.available}</p>
               </div>
             </div>
           ))}
@@ -73,24 +73,24 @@ export function ContactInfo() {
       <Card>
         <CardHeader>
           <CardTitle className="flex items-center">
-            <Clock className="h-5 w-5 mr-2" />
+            <Clock className="mr-2 h-5 w-5" />
             Horaires de support
           </CardTitle>
         </CardHeader>
         <CardContent>
           <div className="space-y-3">
             {officeHours.map((schedule, index) => (
-              <div key={index} className="flex justify-between items-center">
+              <div key={index} className="flex items-center justify-between">
                 <span className="text-sm">{schedule.day}</span>
                 <span className="text-sm font-medium">{schedule.hours}</span>
               </div>
             ))}
           </div>
-          
-          <div className="mt-4 p-3 bg-muted/50 rounded-lg">
-            <p className="text-sm text-muted-foreground">
-              <strong>Support d'urgence :</strong> Pour les problèmes critiques, 
-              contactez-nous par email. Nous répondons dans l'heure pendant les heures ouvrables.
+
+          <div className="bg-muted/50 mt-4 rounded-lg p-3">
+            <p className="text-muted-foreground text-sm">
+              <strong>Support d'urgence :</strong> Pour les problèmes critiques, contactez-nous par email. Nous
+              répondons dans l'heure pendant les heures ouvrables.
             </p>
           </div>
         </CardContent>
@@ -100,7 +100,7 @@ export function ContactInfo() {
       <Card>
         <CardHeader>
           <CardTitle className="flex items-center">
-            <MapPin className="h-5 w-5 mr-2" />
+            <MapPin className="mr-2 h-5 w-5" />
             Notre bureau
           </CardTitle>
         </CardHeader>
@@ -109,13 +109,14 @@ export function ContactInfo() {
             <div>
               <p className="font-medium">SaaS Formation</p>
               <p className="text-muted-foreground">
-                Avenue Habib Bourguiba<br />
+                Avenue Habib Bourguiba
+                <br />
                 1000 Tunis, Tunisie
               </p>
             </div>
-            
+
             <Button variant="outline" className="w-full">
-              <MapPin className="h-4 w-4 mr-2" />
+              <MapPin className="mr-2 h-4 w-4" />
               Voir sur Google Maps
             </Button>
           </div>

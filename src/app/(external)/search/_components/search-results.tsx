@@ -1,14 +1,16 @@
 "use client";
 
 import { useState, useEffect } from "react";
+
 import Link from "next/link";
-import { 
-  Star, 
-  MapPin, 
-  Users, 
-  Clock, 
-  Wifi, 
-  Car, 
+
+import {
+  Star,
+  MapPin,
+  Users,
+  Clock,
+  Wifi,
+  Car,
   Coffee,
   Heart,
   Share2,
@@ -17,9 +19,9 @@ import {
   List
 } from "lucide-react";
 
+import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
-import { Badge } from "@/components/ui/badge";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Skeleton } from "@/components/ui/skeleton";
 
@@ -100,23 +102,23 @@ export function SearchResults({ searchParams }: SearchResultsProps) {
     const timer = setTimeout(() => {
       // Filter and sort results based on search params
       let filteredResults = [...mockResults];
-      
+
       // Apply filters here based on searchParams
       if (searchParams.location) {
-        filteredResults = filteredResults.filter(result => 
-          result.location.toLowerCase().includes(searchParams.location!.toLowerCase())
+        filteredResults = filteredResults.filter((result) =>
+          result.location.toLowerCase().includes(searchParams.location!.toLowerCase()),
         );
       }
-      
+
       // Sort results
       switch (sortBy) {
         case "price-low":
-          filteredResults.sort((a, b) => 
+          filteredResults.sort((a, b) =>
             parseInt(a.priceRange.split("-")[0]) - parseInt(b.priceRange.split("-")[0])
           );
           break;
         case "price-high":
-          filteredResults.sort((a, b) => 
+          filteredResults.sort((a, b) =>
             parseInt(b.priceRange.split("-")[0]) - parseInt(a.priceRange.split("-")[0])
           );
           break;
@@ -124,12 +126,12 @@ export function SearchResults({ searchParams }: SearchResultsProps) {
           filteredResults.sort((a, b) => b.rating - a.rating);
           break;
         case "distance":
-          filteredResults.sort((a, b) => 
+          filteredResults.sort((a, b) =>
             parseFloat(a.distance) - parseFloat(b.distance)
           );
           break;
       }
-      
+
       setResults(filteredResults);
       setLoading(false);
     }, 500);
@@ -175,14 +177,12 @@ export function SearchResults({ searchParams }: SearchResultsProps) {
           <h2 className="text-lg font-semibold">
             {results.length} résultat{results.length > 1 ? "s" : ""} trouvé{results.length > 1 ? "s" : ""}
           </h2>
-          <p className="text-sm text-muted-foreground">
-            Centres et espaces de formation disponibles
-          </p>
+          <p className="text-muted-foreground text-sm">Centres et espaces de formation disponibles</p>
         </div>
-        
+
         <div className="flex items-center space-x-2">
           {/* View Mode Toggle */}
-          <div className="flex border rounded-md">
+          <div className="flex rounded-md border">
             <Button
               variant={viewMode === "list" ? "default" : "ghost"}
               size="sm"
@@ -200,7 +200,7 @@ export function SearchResults({ searchParams }: SearchResultsProps) {
               <Grid className="h-4 w-4" />
             </Button>
           </div>
-          
+
           {/* Sort Dropdown */}
           <Select value={sortBy} onValueChange={setSortBy}>
             <SelectTrigger className="w-48">
@@ -218,30 +218,30 @@ export function SearchResults({ searchParams }: SearchResultsProps) {
       </div>
 
       {/* Results List */}
-      <div className="space-y-4 max-h-[calc(100vh-300px)] overflow-y-auto">
+      <div className="max-h-[calc(100vh-300px)] space-y-4 overflow-y-auto">
         {results.map((result) => (
-          <Card key={result.id} className="hover:shadow-md transition-shadow">
+          <Card key={result.id} className="transition-shadow hover:shadow-md">
             <CardContent className="p-6">
               <div className="flex space-x-4">
                 {/* Image */}
-                <div className="w-32 h-24 bg-muted rounded-lg flex items-center justify-center flex-shrink-0">
+                <div className="bg-muted flex h-24 w-32 flex-shrink-0 items-center justify-center rounded-lg">
                   <span className="text-muted-foreground text-sm">Image</span>
                 </div>
-                
+
                 {/* Content */}
-                <div className="flex-1 min-w-0">
+                <div className="min-w-0 flex-1">
                   <div className="flex items-start justify-between">
                     <div className="flex-1">
-                      <div className="flex items-center space-x-2 mb-1">
-                        <h3 className="font-semibold text-lg">{result.name}</h3>
+                      <div className="mb-1 flex items-center space-x-2">
+                        <h3 className="text-lg font-semibold">{result.name}</h3>
                         {result.verified && (
                           <Badge variant="secondary" className="text-xs">
                             Vérifié
                           </Badge>
                         )}
                       </div>
-                      
-                      <div className="flex items-center space-x-4 text-sm text-muted-foreground mb-2">
+
+                      <div className="text-muted-foreground mb-2 flex items-center space-x-4 text-sm">
                         <div className="flex items-center space-x-1">
                           <Star className="h-4 w-4 fill-yellow-400 text-yellow-400" />
                           <span>{result.rating}</span>
@@ -249,20 +249,19 @@ export function SearchResults({ searchParams }: SearchResultsProps) {
                         </div>
                         <div className="flex items-center space-x-1">
                           <MapPin className="h-4 w-4" />
-                          <span>{result.location} • {result.distance}</span>
+                          <span>
+                            {result.location} • {result.distance}
+                          </span>
                         </div>
-                      </div>
-                      
-                      <p className="text-muted-foreground text-sm mb-3 line-clamp-2">
-                        {result.description}
-                      </p>
-                      
+
+                      <p className="text-muted-foreground mb-3 line-clamp-2 text-sm">{result.description}</p>
+
                       {/* Amenities */}
-                      <div className="flex items-center space-x-2 mb-3">
+                      <div className="mb-3 flex items-center space-x-2">
                         {result.amenities.slice(0, 4).map((amenity) => {
                           const IconComponent = amenityIcons[amenity as keyof typeof amenityIcons];
                           return (
-                            <div key={amenity} className="flex items-center space-x-1 text-xs text-muted-foreground">
+                            <div key={amenity} className="text-muted-foreground flex items-center space-x-1 text-xs">
                               {typeof IconComponent === "string" ? (
                                 <span>{IconComponent}</span>
                               ) : (
@@ -272,31 +271,30 @@ export function SearchResults({ searchParams }: SearchResultsProps) {
                           );
                         })}
                         {result.amenities.length > 4 && (
-                          <span className="text-xs text-muted-foreground">
-                            +{result.amenities.length - 4} autres
-                          </span>
+                          <span className="text-muted-foreground text-xs">+{result.amenities.length - 4} autres</span>
                         )}
                       </div>
-                      
+
                       {/* Rooms */}
                       <div className="flex items-center space-x-4 text-sm">
                         <div className="flex items-center space-x-1">
-                          <Users className="h-4 w-4 text-muted-foreground" />
-                          <span>{result.rooms.length} salle{result.rooms.length > 1 ? "s" : ""}</span>
+                          <Users className="text-muted-foreground h-4 w-4" />
+                          <span>
+                            {result.rooms.length} salle{result.rooms.length > 1 ? "s" : ""}
+                          </span>
                         </div>
                         <div className="text-muted-foreground">
-                          Capacité: {Math.min(...result.rooms.map(r => r.capacity))}-{Math.max(...result.rooms.map(r => r.capacity))} pers.
+                          Capacité: {Math.min(...result.rooms.map((r) => r.capacity))}-
+                          {Math.max(...result.rooms.map((r) => r.capacity))} pers.
                         </div>
                       </div>
                     </div>
-                    
+
                     {/* Price & Actions */}
-                    <div className="text-right flex-shrink-0 ml-4">
-                      <div className="text-lg font-semibold mb-2">
-                        {result.priceRange}
-                      </div>
-                      
-                      <div className="flex items-center space-x-2 mb-3">
+                    <div className="ml-4 flex-shrink-0 text-right">
+                      <div className="mb-2 text-lg font-semibold">{result.priceRange}</div>
+
+                      <div className="mb-3 flex items-center space-x-2">
                         <Button variant="ghost" size="icon">
                           <Heart className="h-4 w-4" />
                         </Button>
@@ -304,11 +302,9 @@ export function SearchResults({ searchParams }: SearchResultsProps) {
                           <Share2 className="h-4 w-4" />
                         </Button>
                       </div>
-                      
+
                       <Button asChild className="w-full">
-                        <Link href={`/centers/${result.id}`}>
-                          Voir détails
-                        </Link>
+                        <Link href={`/centers/${result.id}`}>Voir détails</Link>
                       </Button>
                     </div>
                   </div>
@@ -318,15 +314,11 @@ export function SearchResults({ searchParams }: SearchResultsProps) {
           </Card>
         ))}
       </div>
-      
+
       {results.length === 0 && (
-        <div className="text-center py-12">
-          <div className="text-muted-foreground mb-4">
-            Aucun résultat trouvé pour votre recherche
-          </div>
-          <Button variant="outline">
-            Modifier les filtres
-          </Button>
+        <div className="py-12 text-center">
+          <div className="text-muted-foreground mb-4">Aucun résultat trouvé pour votre recherche</div>
+          <Button variant="outline">Modifier les filtres</Button>
         </div>
       )}
     </div>

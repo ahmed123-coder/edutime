@@ -1,6 +1,8 @@
-import { withAuth } from 'next-auth/middleware';
-import { NextResponse } from 'next/server';
-import { getDefaultDashboardUrl } from '@/navigation/sidebar/get-sidebar-items';
+import { NextResponse } from "next/server";
+
+import { withAuth } from "next-auth/middleware";
+
+import { getDefaultDashboardUrl } from "@/navigation/sidebar/get-sidebar-items";
 // import { hasActiveSubscription } from '@/lib/subscription-check'; // Disabled for Edge Runtime compatibility
 
 export default withAuth(
@@ -10,55 +12,53 @@ export default withAuth(
 
     // Public routes that don't require authentication
     const publicRoutes = [
-      '/',
-      '/auth/login',
-      '/auth/register',
-      '/auth/verify-email',
-      '/auth/error',
-      '/about',
-      '/contact',
-      '/pricing',
-      '/search',
-      '/centers',
-      '/specialists',
-      '/partners',
-      '/privacy',
-      '/terms',
-      '/help',
-      '/organizations',
+      "/",
+      "/auth/login",
+      "/auth/register",
+      "/auth/verify-email",
+      "/auth/error",
+      "/about",
+      "/contact",
+      "/pricing",
+      "/search",
+      "/centers",
+      "/specialists",
+      "/partners",
+      "/privacy",
+      "/terms",
+      "/help",
+      "/organizations",
     ];
 
     // Check if route is public
-    const isPublicRoute = publicRoutes.some(route => 
-      pathname === route || pathname.startsWith(`${route}/`)
-    );
+    const isPublicRoute = publicRoutes.some((route) => pathname === route || pathname.startsWith(`${route}/`));
 
     if (isPublicRoute) {
       return NextResponse.next();
     }
 
     // API routes protection
-    if (pathname.startsWith('/api/')) {
+    if (pathname.startsWith("/api/")) {
       // Allow auth API routes
-      if (pathname.startsWith('/api/auth/')) {
+      if (pathname.startsWith("/api/auth/")) {
         return NextResponse.next();
       }
 
       // Require authentication for other API routes
       if (!token) {
-        return new NextResponse(
-          JSON.stringify({ error: 'Authentication required' }),
-          { status: 401, headers: { 'content-type': 'application/json' } }
-        );
+        return new NextResponse(JSON.stringify({ error: "Authentication required" }), {
+          status: 401,
+          headers: { "content-type": "application/json" },
+        });
       }
 
       // Admin-only API routes
-      if (pathname.startsWith('/api/admin/')) {
-        if (token.role !== 'ADMIN') {
-          return new NextResponse(
-            JSON.stringify({ error: 'Admin access required' }),
-            { status: 403, headers: { 'content-type': 'application/json' } }
-          );
+      if (pathname.startsWith("/api/admin/")) {
+        if (token.role !== "ADMIN") {
+          return new NextResponse(JSON.stringify({ error: "Admin access required" }), {
+            status: 403,
+            headers: { "content-type": "application/json" },
+          });
         }
       }
 
@@ -66,14 +66,14 @@ export default withAuth(
     }
 
     // Dashboard routes protection
-    if (pathname.startsWith('/dashboard')) {
+    if (pathname.startsWith("/dashboard")) {
       if (!token) {
-        return NextResponse.redirect(new URL('/auth/login', req.url));
+        return NextResponse.redirect(new URL("/auth/login", req.url));
       }
 
       // Check email verification
       if (!token.verified) {
-        return NextResponse.redirect(new URL('/auth/verify-email', req.url));
+        return NextResponse.redirect(new URL("/auth/verify-email", req.url));
       }
 
       // Check subscription status (except for admins)
@@ -101,33 +101,33 @@ export default withAuth(
       const userRole = token.role as string;
 
       // Admin dashboard
-      if (pathname.startsWith('/dashboard/admin')) {
-        if (userRole !== 'ADMIN') {
+      if (pathname.startsWith("/dashboard/admin")) {
+        if (userRole !== "ADMIN") {
           const userDashboard = getDefaultDashboardUrl(userRole);
           return NextResponse.redirect(new URL(userDashboard, req.url));
         }
       }
 
       // Center owner/manager dashboard
-      if (pathname.startsWith('/dashboard/owner')) {
-        if (!['CENTER_OWNER', 'TRAINING_MANAGER'].includes(userRole)) {
+      if (pathname.startsWith("/dashboard/owner")) {
+        if (!["CENTER_OWNER", "TRAINING_MANAGER"].includes(userRole)) {
           const userDashboard = getDefaultDashboardUrl(userRole);
           return NextResponse.redirect(new URL(userDashboard, req.url));
         }
       }
 
       // Teacher dashboard
-      if (pathname.startsWith('/dashboard/teacher')) {
-        if (userRole !== 'TEACHER') {
+      if (pathname.startsWith("/dashboard/teacher")) {
+        if (userRole !== "TEACHER") {
           const userDashboard = getDefaultDashboardUrl(userRole);
           return NextResponse.redirect(new URL(userDashboard, req.url));
         }
       }
 
       // Partner dashboard
-      if (pathname.startsWith('/dashboard/partner')) {
-        if (userRole !== 'PARTNER') {
-          return NextResponse.redirect(new URL('/dashboard', req.url));
+      if (pathname.startsWith("/dashboard/partner")) {
+        if (userRole !== "PARTNER") {
+          return NextResponse.redirect(new URL("/dashboard", req.url));
         }
       }
 
@@ -141,30 +141,28 @@ export default withAuth(
     callbacks: {
       authorized: ({ token, req }) => {
         const { pathname } = req.nextUrl;
-        
+
         // Always allow access to public routes
         const publicRoutes = [
-          '/',
-          '/auth/login',
-          '/auth/register',
-          '/auth/verify-email',
-          '/auth/error',
-          '/about',
-          '/contact',
-          '/pricing',
-          '/search',
-          '/centers',
-          '/specialists',
-          '/partners',
-          '/privacy',
-          '/terms',
-          '/help',
-          '/organizations',
+          "/",
+          "/auth/login",
+          "/auth/register",
+          "/auth/verify-email",
+          "/auth/error",
+          "/about",
+          "/contact",
+          "/pricing",
+          "/search",
+          "/centers",
+          "/specialists",
+          "/partners",
+          "/privacy",
+          "/terms",
+          "/help",
+          "/organizations",
         ];
 
-        const isPublicRoute = publicRoutes.some(route => 
-          pathname === route || pathname.startsWith(`${route}/`)
-        );
+        const isPublicRoute = publicRoutes.some((route) => pathname === route || pathname.startsWith(`${route}/`));
 
         if (isPublicRoute) {
           return true;
@@ -174,7 +172,7 @@ export default withAuth(
         return !!token;
       },
     },
-  }
+  },
 );
 
 export const config = {
@@ -186,6 +184,6 @@ export const config = {
      * - favicon.ico (favicon file)
      * - public folder
      */
-    '/((?!_next/static|_next/image|favicon.ico|public/).*)',
+    "/((?!_next/static|_next/image|favicon.ico|public/).*)",
   ],
 };

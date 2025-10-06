@@ -1,15 +1,16 @@
 "use client";
 
 import { useState } from "react";
+
 import { Phone, Mail, Globe, MessageCircle, Send, Clock } from "lucide-react";
 
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { Textarea } from "@/components/ui/textarea";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Separator } from "@/components/ui/separator";
+import { Textarea } from "@/components/ui/textarea";
 
 interface PartnerContactProps {
   partner: {
@@ -44,7 +45,7 @@ export function PartnerContact({ partner }: PartnerContactProps) {
   };
 
   const handleChange = (field: string, value: string) => {
-    setFormData(prev => ({ ...prev, [field]: value }));
+    setFormData((prev) => ({ ...prev, [field]: value }));
   };
 
   return (
@@ -117,12 +118,8 @@ export function PartnerContact({ partner }: PartnerContactProps) {
               />
             </div>
 
-            <Button 
-              type="submit" 
-              className="w-full"
-              disabled={!formData.name || !formData.email || !formData.message}
-            >
-              <Send className="h-4 w-4 mr-2" />
+            <Button type="submit" className="w-full" disabled={!formData.name || !formData.email || !formData.message}>
+              <Send className="mr-2 h-4 w-4" />
               Envoyer la demande
             </Button>
           </form>
@@ -135,44 +132,44 @@ export function PartnerContact({ partner }: PartnerContactProps) {
           <CardTitle>Contact direct</CardTitle>
         </CardHeader>
         <CardContent className="space-y-4">
-          <a 
+          <a
             href={`tel:${partner.phone}`}
-            className="flex items-center space-x-3 p-3 rounded-lg hover:bg-muted/50 transition-colors"
+            className="hover:bg-muted/50 flex items-center space-x-3 rounded-lg p-3 transition-colors"
           >
-            <Phone className="h-5 w-5 text-primary" />
+            <Phone className="text-primary h-5 w-5" />
             <div>
               <div className="font-medium">Téléphone</div>
-              <div className="text-sm text-muted-foreground">{partner.phone}</div>
+              <div className="text-muted-foreground text-sm">{partner.phone}</div>
             </div>
           </a>
 
-          <a 
+          <a
             href={`mailto:${partner.email}`}
-            className="flex items-center space-x-3 p-3 rounded-lg hover:bg-muted/50 transition-colors"
+            className="hover:bg-muted/50 flex items-center space-x-3 rounded-lg p-3 transition-colors"
           >
-            <Mail className="h-5 w-5 text-primary" />
+            <Mail className="text-primary h-5 w-5" />
             <div>
               <div className="font-medium">Email</div>
-              <div className="text-sm text-muted-foreground">{partner.email}</div>
+              <div className="text-muted-foreground text-sm">{partner.email}</div>
             </div>
           </a>
 
-          <a 
+          <a
             href={`https://${partner.website}`}
             target="_blank"
             rel="noopener noreferrer"
-            className="flex items-center space-x-3 p-3 rounded-lg hover:bg-muted/50 transition-colors"
+            className="hover:bg-muted/50 flex items-center space-x-3 rounded-lg p-3 transition-colors"
           >
-            <Globe className="h-5 w-5 text-primary" />
+            <Globe className="text-primary h-5 w-5" />
             <div>
               <div className="font-medium">Site web</div>
-              <div className="text-sm text-muted-foreground">{partner.website}</div>
+              <div className="text-muted-foreground text-sm">{partner.website}</div>
             </div>
           </a>
 
           <Separator />
 
-          <div className="flex items-center space-x-2 text-sm text-muted-foreground">
+          <div className="text-muted-foreground flex items-center space-x-2 text-sm">
             <Clock className="h-4 w-4" />
             <span>Temps de réponse moyen: 4-6 heures</span>
           </div>
@@ -184,7 +181,7 @@ export function PartnerContact({ partner }: PartnerContactProps) {
         <CardContent className="p-4">
           <div className="space-y-3">
             <Button variant="outline" className="w-full">
-              <MessageCircle className="h-4 w-4 mr-2" />
+              <MessageCircle className="mr-2 h-4 w-4" />
               Chat en direct
             </Button>
             <Button variant="outline" className="w-full">
@@ -200,8 +197,8 @@ export function PartnerContact({ partner }: PartnerContactProps) {
       {/* Trust Indicators */}
       <Card className="bg-muted/30">
         <CardContent className="p-4 text-center">
-          <div className="text-sm text-muted-foreground">
-            <div className="font-medium mb-1">Partenaire vérifié</div>
+          <div className="text-muted-foreground text-sm">
+            <div className="mb-1 font-medium">Partenaire vérifié</div>
             <div>✓ Identité vérifiée</div>
             <div>✓ Assurance professionnelle</div>
             <div>✓ Références clients</div>

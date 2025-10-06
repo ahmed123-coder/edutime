@@ -1,9 +1,10 @@
 import Link from "next/link";
+
 import { Star, MapPin, Users, Wifi, Car, Coffee, CheckCircle, Heart, Share } from "lucide-react";
 
-import { Card, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
+import { Card, CardContent } from "@/components/ui/card";
 
 // Mock centers data
 const centers = [
@@ -91,10 +92,10 @@ export function CentersList() {
           <h2 className="text-2xl font-bold">Centres de formation</h2>
           <p className="text-muted-foreground">{centers.length} centres trouvés</p>
         </div>
-        
+
         <div className="flex items-center space-x-2">
-          <span className="text-sm text-muted-foreground">Trier par:</span>
-          <select className="text-sm border rounded px-2 py-1">
+          <span className="text-muted-foreground text-sm">Trier par:</span>
+          <select className="rounded border px-2 py-1 text-sm">
             <option>Pertinence</option>
             <option>Note</option>
             <option>Prix croissant</option>
@@ -107,12 +108,12 @@ export function CentersList() {
       {/* Centers Grid */}
       <div className="grid gap-6">
         {centers.map((center) => (
-          <Card key={center.id} className="overflow-hidden hover:shadow-lg transition-shadow">
+          <Card key={center.id} className="overflow-hidden transition-shadow hover:shadow-lg">
             <CardContent className="p-0">
-              <div className="grid md:grid-cols-3 gap-0">
+              <div className="grid gap-0 md:grid-cols-3">
                 {/* Image */}
                 <div className="relative">
-                  <div className="aspect-[4/3] bg-muted flex items-center justify-center">
+                  <div className="bg-muted flex aspect-[4/3] items-center justify-center">
                     <span className="text-muted-foreground">Photo du centre</span>
                   </div>
                   <div className="absolute top-3 right-3 flex space-x-2">
@@ -126,19 +127,17 @@ export function CentersList() {
                 </div>
 
                 {/* Content */}
-                <div className="md:col-span-2 p-6">
-                  <div className="flex items-start justify-between mb-3">
+                <div className="p-6 md:col-span-2">
+                  <div className="mb-3 flex items-start justify-between">
                     <div>
-                      <div className="flex items-center space-x-2 mb-1">
+                      <div className="mb-1 flex items-center space-x-2">
                         <h3 className="text-xl font-semibold">{center.name}</h3>
-                        {center.verified && (
-                          <CheckCircle className="h-5 w-5 text-blue-500" />
-                        )}
+                        {center.verified && <CheckCircle className="h-5 w-5 text-blue-500" />}
                       </div>
-                      
-                      <div className="flex items-center space-x-4 text-sm text-muted-foreground mb-2">
+
+                      <div className="text-muted-foreground mb-2 flex items-center space-x-4 text-sm">
                         <div className="flex items-center space-x-1">
-                          <Star className="h-4 w-4 text-yellow-500 fill-current" />
+                          <Star className="h-4 w-4 fill-current text-yellow-500" />
                           <span className="font-medium">{center.rating}</span>
                           <span>({center.reviewCount} avis)</span>
                         </div>
@@ -148,23 +147,21 @@ export function CentersList() {
                         </div>
                       </div>
                     </div>
-                    
+
                     <div className="text-right">
-                      <div className="text-lg font-bold text-primary">{center.priceRange}</div>
-                      <div className="text-sm text-muted-foreground">par heure</div>
+                      <div className="text-primary text-lg font-bold">{center.priceRange}</div>
+                      <div className="text-muted-foreground text-sm">par heure</div>
                     </div>
                   </div>
 
-                  <p className="text-muted-foreground mb-4 leading-relaxed">
-                    {center.description}
-                  </p>
+                  <p className="text-muted-foreground mb-4 leading-relaxed">{center.description}</p>
 
-                  <div className="text-sm text-muted-foreground mb-4">
+                  <div className="text-muted-foreground mb-4 text-sm">
                     <strong>Adresse:</strong> {center.address}
                   </div>
 
                   {/* Stats */}
-                  <div className="flex items-center space-x-6 text-sm mb-4">
+                  <div className="mb-4 flex items-center space-x-6 text-sm">
                     <div className="flex items-center space-x-1">
                       <Users className="h-4 w-4" />
                       <span>{center.roomCount} salles</span>
@@ -176,24 +173,22 @@ export function CentersList() {
                   </div>
 
                   {/* Amenities */}
-                  <div className="flex items-center space-x-3 mb-4">
+                  <div className="mb-4 flex items-center space-x-3">
                     {center.amenities.slice(0, 4).map((amenity) => {
                       const Icon = amenityIcons[amenity as keyof typeof amenityIcons];
                       return (
-                        <div key={amenity} className="flex items-center space-x-1 text-xs text-muted-foreground">
+                        <div key={amenity} className="text-muted-foreground flex items-center space-x-1 text-xs">
                           <Icon className="h-3 w-3" />
                         </div>
                       );
                     })}
                     {center.amenities.length > 4 && (
-                      <span className="text-xs text-muted-foreground">
-                        +{center.amenities.length - 4} autres
-                      </span>
+                      <span className="text-muted-foreground text-xs">+{center.amenities.length - 4} autres</span>
                     )}
                   </div>
 
                   {/* Features */}
-                  <div className="flex flex-wrap gap-2 mb-4">
+                  <div className="mb-4 flex flex-wrap gap-2">
                     {center.features.slice(0, 3).map((feature, index) => (
                       <Badge key={index} variant="secondary" className="text-xs">
                         {feature}
@@ -204,9 +199,7 @@ export function CentersList() {
                   {/* Actions */}
                   <div className="flex space-x-3">
                     <Button asChild className="flex-1">
-                      <Link href={`/centers/${center.id}`}>
-                        Voir les détails
-                      </Link>
+                      <Link href={`/centers/${center.id}`}>Voir les détails</Link>
                     </Button>
                     <Button variant="outline" className="flex-1">
                       Réserver maintenant

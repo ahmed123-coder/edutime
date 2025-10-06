@@ -1,8 +1,8 @@
 import { Linkedin, Mail } from "lucide-react";
 
-import { Card, CardContent } from "@/components/ui/card";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Button } from "@/components/ui/button";
+import { Card, CardContent } from "@/components/ui/card";
 
 const team = [
   {
@@ -41,42 +41,37 @@ const team = [
 
 export function AboutTeam() {
   return (
-    <section className="py-20 bg-muted/30">
+    <section className="bg-muted/30 py-20">
       <div className="container mx-auto px-4">
-        <div className="text-center mb-16">
-          <h2 className="text-3xl lg:text-4xl font-bold mb-6">
-            Notre équipe
-          </h2>
-          <p className="text-lg text-muted-foreground max-w-2xl mx-auto">
-            Rencontrez les personnes passionnées qui travaillent chaque jour 
-            pour améliorer votre expérience sur SaaS Formation.
+        <div className="mb-16 text-center">
+          <h2 className="mb-6 text-3xl font-bold lg:text-4xl">Notre équipe</h2>
+          <p className="text-muted-foreground mx-auto max-w-2xl text-lg">
+            Rencontrez les personnes passionnées qui travaillent chaque jour pour améliorer votre expérience sur SaaS
+            Formation.
           </p>
         </div>
 
-        <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-8">
+        <div className="grid gap-8 md:grid-cols-2 lg:grid-cols-4">
           {team.map((member, index) => (
-            <Card key={index} className="border-0 shadow-md hover:shadow-lg transition-shadow duration-300">
+            <Card key={index} className="border-0 shadow-md transition-shadow duration-300 hover:shadow-lg">
               <CardContent className="p-6 text-center">
-                <Avatar className="w-24 h-24 mx-auto mb-4">
+                <Avatar className="mx-auto mb-4 h-24 w-24">
                   <AvatarImage src={member.avatar} alt={member.name} />
                   <AvatarFallback className="text-lg">
-                    {member.name.split(' ').map(n => n[0]).join('')}
+                    {member.name
+                      .split(" ")
+                      .map((n) => n[0])
+                      .join("")}
                   </AvatarFallback>
                 </Avatar>
-                
-                <h3 className="text-xl font-bold mb-1">{member.name}</h3>
-                <p className="text-primary font-medium mb-3">{member.role}</p>
-                <p className="text-muted-foreground text-sm leading-relaxed mb-4">
-                  {member.bio}
-                </p>
-                
+
+                <h3 className="mb-1 text-xl font-bold">{member.name}</h3>
+                <p className="text-primary mb-3 font-medium">{member.role}</p>
+                <p className="text-muted-foreground mb-4 text-sm leading-relaxed">{member.bio}</p>
+
                 <div className="flex justify-center space-x-2">
                   <Button variant="ghost" size="icon" asChild>
-                    <a 
-                      href={`https://${member.linkedin}`} 
-                      target="_blank" 
-                      rel="noopener noreferrer"
-                    >
+                    <a href={`https://${member.linkedin}`} target="_blank" rel="noopener noreferrer">
                       <Linkedin className="h-4 w-4" />
                     </a>
                   </Button>
@@ -93,16 +88,14 @@ export function AboutTeam() {
 
         {/* Join Team CTA */}
         <div className="mt-16 text-center">
-          <Card className="max-w-2xl mx-auto bg-gradient-to-br from-primary/5 to-secondary/5 border-0">
+          <Card className="from-primary/5 to-secondary/5 mx-auto max-w-2xl border-0 bg-gradient-to-br">
             <CardContent className="p-8">
-              <h3 className="text-2xl font-bold mb-4">Rejoignez notre équipe</h3>
+              <h3 className="mb-4 text-2xl font-bold">Rejoignez notre équipe</h3>
               <p className="text-muted-foreground mb-6">
-                Nous sommes toujours à la recherche de talents passionnés 
-                pour nous aider à révolutionner le secteur de la formation.
+                Nous sommes toujours à la recherche de talents passionnés pour nous aider à révolutionner le secteur de
+                la formation.
               </p>
-              <Button>
-                Voir nos offres d'emploi
-              </Button>
+              <Button>Voir nos offres d'emploi</Button>
             </CardContent>
           </Card>
         </div>

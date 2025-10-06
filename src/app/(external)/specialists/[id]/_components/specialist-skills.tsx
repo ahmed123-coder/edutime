@@ -17,7 +17,7 @@ export function SpecialistSkills({ specialist }: SpecialistSkillsProps) {
     <Card>
       <CardHeader>
         <CardTitle className="flex items-center">
-          <TrendingUp className="h-5 w-5 mr-2" />
+          <TrendingUp className="mr-2 h-5 w-5" />
           Compétences
         </CardTitle>
       </CardHeader>
@@ -25,9 +25,9 @@ export function SpecialistSkills({ specialist }: SpecialistSkillsProps) {
         <div className="space-y-4">
           {specialist.skills.map((skill, index) => (
             <div key={index} className="space-y-2">
-              <div className="flex justify-between items-center">
+              <div className="flex items-center justify-between">
                 <span className="font-medium">{skill.name}</span>
-                <span className="text-sm text-muted-foreground">{skill.level}%</span>
+                <span className="text-muted-foreground text-sm">{skill.level}%</span>
               </div>
               <Progress value={skill.level} className="h-2" />
             </div>

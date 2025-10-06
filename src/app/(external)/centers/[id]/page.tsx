@@ -1,18 +1,20 @@
 import { Metadata } from "next";
 import { notFound } from "next/navigation";
-import { CenterHeader } from "./_components/center-header";
-import { CenterGallery } from "./_components/center-gallery";
-import { CenterInfo } from "./_components/center-info";
-import { CenterRooms } from "./_components/center-rooms";
-import { CenterReviews } from "./_components/center-reviews";
+
 import { CenterBooking } from "./_components/center-booking";
+import { CenterGallery } from "./_components/center-gallery";
+import { CenterHeader } from "./_components/center-header";
+import { CenterInfo } from "./_components/center-info";
+import { CenterReviews } from "./_components/center-reviews";
+import { CenterRooms } from "./_components/center-rooms";
 
 // Mock data - In real app, this would come from API
 const mockCenter = {
   id: "1",
   name: "Excellence Training Center",
   slug: "excellence-training-center",
-  description: "Centre de formation moderne avec équipements de pointe situé au cœur de Tunis. Nous offrons des espaces adaptés à tous types de formations professionnelles.",
+  description:
+    "Centre de formation moderne avec équipements de pointe situé au cœur de Tunis. Nous offrons des espaces adaptés à tous types de formations professionnelles.",
   type: "TRAINING_CENTER",
   verified: true,
   rating: 4.8,
@@ -40,14 +42,9 @@ const mockCenter = {
     "Système audio",
     "Climatisation",
     "Sécurité 24/7",
-    "Accès handicapés"
+    "Accès handicapés",
   ],
-  images: [
-    "/images/center1-1.jpg",
-    "/images/center1-2.jpg",
-    "/images/center1-3.jpg",
-    "/images/center1-4.jpg",
-  ],
+  images: ["/images/center1-1.jpg", "/images/center1-2.jpg", "/images/center1-3.jpg", "/images/center1-4.jpg"],
   rooms: [
     {
       id: "r1",
@@ -94,7 +91,7 @@ interface CenterPageProps {
 export async function generateMetadata({ params }: CenterPageProps): Promise<Metadata> {
   // In real app, fetch center data
   const center = mockCenter;
-  
+
   if (!center) {
     return {
       title: "Centre non trouvé",
@@ -125,13 +122,13 @@ export default function CenterPage({ params }: CenterPageProps) {
   }
 
   return (
-    <div className="min-h-screen bg-background">
+    <div className="bg-background min-h-screen">
       <CenterHeader center={center} />
-      
+
       <div className="container mx-auto px-4 py-8">
-        <div className="grid lg:grid-cols-3 gap-8">
+        <div className="grid gap-8 lg:grid-cols-3">
           {/* Main Content */}
-          <div className="lg:col-span-2 space-y-8">
+          <div className="space-y-8 lg:col-span-2">
             <CenterGallery images={center.images} />
             <CenterInfo center={center} />
             <CenterRooms rooms={center.rooms} />

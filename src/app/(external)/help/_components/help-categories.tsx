@@ -1,15 +1,7 @@
-import { 
-  Calendar, 
-  CreditCard, 
-  Settings, 
-  Users, 
-  Building, 
-  HelpCircle,
-  ArrowRight
-} from "lucide-react";
+import { Calendar, CreditCard, Settings, Users, Building, HelpCircle, ArrowRight } from "lucide-react";
 
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 
 const categories = [
   {
@@ -64,39 +56,34 @@ const categories = [
 
 export function HelpCategories() {
   return (
-    <section className="py-20 bg-background">
+    <section className="bg-background py-20">
       <div className="container mx-auto px-4">
-        <div className="text-center mb-16">
-          <h2 className="text-3xl lg:text-4xl font-bold mb-6">
-            Parcourir par catégorie
-          </h2>
-          <p className="text-lg text-muted-foreground max-w-2xl mx-auto">
-            Explorez nos guides organisés par thème pour trouver rapidement 
-            les informations dont vous avez besoin.
+        <div className="mb-16 text-center">
+          <h2 className="mb-6 text-3xl font-bold lg:text-4xl">Parcourir par catégorie</h2>
+          <p className="text-muted-foreground mx-auto max-w-2xl text-lg">
+            Explorez nos guides organisés par thème pour trouver rapidement les informations dont vous avez besoin.
           </p>
         </div>
 
-        <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6 max-w-6xl mx-auto">
+        <div className="mx-auto grid max-w-6xl gap-6 md:grid-cols-2 lg:grid-cols-3">
           {categories.map((category, index) => (
-            <Card key={index} className="hover:shadow-md transition-shadow cursor-pointer group">
+            <Card key={index} className="group cursor-pointer transition-shadow hover:shadow-md">
               <CardHeader className="pb-4">
-                <div className={`w-12 h-12 rounded-lg ${category.bgColor} flex items-center justify-center mb-4`}>
+                <div className={`h-12 w-12 rounded-lg ${category.bgColor} mb-4 flex items-center justify-center`}>
                   <category.icon className={`h-6 w-6 ${category.color}`} />
                 </div>
                 <CardTitle className="text-xl">{category.title}</CardTitle>
               </CardHeader>
               <CardContent>
-                <p className="text-muted-foreground mb-4 leading-relaxed">
-                  {category.description}
-                </p>
-                
+                <p className="text-muted-foreground mb-4 leading-relaxed">{category.description}</p>
+
                 <div className="flex items-center justify-between">
-                  <span className="text-sm text-muted-foreground">
-                    {category.articles} article{category.articles > 1 ? 's' : ''}
+                  <span className="text-muted-foreground text-sm">
+                    {category.articles} article{category.articles > 1 ? "s" : ""}
                   </span>
-                  <Button variant="ghost" size="sm" className="group-hover:translate-x-1 transition-transform">
+                  <Button variant="ghost" size="sm" className="transition-transform group-hover:translate-x-1">
                     Voir tout
-                    <ArrowRight className="h-4 w-4 ml-2" />
+                    <ArrowRight className="ml-2 h-4 w-4" />
                   </Button>
                 </div>
               </CardContent>

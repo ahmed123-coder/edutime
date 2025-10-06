@@ -1,8 +1,9 @@
 import { Metadata } from "next";
-import { PartnerHeader } from "./_components/partner-header";
-import { PartnerServices } from "./_components/partner-services";
-import { PartnerReviews } from "./_components/partner-reviews";
+
 import { PartnerContact } from "./_components/partner-contact";
+import { PartnerHeader } from "./_components/partner-header";
+import { PartnerReviews } from "./_components/partner-reviews";
+import { PartnerServices } from "./_components/partner-services";
 
 // Mock data - in real app, this would come from database
 const mockPartner = {
@@ -28,17 +29,17 @@ export async function generateMetadata(): Promise<Metadata> {
   return {
     title: `${mockPartner.name} | SaaS Formation`,
     description: `Découvrez les services de ${mockPartner.name} - ${mockPartner.description}`,
-    keywords: `${mockPartner.name}, partenaire, services, formation, ${mockPartner.specialties.join(', ')}`,
+    keywords: `${mockPartner.name}, partenaire, services, formation, ${mockPartner.specialties.join(", ")}`,
   };
 }
 
 export default function PartnerPage() {
   return (
-    <div className="min-h-screen bg-background">
+    <div className="bg-background min-h-screen">
       <div className="container mx-auto px-4 py-8">
-        <div className="grid lg:grid-cols-3 gap-8">
+        <div className="grid gap-8 lg:grid-cols-3">
           {/* Main Content */}
-          <div className="lg:col-span-2 space-y-8">
+          <div className="space-y-8 lg:col-span-2">
             <PartnerHeader partner={mockPartner} />
             <PartnerServices partnerId={mockPartner.id} />
             <PartnerReviews partnerId={mockPartner.id} />

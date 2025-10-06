@@ -49,29 +49,27 @@ const values = [
 
 export function AboutValues() {
   return (
-    <section className="py-20 bg-muted/30">
+    <section className="bg-muted/30 py-20">
       <div className="container mx-auto px-4">
-        <div className="text-center mb-16">
-          <h2 className="text-3xl lg:text-4xl font-bold mb-6">
-            Nos valeurs
-          </h2>
-          <p className="text-lg text-muted-foreground max-w-2xl mx-auto">
-            Ces valeurs guident chacune de nos décisions et façonnent 
-            notre approche dans le développement de notre plateforme.
+        <div className="mb-16 text-center">
+          <h2 className="mb-6 text-3xl font-bold lg:text-4xl">Nos valeurs</h2>
+          <p className="text-muted-foreground mx-auto max-w-2xl text-lg">
+            Ces valeurs guident chacune de nos décisions et façonnent notre approche dans le développement de notre
+            plateforme.
           </p>
         </div>
 
-        <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
+        <div className="grid gap-8 md:grid-cols-2 lg:grid-cols-3">
           {values.map((value, index) => (
-            <Card key={index} className="border-0 shadow-md hover:shadow-lg transition-shadow duration-300">
+            <Card key={index} className="border-0 shadow-md transition-shadow duration-300 hover:shadow-lg">
               <CardContent className="p-6 text-center">
-                <div className={`w-16 h-16 rounded-full ${value.bgColor} flex items-center justify-center mx-auto mb-4`}>
+                <div
+                  className={`h-16 w-16 rounded-full ${value.bgColor} mx-auto mb-4 flex items-center justify-center`}
+                >
                   <value.icon className={`h-8 w-8 ${value.color}`} />
                 </div>
-                <h3 className="text-xl font-bold mb-3">{value.title}</h3>
-                <p className="text-muted-foreground leading-relaxed">
-                  {value.description}
-                </p>
+                <h3 className="mb-3 text-xl font-bold">{value.title}</h3>
+                <p className="text-muted-foreground leading-relaxed">{value.description}</p>
               </CardContent>
             </Card>
           ))}

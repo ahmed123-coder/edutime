@@ -1,51 +1,36 @@
-'use client';
+"use client";
 
-import { useState } from 'react';
-import { useForm } from 'react-hook-form';
-import { zodResolver } from '@hookform/resolvers/zod';
-import { z } from 'zod';
-import { toast } from 'sonner';
+import { useState } from "react";
 
-import {
-  Dialog,
-  DialogContent,
-  DialogDescription,
-  DialogHeader,
-  DialogTitle,
-} from '@/components/ui/dialog';
-import {
-  Form,
-  FormControl,
-  FormField,
-  FormItem,
-  FormLabel,
-  FormMessage,
-} from '@/components/ui/form';
-import { Input } from '@/components/ui/input';
-import { Button } from '@/components/ui/button';
-import { Textarea } from '@/components/ui/textarea';
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from '@/components/ui/select';
+import { zodResolver } from "@hookform/resolvers/zod";
+import { useForm } from "react-hook-form";
+import { toast } from "sonner";
+import { z } from "zod";
+
+import { Button } from "@/components/ui/button";
+import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle } from "@/components/ui/dialog";
+import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form";
+import { Input } from "@/components/ui/input";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import { Textarea } from "@/components/ui/textarea";
 
 const createOrganizationSchema = z.object({
-  name: z.string().min(1, 'Name is required'),
-  slug: z.string().min(1, 'Slug is required').regex(/^[a-z0-9-]+$/, 'Slug must contain only lowercase letters, numbers, and hyphens'),
+  name: z.string().min(1, "Name is required"),
+  slug: z
+    .string()
+    .min(1, "Slug is required")
+    .regex(/^[a-z0-9-]+$/, "Slug must contain only lowercase letters, numbers, and hyphens"),
   description: z.string().optional(),
-  type: z.enum(['TRAINING_CENTER', 'PARTNER_SERVICE']),
-  subscription: z.enum(['ESSENTIAL', 'PRO', 'PREMIUM']).default('ESSENTIAL'),
-  street: z.string().min(1, 'Street is required'),
-  city: z.string().min(1, 'City is required'),
-  state: z.string().min(1, 'State is required'),
-  country: z.string().min(1, 'Country is required'),
-  zipCode: z.string().min(1, 'Zip code is required'),
+  type: z.enum(["TRAINING_CENTER", "PARTNER_SERVICE"]),
+  subscription: z.enum(["ESSENTIAL", "PRO", "PREMIUM"]).default("ESSENTIAL"),
+  street: z.string().min(1, "Street is required"),
+  city: z.string().min(1, "City is required"),
+  state: z.string().min(1, "State is required"),
+  country: z.string().min(1, "Country is required"),
+  zipCode: z.string().min(1, "Zip code is required"),
   phone: z.string().optional(),
-  email: z.string().email().optional().or(z.literal('')),
-  website: z.string().url().optional().or(z.literal('')),
+  email: z.string().email().optional().or(z.literal("")),
+  website: z.string().url().optional().or(z.literal("")),
 });
 
 type CreateOrganizationFormData = z.infer<typeof createOrganizationSchema>;
@@ -62,19 +47,19 @@ export function CreateOrganizationModal({ open, onOpenChange, onOrganizationCrea
   const form = useForm<CreateOrganizationFormData>({
     resolver: zodResolver(createOrganizationSchema),
     defaultValues: {
-      name: '',
-      slug: '',
-      description: '',
-      type: 'TRAINING_CENTER',
-      subscription: 'ESSENTIAL',
-      street: '',
-      city: '',
-      state: '',
-      country: '',
-      zipCode: '',
-      phone: '',
-      email: '',
-      website: '',
+      name: "",
+      slug: "",
+      description: "",
+      type: "TRAINING_CENTER",
+      subscription: "ESSENTIAL",
+      street: "",
+      city: "",
+      state: "",
+      country: "",
+      zipCode: "",
+      phone: "",
+      email: "",
+      website: "",
     },
   });
 
@@ -100,26 +85,26 @@ export function CreateOrganizationModal({ open, onOpenChange, onOrganizationCrea
         website: data.website || undefined,
       };
 
-      const response = await fetch('/api/organizations', {
-        method: 'POST',
+      const response = await fetch("/api/organizations", {
+        method: "POST",
         headers: {
-          'Content-Type': 'application/json',
+          "Content-Type": "application/json",
         },
         body: JSON.stringify(organizationData),
       });
 
       if (!response.ok) {
         const error = await response.json();
-        throw new Error(error.error || 'Failed to create organization');
+        throw new Error(error.error || "Failed to create organization");
       }
 
-      toast.success('Organization created successfully');
+      toast.success("Organization created successfully");
       form.reset();
       onOpenChange(false);
       onOrganizationCreated();
     } catch (error) {
-      console.error('Error creating organization:', error);
-      toast.error(error instanceof Error ? error.message : 'Failed to create organization');
+      console.error("Error creating organization:", error);
+      toast.error(error instanceof Error ? error.message : "Failed to create organization");
     } finally {
       setIsLoading(false);
     }
@@ -127,12 +112,10 @@ export function CreateOrganizationModal({ open, onOpenChange, onOrganizationCrea
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
-      <DialogContent className="sm:max-w-[600px] max-h-[90vh] overflow-y-auto">
+      <DialogContent className="max-h-[90vh] overflow-y-auto sm:max-w-[600px]">
         <DialogHeader>
           <DialogTitle>Create Organization</DialogTitle>
-          <DialogDescription>
-            Create a new training center or partner service organization.
-          </DialogDescription>
+          <DialogDescription>Create a new training center or partner service organization.</DialogDescription>
         </DialogHeader>
 
         <Form {...form}>
@@ -350,16 +333,11 @@ export function CreateOrganizationModal({ open, onOpenChange, onOrganizationCrea
             </div>
 
             <div className="flex justify-end space-x-2 pt-4">
-              <Button
-                type="button"
-                variant="outline"
-                onClick={() => onOpenChange(false)}
-                disabled={isLoading}
-              >
+              <Button type="button" variant="outline" onClick={() => onOpenChange(false)} disabled={isLoading}>
                 Cancel
               </Button>
               <Button type="submit" disabled={isLoading}>
-                {isLoading ? 'Creating...' : 'Create Organization'}
+                {isLoading ? "Creating..." : "Create Organization"}
               </Button>
             </div>
           </form>

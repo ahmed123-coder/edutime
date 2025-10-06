@@ -1,8 +1,9 @@
 import Link from "next/link";
+
 import { Star, MapPin, Award, Clock, CheckCircle, Heart, Share, DollarSign } from "lucide-react";
 
-import { Card, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
+import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 
@@ -32,7 +33,8 @@ const specialists = [
     name: "Fatma Khelifi",
     title: "Consultante Marketing Digital",
     speciality: "Marketing Digital",
-    description: "Experte en stratégies digitales et growth hacking. Accompagne les entreprises dans leur transformation digitale.",
+    description:
+      "Experte en stratégies digitales et growth hacking. Accompagne les entreprises dans leur transformation digitale.",
     avatar: "/specialists/fatma.jpg",
     rating: 4.8,
     reviewCount: 124,
@@ -95,10 +97,10 @@ export function SpecialistsList() {
           <h2 className="text-2xl font-bold">Spécialistes disponibles</h2>
           <p className="text-muted-foreground">{specialists.length} spécialistes trouvés</p>
         </div>
-        
+
         <div className="flex items-center space-x-2">
-          <span className="text-sm text-muted-foreground">Trier par:</span>
-          <select className="text-sm border rounded px-2 py-1">
+          <span className="text-muted-foreground text-sm">Trier par:</span>
+          <select className="rounded border px-2 py-1 text-sm">
             <option>Pertinence</option>
             <option>Note</option>
             <option>Prix croissant</option>
@@ -111,32 +113,34 @@ export function SpecialistsList() {
       {/* Specialists Grid */}
       <div className="grid gap-6">
         {specialists.map((specialist) => (
-          <Card key={specialist.id} className="overflow-hidden hover:shadow-lg transition-shadow">
+          <Card key={specialist.id} className="overflow-hidden transition-shadow hover:shadow-lg">
             <CardContent className="p-6">
-              <div className="flex flex-col lg:flex-row gap-6">
+              <div className="flex flex-col gap-6 lg:flex-row">
                 {/* Avatar & Basic Info */}
                 <div className="flex items-start space-x-4">
-                  <Avatar className="w-20 h-20">
+                  <Avatar className="h-20 w-20">
                     <AvatarImage src={specialist.avatar} alt={specialist.name} />
                     <AvatarFallback className="text-lg">
-                      {specialist.name.split(' ').map(n => n[0]).join('')}
+                      {specialist.name
+                        .split(" ")
+                        .map((n) => n[0])
+                        .join("")}
                     </AvatarFallback>
                   </Avatar>
-                  
+
                   <div className="flex-1">
-                    <div className="flex items-center space-x-2 mb-1">
+                    <div className="mb-1 flex items-center space-x-2">
                       <h3 className="text-xl font-semibold">{specialist.name}</h3>
-                      {specialist.verified && (
-                        <CheckCircle className="h-5 w-5 text-blue-500" />
-                      )}
-                      <div className={`w-3 h-3 rounded-full ${specialist.available ? 'bg-green-500' : 'bg-gray-400'}`} />
-                    </div>
-                    
-                    <p className="text-primary font-medium mb-2">{specialist.title}</p>
-                    
-                    <div className="flex items-center space-x-4 text-sm text-muted-foreground mb-3">
+                      {specialist.verified && <CheckCircle className="h-5 w-5 text-blue-500" />}
+                      <div
+                        className={`h-3 w-3 rounded-full ${specialist.available ? "bg-green-500" : "bg-gray-400"}`}
+                      />
+
+                    <p className="text-primary mb-2 font-medium">{specialist.title}</p>
+
+                    <div className="text-muted-foreground mb-3 flex items-center space-x-4 text-sm">
                       <div className="flex items-center space-x-1">
-                        <Star className="h-4 w-4 text-yellow-500 fill-current" />
+                        <Star className="h-4 w-4 fill-current text-yellow-500" />
                         <span className="font-medium">{specialist.rating}</span>
                         <span>({specialist.reviewCount} avis)</span>
                       </div>
@@ -154,13 +158,11 @@ export function SpecialistsList() {
 
                 {/* Content */}
                 <div className="flex-1">
-                  <p className="text-muted-foreground mb-4 leading-relaxed">
-                    {specialist.description}
-                  </p>
+                  <p className="text-muted-foreground mb-4 leading-relaxed">{specialist.description}</p>
 
                   {/* Skills */}
                   <div className="mb-4">
-                    <h4 className="text-sm font-medium mb-2">Compétences principales:</h4>
+                    <h4 className="mb-2 text-sm font-medium">Compétences principales:</h4>
                     <div className="flex flex-wrap gap-2">
                       {specialist.skills.slice(0, 4).map((skill, index) => (
                         <Badge key={index} variant="secondary" className="text-xs">
@@ -177,11 +179,15 @@ export function SpecialistsList() {
 
                   {/* Certifications */}
                   <div className="mb-4">
-                    <h4 className="text-sm font-medium mb-2">Certifications:</h4>
+                    <h4 className="mb-2 text-sm font-medium">Certifications:</h4>
                     <div className="flex flex-wrap gap-2">
                       {specialist.certifications.map((cert, index) => (
-                        <Badge key={index} variant="outline" className="text-xs bg-green-50 text-green-700 border-green-200">
-                          <Award className="h-3 w-3 mr-1" />
+                        <Badge
+                          key={index}
+                          variant="outline"
+                          className="border-green-200 bg-green-50 text-xs text-green-700"
+                        >
+                          <Award className="mr-1 h-3 w-3" />
                           {cert}
                         </Badge>
                       ))}
@@ -190,7 +196,7 @@ export function SpecialistsList() {
 
                   {/* Languages */}
                   <div className="mb-4">
-                    <h4 className="text-sm font-medium mb-2">Langues:</h4>
+                    <h4 className="mb-2 text-sm font-medium">Langues:</h4>
                     <div className="flex space-x-2">
                       {specialist.languages.map((lang, index) => (
                         <Badge key={index} variant="outline" className="text-xs">
@@ -201,32 +207,30 @@ export function SpecialistsList() {
                   </div>
 
                   {/* Stats */}
-                  <div className="text-sm text-muted-foreground mb-4">
+                  <div className="text-muted-foreground mb-4 text-sm">
                     <strong>{specialist.completedProjects}</strong> projets réalisés
                   </div>
                 </div>
 
                 {/* Price & Actions */}
-                <div className="lg:w-48 space-y-4">
+                <div className="space-y-4 lg:w-48">
                   <div className="text-center lg:text-right">
-                    <div className="flex items-center justify-center lg:justify-end space-x-1 text-2xl font-bold text-primary">
+                    <div className="text-primary flex items-center justify-center space-x-1 text-2xl font-bold lg:justify-end">
                       <DollarSign className="h-5 w-5" />
                       <span>{specialist.hourlyRate} DT</span>
                     </div>
-                    <div className="text-sm text-muted-foreground">par heure</div>
-                    <div className={`text-xs mt-1 ${specialist.available ? 'text-green-600' : 'text-gray-500'}`}>
-                      {specialist.available ? 'Disponible' : 'Occupé'}
+                    <div className="text-muted-foreground text-sm">par heure</div>
+                    <div className={`mt-1 text-xs ${specialist.available ? "text-green-600" : "text-gray-500"}`}>
+                      {specialist.available ? "Disponible" : "Occupé"}
                     </div>
                   </div>
 
                   <div className="space-y-2">
                     <Button asChild className="w-full">
-                      <Link href={`/specialists/${specialist.id}`}>
-                        Voir le profil
-                      </Link>
+                      <Link href={`/specialists/${specialist.id}`}>Voir le profil</Link>
                     </Button>
-                    <Button 
-                      variant="outline" 
+                    <Button
+                      variant="outline"
                       className="w-full"
                       disabled={!specialist.available}
                     >

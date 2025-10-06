@@ -1,10 +1,11 @@
-import { NextRequest, NextResponse } from 'next/server';
-import { getServerSession } from 'next-auth';
-import { z } from 'zod';
-import bcrypt from 'bcryptjs';
+import { NextRequest, NextResponse } from "next/server";
 
-import { authOptions } from '@/lib/auth';
-import { prisma } from '@/lib/db';
+import bcrypt from "bcryptjs";
+import { getServerSession } from "next-auth";
+import { z } from "zod";
+
+import { authOptions } from "@/lib/auth";
+import { prisma } from "@/lib/db";
 
 // Validation schemas
 const createUserSchema = z.object({
@@ -12,14 +13,14 @@ const createUserSchema = z.object({
   name: z.string().min(1),
   phone: z.string().optional(),
   password: z.string().min(6),
-  role: z.enum(['ADMIN', 'CENTER_OWNER', 'TRAINING_MANAGER', 'TEACHER', 'PARTNER']),
+  role: z.enum(["ADMIN", "CENTER_OWNER", "TRAINING_MANAGER", "TEACHER", "PARTNER"]),
   speciality: z.string().optional(),
 });
 
 const updateUserSchema = z.object({
   name: z.string().min(1).optional(),
   phone: z.string().optional(),
-  role: z.enum(['ADMIN', 'CENTER_OWNER', 'TRAINING_MANAGER', 'TEACHER', 'PARTNER']).optional(),
+  role: z.enum(["ADMIN", "CENTER_OWNER", "TRAINING_MANAGER", "TEACHER", "PARTNER"]).optional(),
   speciality: z.string().optional(),
   verified: z.boolean().optional(),
 });
@@ -27,14 +28,14 @@ const updateUserSchema = z.object({
 // Helper function to check permissions
 function canAccessUsers(userRole: string, targetRole?: string) {
   switch (userRole) {
-    case 'ADMIN':
+    case "ADMIN":
       return true; // Admins can access all users
-    case 'CENTER_OWNER':
-    case 'TRAINING_MANAGER':
+    case "CENTER_OWNER":
+    case "TRAINING_MANAGER":
       // Center owners can access teachers and partners in their organization
-      return targetRole === 'TEACHER' || targetRole === 'PARTNER' || !targetRole;
-    case 'TEACHER':
-    case 'PARTNER':
+      return targetRole === "TEACHER" || targetRole === "PARTNER" || !targetRole;
+    case "TEACHER":
+    case "PARTNER":
       // Teachers and partners can only view users (read-only)
       return !targetRole; // Only for listing, not specific user access
     default:
@@ -46,38 +47,38 @@ function canAccessUsers(userRole: string, targetRole?: string) {
 export async function GET(request: NextRequest) {
   try {
     const session = await getServerSession(authOptions);
-    
+
     if (!session?.user) {
-      return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
+      return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
     }
 
     if (!canAccessUsers(session.user.role)) {
-      return NextResponse.json({ error: 'Forbidden' }, { status: 403 });
+      return NextResponse.json({ error: "Forbidden" }, { status: 403 });
     }
 
     const { searchParams } = new URL(request.url);
-    const page = parseInt(searchParams.get('page') || '1');
-    const limit = parseInt(searchParams.get('limit') || '10');
-    const search = searchParams.get('search') || '';
-    const roleParam = searchParams.get('role') || '';
-    const verified = searchParams.get('verified');
-    
+    const page = parseInt(searchParams.get("page") || "1");
+    const limit = parseInt(searchParams.get("limit") || "10");
+    const search = searchParams.get("search") || "";
+    const roleParam = searchParams.get("role") || "";
+    const verified = searchParams.get("verified");
+
     // Normalize role parameter to uppercase with underscores
-    const role = roleParam ? roleParam.toUpperCase().replace(/-/g, '_') : '';
-    
-    console.log('API Request:', { page, limit, search, roleParam, role, verified });
+    const role = roleParam ? roleParam.toUpperCase().replace(/-/g, "_") : "";
+
+    console.log("API Request:", { page, limit, search, roleParam, role, verified });
 
     const skip = (page - 1) * limit;
 
     // Build where clause based on user permissions
-    let whereClause: any = {};
+    const whereClause: any = {};
 
     // Apply role-based filtering
-    if (session.user.role === 'CENTER_OWNER' || session.user.role === 'TRAINING_MANAGER') {
+    if (session.user.role === "CENTER_OWNER" || session.user.role === "TRAINING_MANAGER") {
       // Only show teachers and partners
       if (role) {
         // If there's a specific role filter, check if it's allowed
-        if (['TEACHER', 'PARTNER'].includes(role)) {
+        if (["TEACHER", "PARTNER"].includes(role)) {
           whereClause.role = role;
         } else {
           // Role filter not allowed for this user type
@@ -85,7 +86,7 @@ export async function GET(request: NextRequest) {
         }
       } else {
         // No specific role filter, show all allowed roles
-        whereClause.role = { in: ['TEACHER', 'PARTNER'] };
+        whereClause.role = { in: ["TEACHER", "PARTNER"] };
       }
     } else if (role) {
       // Admins and other roles can use any role filter
@@ -95,13 +96,13 @@ export async function GET(request: NextRequest) {
     // Apply search filters
     if (search) {
       whereClause.OR = [
-        { name: { contains: search, mode: 'insensitive' } },
-        { email: { contains: search, mode: 'insensitive' } },
+        { name: { contains: search, mode: "insensitive" } },
+        { email: { contains: search, mode: "insensitive" } },
       ];
     }
 
     if (verified !== null && verified !== undefined) {
-      whereClause.verified = verified === 'true';
+      whereClause.verified = verified === "true";
     }
 
     const [users, total] = await Promise.all([
@@ -125,24 +126,24 @@ export async function GET(request: NextRequest) {
                   id: true,
                   name: true,
                   subscriptions: {
-                    where: { status: 'ACTIVE' },
+                    where: { status: "ACTIVE" },
                     select: {
                       endDate: true,
                       package: {
                         select: {
                           name: true,
                           plan: true,
-                        }
-                      }
+                        },
+                      },
                     },
                     take: 1,
-                  }
-                }
-              }
-            }
-          }
+                  },
+                },
+              },
+            },
+          },
         },
-        orderBy: { createdAt: 'desc' },
+        orderBy: { createdAt: "desc" },
         skip,
         take: limit,
       }),
@@ -159,8 +160,8 @@ export async function GET(request: NextRequest) {
       },
     });
   } catch (error) {
-    console.error('Error fetching users:', error);
-    return NextResponse.json({ error: 'Internal server error' }, { status: 500 });
+    console.error("Error fetching users:", error);
+    return NextResponse.json({ error: "Internal server error" }, { status: 500 });
   }
 }
 
@@ -168,23 +169,25 @@ export async function GET(request: NextRequest) {
 export async function POST(request: NextRequest) {
   try {
     const session = await getServerSession(authOptions);
-    
+
     if (!session?.user) {
-      return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
+      return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
     }
 
     // Only admins and center owners can create users
-    if (!['ADMIN', 'CENTER_OWNER', 'TRAINING_MANAGER'].includes(session.user.role)) {
-      return NextResponse.json({ error: 'Forbidden' }, { status: 403 });
+    if (!["ADMIN", "CENTER_OWNER", "TRAINING_MANAGER"].includes(session.user.role)) {
+      return NextResponse.json({ error: "Forbidden" }, { status: 403 });
     }
 
     const body = await request.json();
     const validatedData = createUserSchema.parse(body);
 
     // Center owners can only create teachers and partners
-    if ((session.user.role === 'CENTER_OWNER' || session.user.role === 'TRAINING_MANAGER') && 
-        !['TEACHER', 'PARTNER'].includes(validatedData.role)) {
-      return NextResponse.json({ error: 'Forbidden: Can only create teachers and partners' }, { status: 403 });
+    if (
+      (session.user.role === "CENTER_OWNER" || session.user.role === "TRAINING_MANAGER") &&
+      !["TEACHER", "PARTNER"].includes(validatedData.role)
+    ) {
+      return NextResponse.json({ error: "Forbidden: Can only create teachers and partners" }, { status: 403 });
     }
 
     // Check if user already exists
@@ -193,7 +196,7 @@ export async function POST(request: NextRequest) {
     });
 
     if (existingUser) {
-      return NextResponse.json({ error: 'User with this email already exists' }, { status: 400 });
+      return NextResponse.json({ error: "User with this email already exists" }, { status: 400 });
     }
 
     // Hash password
@@ -208,7 +211,7 @@ export async function POST(request: NextRequest) {
         password: hashedPassword,
         role: validatedData.role,
         speciality: validatedData.speciality,
-        verified: session.user.role === 'ADMIN', // Admins can create pre-verified users
+        verified: session.user.role === "ADMIN", // Admins can create pre-verified users
       },
       select: {
         id: true,
@@ -227,10 +230,10 @@ export async function POST(request: NextRequest) {
     return NextResponse.json({ user }, { status: 201 });
   } catch (error) {
     if (error instanceof z.ZodError) {
-      return NextResponse.json({ error: 'Validation error', details: error.errors }, { status: 400 });
+      return NextResponse.json({ error: "Validation error", details: error.errors }, { status: 400 });
     }
-    
-    console.error('Error creating user:', error);
-    return NextResponse.json({ error: 'Internal server error' }, { status: 500 });
+
+    console.error("Error creating user:", error);
+    return NextResponse.json({ error: "Internal server error" }, { status: 500 });
   }
 }
