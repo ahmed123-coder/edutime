@@ -1,4 +1,4 @@
-import { OrganizationType, SubscriptionPlan, MemberRole } from "../../generated/prisma";
+import { OrganizationType, SubscriptionPlan, MemberRole } from "@prisma/client";
 import { prisma } from "../prisma";
 
 export interface CreateOrganizationData {
@@ -18,14 +18,22 @@ export interface CreateOrganizationData {
 
 export async function createOrganization(data: CreateOrganizationData) {
   return await prisma.$transaction(async (tx) => {
+    // Generate slug if not provided
+    const slug =
+      data.slug ||
+      data.name
+        .toLowerCase()
+        .replace(/[^a-z0-9]+/g, "-")
+        .replace(/(^-|-$)/g, "");
+
     // Create organization
     const organization = await tx.organization.create({
       data: {
         name: data.name,
-        slug: data.slug,
+        slug: slug,
         description: data.description,
         type: data.type,
-        subscription: data.subscription,
+        subscription: data.subscription || "ESSENTIAL",
         address: data.address,
         coordinates: data.coordinates,
         hours: data.hours,

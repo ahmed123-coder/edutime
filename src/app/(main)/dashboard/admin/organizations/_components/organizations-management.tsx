@@ -2,7 +2,19 @@
 
 import { useState, useEffect } from "react";
 
-import { Plus, Search, MoreHorizontal, Edit, Trash2, Eye, Building2, Users, Calendar, Crown, UserPlus } from "lucide-react";
+import {
+  Plus,
+  Search,
+  MoreHorizontal,
+  Edit,
+  Trash2,
+  Eye,
+  Building2,
+  Users,
+  Calendar,
+  Crown,
+  UserPlus,
+} from "lucide-react";
 import { toast } from "sonner";
 
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
@@ -305,7 +317,7 @@ export function OrganizationsManagement() {
                         {org.members.length > 0 ? (
                           <div className="flex -space-x-1">
                             {org.members.slice(0, 3).map((member) => (
-                              <Avatar key={member.id} className="h-6 w-6 border-2 border-background">
+                              <Avatar key={member.id} className="border-background h-6 w-6 border-2">
                                 <AvatarImage src={member.user.avatar} alt={member.user.name} />
                                 <AvatarFallback className="text-xs">
                                   {member.user.name?.charAt(0)?.toUpperCase()}
@@ -313,7 +325,7 @@ export function OrganizationsManagement() {
                               </Avatar>
                             ))}
                             {org.members.length > 3 && (
-                              <div className="flex h-6 w-6 items-center justify-center rounded-full border-2 border-background bg-muted text-xs">
+                              <div className="border-background bg-muted flex h-6 w-6 items-center justify-center rounded-full border-2 text-xs">
                                 +{org.members.length - 3}
                               </div>
                             )}

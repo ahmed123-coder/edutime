@@ -10,7 +10,6 @@ import {
   MessageSquare,
   Star,
   FileText,
-  Camera,
   Clock,
   type LucideIcon,
 } from "lucide-react";

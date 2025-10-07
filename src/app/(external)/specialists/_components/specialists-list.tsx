@@ -135,6 +135,7 @@ export function SpecialistsList() {
                       <div
                         className={`h-3 w-3 rounded-full ${specialist.available ? "bg-green-500" : "bg-gray-400"}`}
                       />
+                    </div>
 
                     <p className="text-primary mb-2 font-medium">{specialist.title}</p>
 
@@ -229,11 +230,7 @@ export function SpecialistsList() {
                     <Button asChild className="w-full">
                       <Link href={`/specialists/${specialist.id}`}>Voir le profil</Link>
                     </Button>
-                    <Button
-                      variant="outline"
-                      className="w-full"
-                      disabled={!specialist.available}
-                    >
+                    <Button variant="outline" className="w-full" disabled={!specialist.available}>
                       Contacter
                     </Button>
                   </div>

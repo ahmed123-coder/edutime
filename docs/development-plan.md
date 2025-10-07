@@ -1,6 +1,7 @@
 # SaaS Formation Space Management Platform - Development Plan
 
 ## Tech Stack
+
 - **Frontend**: Next.js 14+ with App Router
 - **UI Components**: shadcn/ui + Tailwind CSS
 - **Database**: PostgreSQL with Prisma ORM
@@ -13,6 +14,7 @@
 - **Deployment**: Vercel or AWS
 
 ## Project Structure
+
 ```
 saas-formation/
 ├── apps/
@@ -30,6 +32,7 @@ saas-formation/
 ## Phase 1: Foundation & Core Setup (Week 1-2)
 
 ### 1.1 Project Initialization
+
 - [ ] Initialize Next.js project with TypeScript
 - [ ] Setup shadcn/ui components
 - [ ] Configure Tailwind CSS
@@ -37,12 +40,14 @@ saas-formation/
 - [ ] Initialize Git repository with proper .gitignore
 
 ### 1.2 Database Setup
+
 - [ ] Design Prisma schema for multi-tenant architecture
 - [ ] Setup PostgreSQL database
 - [ ] Create initial migrations
 - [ ] Seed database with test data
 
 ### 1.3 Authentication System
+
 - [ ] Setup NextAuth.js with multiple providers
 - [ ] Implement role-based access control (RBAC)
 - [ ] Create user registration/login flows
@@ -51,6 +56,7 @@ saas-formation/
 ## Phase 2: Core Database Schema (Week 2-3)
 
 ### 2.1 User Management
+
 ```prisma
 model User {
   id          String   @id @default(cuid())
@@ -72,6 +78,7 @@ enum UserRole {
 ```
 
 ### 2.2 Multi-tenant Architecture
+
 ```prisma
 model Organization {
   id          String @id @default(cuid())
@@ -89,6 +96,7 @@ enum OrgType {
 ```
 
 ### 2.3 Core Entities
+
 - [ ] Training Centers (Organizations)
 - [ ] Rooms/Spaces
 - [ ] Bookings/Reservations
@@ -99,6 +107,7 @@ enum OrgType {
 ## Phase 3: Core Features Development (Week 3-6)
 
 ### 3.1 Training Center Management
+
 - [ ] Center profile creation and management
 - [ ] Room/space management (CRUD operations)
 - [ ] Photo upload and management
@@ -106,6 +115,7 @@ enum OrgType {
 - [ ] Pricing configuration
 
 ### 3.2 Booking System
+
 - [ ] Calendar component with availability
 - [ ] Booking creation workflow
 - [ ] Booking validation and approval
@@ -113,6 +123,7 @@ enum OrgType {
 - [ ] Booking status management
 
 ### 3.3 Teacher Interface
+
 - [ ] Teacher profile management
 - [ ] Center search and filtering
 - [ ] Interactive map with centers
@@ -122,12 +133,14 @@ enum OrgType {
 ## Phase 4: Payment Integration (Week 6-7)
 
 ### 4.1 Payment Providers
+
 - [ ] Konnect payment integration
 - [ ] ClickToPay integration
 - [ ] Payment method management
 - [ ] Secure payment processing
 
 ### 4.2 Financial Management
+
 - [ ] Invoice generation
 - [ ] Receipt creation
 - [ ] Commission calculation
@@ -137,6 +150,7 @@ enum OrgType {
 ## Phase 5: Advanced Features (Week 7-10)
 
 ### 5.1 Notification System
+
 - [ ] Email notifications (Resend/SendGrid)
 - [ ] SMS notifications (WinSMS)
 - [ ] Push notifications
@@ -144,12 +158,14 @@ enum OrgType {
 - [ ] Template management
 
 ### 5.2 Review & Rating System
+
 - [ ] Review submission
 - [ ] Rating calculation
 - [ ] Review moderation
 - [ ] Response management
 
 ### 5.3 Promotion System
+
 - [ ] Discount code creation
 - [ ] Promotional campaigns
 - [ ] Special offers
@@ -158,12 +174,14 @@ enum OrgType {
 ## Phase 6: Partner Services (Week 10-11)
 
 ### 6.1 Partner Management
+
 - [ ] Partner registration
 - [ ] Service catalog
 - [ ] Order management
 - [ ] Service delivery tracking
 
 ### 6.2 Document Services
+
 - [ ] File upload system
 - [ ] Print job management
 - [ ] Delivery coordination
@@ -172,6 +190,7 @@ enum OrgType {
 ## Phase 7: Administration & Analytics (Week 11-12)
 
 ### 7.1 Admin Dashboard
+
 - [ ] Platform overview
 - [ ] User management
 - [ ] Content moderation
@@ -179,6 +198,7 @@ enum OrgType {
 - [ ] System monitoring
 
 ### 7.2 Analytics & Reporting
+
 - [ ] Booking analytics
 - [ ] Revenue tracking
 - [ ] User behavior analysis
@@ -188,12 +208,14 @@ enum OrgType {
 ## Phase 8: Mobile Optimization & PWA (Week 12-13)
 
 ### 8.1 Mobile Experience
+
 - [ ] Responsive design optimization
 - [ ] Touch-friendly interfaces
 - [ ] Mobile-specific features
 - [ ] Performance optimization
 
 ### 8.2 Progressive Web App
+
 - [ ] Service worker implementation
 - [ ] Offline functionality
 - [ ] App-like experience
@@ -202,6 +224,7 @@ enum OrgType {
 ## Phase 9: Testing & Quality Assurance (Week 13-14)
 
 ### 9.1 Testing Strategy
+
 - [ ] Unit tests (Jest/Vitest)
 - [ ] Integration tests
 - [ ] E2E tests (Playwright)
@@ -209,6 +232,7 @@ enum OrgType {
 - [ ] Performance testing
 
 ### 9.2 Security & Compliance
+
 - [ ] Security audit
 - [ ] GDPR compliance
 - [ ] Data encryption
@@ -218,6 +242,7 @@ enum OrgType {
 ## Phase 10: Deployment & Launch (Week 14-15)
 
 ### 10.1 Production Setup
+
 - [ ] Production environment configuration
 - [ ] Database migration
 - [ ] CDN setup
@@ -225,6 +250,7 @@ enum OrgType {
 - [ ] Backup strategy
 
 ### 10.2 Launch Preparation
+
 - [ ] User documentation
 - [ ] Admin training materials
 - [ ] Support system setup
@@ -236,6 +262,7 @@ enum OrgType {
 ### Database Schema Design
 
 #### Core Models
+
 ```prisma
 // User and Authentication
 model User {
@@ -588,6 +615,7 @@ enum NotificationType {
 ### API Structure (Next.js App Router)
 
 #### Authentication Routes
+
 ```typescript
 // app/api/auth/[...nextauth]/route.ts
 // app/api/auth/register/route.ts
@@ -596,6 +624,7 @@ enum NotificationType {
 ```
 
 #### Core API Routes
+
 ```typescript
 // Organizations
 // app/api/organizations/route.ts - GET, POST
@@ -646,53 +675,50 @@ enum NotificationType {
 ### Component Architecture
 
 #### Shared UI Components (packages/ui)
+
 ```typescript
 // Authentication
-- LoginForm
-- RegisterForm
-- PasswordResetForm
-- EmailVerification
-
-// Layout
-- Header
-- Sidebar
-- Footer
-- Navigation
-- Breadcrumbs
-
-// Data Display
-- DataTable
-- Calendar
-- Map
-- Charts
-- Statistics
-- ReviewCard
-- RoomCard
-- OrganizationCard
-
-// Forms
-- BookingForm
-- RoomForm
-- OrganizationForm
-- PaymentForm
-- ReviewForm
-
-// Feedback
-- Toast
-- Modal
-- ConfirmDialog
-- LoadingSpinner
-- EmptyState
-- ErrorBoundary
-
-// Navigation
-- Pagination
-- Tabs
-- Steps
-- Filters
+-LoginForm -
+  RegisterForm -
+  PasswordResetForm -
+  EmailVerification -
+  // Layout
+  Header -
+  Sidebar -
+  Footer -
+  Navigation -
+  Breadcrumbs -
+  // Data Display
+  DataTable -
+  Calendar -
+  Map -
+  Charts -
+  Statistics -
+  ReviewCard -
+  RoomCard -
+  OrganizationCard -
+  // Forms
+  BookingForm -
+  RoomForm -
+  OrganizationForm -
+  PaymentForm -
+  ReviewForm -
+  // Feedback
+  Toast -
+  Modal -
+  ConfirmDialog -
+  LoadingSpinner -
+  EmptyState -
+  ErrorBoundary -
+  // Navigation
+  Pagination -
+  Tabs -
+  Steps -
+  Filters;
 ```
 
 #### Page Components Structure
+
 ```typescript
 // app/(auth)/
 ├── login/page.tsx
@@ -742,15 +768,16 @@ enum NotificationType {
 ### Key Feature Implementations
 
 #### 1. Multi-tenant Architecture
+
 ```typescript
 // lib/tenant.ts
 export async function getTenantFromRequest(request: Request) {
   const url = new URL(request.url);
-  const subdomain = url.hostname.split('.')[0];
+  const subdomain = url.hostname.split(".")[0];
 
-  if (subdomain && subdomain !== 'www') {
+  if (subdomain && subdomain !== "www") {
     return await prisma.organization.findUnique({
-      where: { slug: subdomain }
+      where: { slug: subdomain },
     });
   }
 
@@ -764,7 +791,7 @@ export async function middleware(request: NextRequest) {
   if (tenant) {
     // Add tenant context to headers
     const requestHeaders = new Headers(request.headers);
-    requestHeaders.set('x-tenant-id', tenant.id);
+    requestHeaders.set("x-tenant-id", tenant.id);
 
     return NextResponse.next({
       request: {
@@ -778,40 +805,32 @@ export async function middleware(request: NextRequest) {
 ```
 
 #### 2. Booking System with Conflict Detection
+
 ```typescript
 // lib/booking.ts
 export async function checkAvailability(
   roomId: string,
   date: Date,
   startTime: string,
-  endTime: string
+  endTime: string,
 ): Promise<boolean> {
   const existingBookings = await prisma.booking.findMany({
     where: {
       roomId,
       date,
-      status: { in: ['PENDING', 'CONFIRMED'] },
+      status: { in: ["PENDING", "CONFIRMED"] },
       OR: [
         {
-          AND: [
-            { startTime: { lte: startTime } },
-            { endTime: { gt: startTime } }
-          ]
+          AND: [{ startTime: { lte: startTime } }, { endTime: { gt: startTime } }],
         },
         {
-          AND: [
-            { startTime: { lt: endTime } },
-            { endTime: { gte: endTime } }
-          ]
+          AND: [{ startTime: { lt: endTime } }, { endTime: { gte: endTime } }],
         },
         {
-          AND: [
-            { startTime: { gte: startTime } },
-            { endTime: { lte: endTime } }
-          ]
-        }
-      ]
-    }
+          AND: [{ startTime: { gte: startTime } }, { endTime: { lte: endTime } }],
+        },
+      ],
+    },
   });
 
   return existingBookings.length === 0;
@@ -820,23 +839,18 @@ export async function checkAvailability(
 export async function createBooking(data: BookingCreateInput) {
   return await prisma.$transaction(async (tx) => {
     // Check availability again within transaction
-    const isAvailable = await checkAvailability(
-      data.roomId,
-      data.date,
-      data.startTime,
-      data.endTime
-    );
+    const isAvailable = await checkAvailability(data.roomId, data.date, data.startTime, data.endTime);
 
     if (!isAvailable) {
-      throw new Error('Time slot is no longer available');
+      throw new Error("Time slot is no longer available");
     }
 
     // Create booking
     const booking = await tx.booking.create({
       data: {
         ...data,
-        status: 'PENDING'
-      }
+        status: "PENDING",
+      },
     });
 
     // Send notification
@@ -848,6 +862,7 @@ export async function createBooking(data: BookingCreateInput) {
 ```
 
 #### 3. Payment Integration
+
 ```typescript
 // lib/payments/konnect.ts
 export class KonnectPaymentProvider {
@@ -861,18 +876,18 @@ export class KonnectPaymentProvider {
 
   async createPayment(amount: number, bookingId: string) {
     const response = await fetch(`${this.baseUrl}/payments`, {
-      method: 'POST',
+      method: "POST",
       headers: {
-        'Authorization': `Bearer ${this.apiKey}`,
-        'Content-Type': 'application/json'
+        Authorization: `Bearer ${this.apiKey}`,
+        "Content-Type": "application/json",
       },
       body: JSON.stringify({
         amount: amount * 100, // Convert to cents
-        currency: 'TND',
+        currency: "TND",
         reference: bookingId,
         callback_url: `${process.env.NEXT_PUBLIC_APP_URL}/api/payments/webhooks/konnect`,
-        return_url: `${process.env.NEXT_PUBLIC_APP_URL}/bookings/${bookingId}/success`
-      })
+        return_url: `${process.env.NEXT_PUBLIC_APP_URL}/bookings/${bookingId}/success`,
+      }),
     });
 
     return await response.json();
@@ -892,35 +907,38 @@ export class ClickToPayProvider {
 ```
 
 #### 4. Notification System
+
 ```typescript
 // lib/notifications/email.ts
-import { Resend } from 'resend';
+import { Resend } from "resend";
 
 const resend = new Resend(process.env.RESEND_API_KEY);
 
 export async function sendBookingConfirmation(booking: Booking) {
   await resend.emails.send({
-    from: 'noreply@yourplatform.com',
+    from: "noreply@yourplatform.com",
     to: booking.user.email,
-    subject: 'Booking Confirmation',
-    react: BookingConfirmationEmail({ booking })
+    subject: "Booking Confirmation",
+    react: BookingConfirmationEmail({ booking }),
   });
 }
 
 // lib/notifications/sms.ts
 export async function sendSMS(phone: string, message: string) {
-  const response = await fetch('https://api.winsms.co.za/api/rest/v1/sms/outbound/send', {
-    method: 'POST',
+  const response = await fetch("https://api.winsms.co.za/api/rest/v1/sms/outbound/send", {
+    method: "POST",
     headers: {
-      'Authorization': `Bearer ${process.env.WINSMS_API_KEY}`,
-      'Content-Type': 'application/json'
+      Authorization: `Bearer ${process.env.WINSMS_API_KEY}`,
+      "Content-Type": "application/json",
     },
     body: JSON.stringify({
-      messages: [{
-        to: phone,
-        text: message
-      }]
-    })
+      messages: [
+        {
+          to: phone,
+          text: message,
+        },
+      ],
+    }),
   });
 
   return await response.json();
@@ -936,47 +954,41 @@ export async function sendPushNotification(userId: string, notification: any) {
       type: notification.type,
       title: notification.title,
       message: notification.message,
-      data: notification.data
-    }
+      data: notification.data,
+    },
   });
 }
 ```
 
 #### 5. Search and Filtering
+
 ```typescript
 // lib/search.ts
 export async function searchOrganizations(params: SearchParams) {
-  const {
-    query,
-    location,
-    priceRange,
-    amenities,
-    rating,
-    page = 1,
-    limit = 20
-  } = params;
+  const { query, location, priceRange, amenities, rating, page = 1, limit = 20 } = params;
 
   const where: Prisma.OrganizationWhereInput = {
     active: true,
     verified: true,
     ...(query && {
       OR: [
-        { name: { contains: query, mode: 'insensitive' } },
-        { description: { contains: query, mode: 'insensitive' } }
-      ]
+        { name: { contains: query, mode: "insensitive" } },
+        { description: { contains: query, mode: "insensitive" } },
+      ],
     }),
-    ...(location && {
-      // Implement geospatial search
-    }),
+    ...(location &&
+      {
+        // Implement geospatial search
+      }),
     ...(amenities?.length && {
       rooms: {
         some: {
           amenities: {
-            array_contains: amenities
-          }
-        }
-      }
-    })
+            array_contains: amenities,
+          },
+        },
+      },
+    }),
   };
 
   const organizations = await prisma.organization.findMany({
@@ -984,34 +996,30 @@ export async function searchOrganizations(params: SearchParams) {
     include: {
       rooms: {
         where: { active: true },
-        take: 3
+        take: 3,
       },
       reviews: {
-        select: { rating: true }
+        select: { rating: true },
       },
       _count: {
-        select: { reviews: true }
-      }
+        select: { reviews: true },
+      },
     },
     skip: (page - 1) * limit,
     take: limit,
-    orderBy: [
-      { verified: 'desc' },
-      { createdAt: 'desc' }
-    ]
+    orderBy: [{ verified: "desc" }, { createdAt: "desc" }],
   });
 
-  return organizations.map(org => ({
+  return organizations.map((org) => ({
     ...org,
-    averageRating: org.reviews.length > 0
-      ? org.reviews.reduce((sum, r) => sum + r.rating, 0) / org.reviews.length
-      : 0,
-    reviewCount: org._count.reviews
+    averageRating: org.reviews.length > 0 ? org.reviews.reduce((sum, r) => sum + r.rating, 0) / org.reviews.length : 0,
+    reviewCount: org._count.reviews,
   }));
 }
 ```
 
 #### 6. Map Integration
+
 ```typescript
 // components/Map.tsx
 'use client';
@@ -1076,10 +1084,11 @@ export function Map({ organizations, center, onMarkerClick }: MapProps) {
 ### Security Implementation
 
 #### 1. Authentication & Authorization
+
 ```typescript
 // lib/auth.ts
-import { NextAuthOptions } from 'next-auth';
-import { PrismaAdapter } from '@next-auth/prisma-adapter';
+import { NextAuthOptions } from "next-auth";
+import { PrismaAdapter } from "@next-auth/prisma-adapter";
 
 export const authOptions: NextAuthOptions = {
   adapter: PrismaAdapter(prisma),
@@ -1109,73 +1118,53 @@ export const authOptions: NextAuthOptions = {
     },
   },
   session: {
-    strategy: 'jwt',
+    strategy: "jwt",
   },
 };
 
 // lib/permissions.ts
-export function hasPermission(
-  userRole: UserRole,
-  action: string,
-  resource: string
-): boolean {
+export function hasPermission(userRole: UserRole, action: string, resource: string): boolean {
   const permissions = {
-    ADMIN: ['*'],
+    ADMIN: ["*"],
     CENTER_OWNER: [
-      'organization:read',
-      'organization:update',
-      'room:create',
-      'room:read',
-      'room:update',
-      'room:delete',
-      'booking:read',
-      'booking:confirm',
-      'booking:cancel'
+      "organization:read",
+      "organization:update",
+      "room:create",
+      "room:read",
+      "room:update",
+      "room:delete",
+      "booking:read",
+      "booking:confirm",
+      "booking:cancel",
     ],
-    TRAINING_MANAGER: [
-      'organization:read',
-      'room:read',
-      'booking:read',
-      'booking:confirm'
-    ],
-    TEACHER: [
-      'organization:read',
-      'room:read',
-      'booking:create',
-      'booking:read',
-      'booking:cancel',
-      'review:create'
-    ],
-    PARTNER: [
-      'service:create',
-      'service:read',
-      'service:update',
-      'order:read',
-      'order:update'
-    ]
+    TRAINING_MANAGER: ["organization:read", "room:read", "booking:read", "booking:confirm"],
+    TEACHER: ["organization:read", "room:read", "booking:create", "booking:read", "booking:cancel", "review:create"],
+    PARTNER: ["service:create", "service:read", "service:update", "order:read", "order:update"],
   };
 
   const userPermissions = permissions[userRole] || [];
-  return userPermissions.includes('*') ||
-         userPermissions.includes(`${resource}:${action}`);
+  return userPermissions.includes("*") || userPermissions.includes(`${resource}:${action}`);
 }
 ```
 
 #### 2. Data Validation & Sanitization
+
 ```typescript
 // lib/validation.ts
-import { z } from 'zod';
+import { z } from "zod";
 
-export const createBookingSchema = z.object({
-  roomId: z.string().cuid(),
-  date: z.string().datetime(),
-  startTime: z.string().regex(/^([0-1]?[0-9]|2[0-3]):[0-5][0-9]$/),
-  endTime: z.string().regex(/^([0-1]?[0-9]|2[0-3]):[0-5][0-9]$/),
-  notes: z.string().max(500).optional(),
-}).refine((data) => data.startTime < data.endTime, {
-  message: "End time must be after start time",
-  path: ["endTime"],
-});
+export const createBookingSchema = z
+  .object({
+    roomId: z.string().cuid(),
+    date: z.string().datetime(),
+    startTime: z.string().regex(/^([0-1]?[0-9]|2[0-3]):[0-5][0-9]$/),
+    endTime: z.string().regex(/^([0-1]?[0-9]|2[0-3]):[0-5][0-9]$/),
+    notes: z.string().max(500).optional(),
+  })
+  .refine((data) => data.startTime < data.endTime, {
+    message: "End time must be after start time",
+    path: ["endTime"],
+  });
 
 export const createOrganizationSchema = z.object({
   name: z.string().min(2).max(100),
@@ -1194,46 +1183,37 @@ export const createOrganizationSchema = z.object({
 ### Testing Strategy
 
 #### 1. Unit Tests
+
 ```typescript
 // __tests__/lib/booking.test.ts
-import { checkAvailability, createBooking } from '@/lib/booking';
-import { prismaMock } from '@/lib/prisma-mock';
+import { checkAvailability, createBooking } from "@/lib/booking";
+import { prismaMock } from "@/lib/prisma-mock";
 
-describe('Booking System', () => {
+describe("Booking System", () => {
   beforeEach(() => {
     jest.clearAllMocks();
   });
 
-  describe('checkAvailability', () => {
-    it('should return true when no conflicts exist', async () => {
+  describe("checkAvailability", () => {
+    it("should return true when no conflicts exist", async () => {
       prismaMock.booking.findMany.mockResolvedValue([]);
 
-      const result = await checkAvailability(
-        'room-1',
-        new Date('2024-01-15'),
-        '09:00',
-        '11:00'
-      );
+      const result = await checkAvailability("room-1", new Date("2024-01-15"), "09:00", "11:00");
 
       expect(result).toBe(true);
     });
 
-    it('should return false when time slot conflicts', async () => {
+    it("should return false when time slot conflicts", async () => {
       prismaMock.booking.findMany.mockResolvedValue([
         {
-          id: 'booking-1',
-          startTime: '10:00',
-          endTime: '12:00',
-          status: 'CONFIRMED'
-        }
+          id: "booking-1",
+          startTime: "10:00",
+          endTime: "12:00",
+          status: "CONFIRMED",
+        },
       ]);
 
-      const result = await checkAvailability(
-        'room-1',
-        new Date('2024-01-15'),
-        '09:00',
-        '11:00'
-      );
+      const result = await checkAvailability("room-1", new Date("2024-01-15"), "09:00", "11:00");
 
       expect(result).toBe(false);
     });
@@ -1242,28 +1222,29 @@ describe('Booking System', () => {
 ```
 
 #### 2. Integration Tests
+
 ```typescript
 // __tests__/api/bookings.test.ts
-import { POST } from '@/app/api/bookings/route';
-import { getServerSession } from 'next-auth';
+import { POST } from "@/app/api/bookings/route";
+import { getServerSession } from "next-auth";
 
-jest.mock('next-auth');
+jest.mock("next-auth");
 
-describe('/api/bookings', () => {
-  it('should create a booking successfully', async () => {
+describe("/api/bookings", () => {
+  it("should create a booking successfully", async () => {
     (getServerSession as jest.Mock).mockResolvedValue({
-      user: { id: 'user-1', role: 'TEACHER' }
+      user: { id: "user-1", role: "TEACHER" },
     });
 
-    const request = new Request('http://localhost:3000/api/bookings', {
-      method: 'POST',
+    const request = new Request("http://localhost:3000/api/bookings", {
+      method: "POST",
       body: JSON.stringify({
-        roomId: 'room-1',
-        date: '2024-01-15T00:00:00Z',
-        startTime: '09:00',
-        endTime: '11:00'
+        roomId: "room-1",
+        date: "2024-01-15T00:00:00Z",
+        startTime: "09:00",
+        endTime: "11:00",
       }),
-      headers: { 'Content-Type': 'application/json' }
+      headers: { "Content-Type": "application/json" },
     });
 
     const response = await POST(request);
@@ -1276,43 +1257,45 @@ describe('/api/bookings', () => {
 ```
 
 #### 3. E2E Tests
+
 ```typescript
 // e2e/booking-flow.spec.ts
-import { test, expect } from '@playwright/test';
+import { test, expect } from "@playwright/test";
 
-test('complete booking flow', async ({ page }) => {
+test("complete booking flow", async ({ page }) => {
   // Login as teacher
-  await page.goto('/login');
-  await page.fill('[data-testid=email]', 'teacher@example.com');
-  await page.fill('[data-testid=password]', 'password123');
-  await page.click('[data-testid=login-button]');
+  await page.goto("/login");
+  await page.fill("[data-testid=email]", "teacher@example.com");
+  await page.fill("[data-testid=password]", "password123");
+  await page.click("[data-testid=login-button]");
 
   // Search for centers
-  await page.goto('/search');
-  await page.fill('[data-testid=search-input]', 'Training Center');
-  await page.click('[data-testid=search-button]');
+  await page.goto("/search");
+  await page.fill("[data-testid=search-input]", "Training Center");
+  await page.click("[data-testid=search-button]");
 
   // Select a center
-  await page.click('[data-testid=center-card]:first-child');
+  await page.click("[data-testid=center-card]:first-child");
 
   // Select a room and time
-  await page.click('[data-testid=room-card]:first-child');
-  await page.click('[data-testid=date-picker]');
-  await page.click('[data-testid=time-slot-9-11]');
+  await page.click("[data-testid=room-card]:first-child");
+  await page.click("[data-testid=date-picker]");
+  await page.click("[data-testid=time-slot-9-11]");
 
   // Complete booking
-  await page.click('[data-testid=book-now-button]');
-  await page.fill('[data-testid=notes]', 'Test booking');
-  await page.click('[data-testid=confirm-booking]');
+  await page.click("[data-testid=book-now-button]");
+  await page.fill("[data-testid=notes]", "Test booking");
+  await page.click("[data-testid=confirm-booking]");
 
   // Verify success
-  await expect(page.locator('[data-testid=booking-success]')).toBeVisible();
+  await expect(page.locator("[data-testid=booking-success]")).toBeVisible();
 });
 ```
 
 ### Deployment Configuration
 
 #### 1. Environment Variables
+
 ```bash
 # .env.example
 # Database
@@ -1353,6 +1336,7 @@ NEXT_PUBLIC_APP_NAME="Formation Space"
 ```
 
 #### 2. Docker Configuration
+
 ```dockerfile
 # Dockerfile
 FROM node:18-alpine AS base
@@ -1396,6 +1380,7 @@ CMD ["node", "server.js"]
 ```
 
 #### 3. CI/CD Pipeline
+
 ```yaml
 # .github/workflows/deploy.yml
 name: Deploy to Production
@@ -1411,8 +1396,8 @@ jobs:
       - uses: actions/checkout@v4
       - uses: actions/setup-node@v4
         with:
-          node-version: '18'
-          cache: 'npm'
+          node-version: "18"
+          cache: "npm"
 
       - run: npm ci
       - run: npm run lint
@@ -1430,12 +1415,13 @@ jobs:
           vercel-token: ${{ secrets.VERCEL_TOKEN }}
           vercel-org-id: ${{ secrets.ORG_ID }}
           vercel-project-id: ${{ secrets.PROJECT_ID }}
-          vercel-args: '--prod'
+          vercel-args: "--prod"
 ```
 
 ### Development Workflow
 
 #### 1. Git Workflow
+
 ```bash
 # Feature development
 git checkout -b feature/booking-system
@@ -1449,6 +1435,7 @@ git push origin feature/booking-system
 ```
 
 #### 2. Database Migrations
+
 ```bash
 # Create migration
 npx prisma migrate dev --name add_booking_table
@@ -1461,9 +1448,10 @@ npx prisma generate
 ```
 
 #### 3. Monitoring & Logging
+
 ```typescript
 // lib/monitoring.ts
-import { Sentry } from '@sentry/nextjs';
+import { Sentry } from "@sentry/nextjs";
 
 export function logError(error: Error, context?: any) {
   console.error(error);
@@ -1507,6 +1495,11 @@ export function logEvent(event: string, data?: any) {
    - Add comprehensive testing
 
 This development plan provides a comprehensive roadmap for building the SaaS formation space management platform with all the features specified in the PRD.
+
 ```
+
 ```
+
+```
+
 ```

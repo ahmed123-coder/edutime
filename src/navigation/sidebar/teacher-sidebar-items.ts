@@ -1,7 +1,6 @@
 import {
   LayoutDashboard,
   Search,
-  MapPin,
   Calendar,
   CreditCard,
   Star,

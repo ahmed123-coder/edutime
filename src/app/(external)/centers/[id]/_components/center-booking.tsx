@@ -48,7 +48,7 @@ export function CenterBooking({ center }: CenterBookingProps) {
   const commission = totalPrice * 0.1; // 10% commission
   const finalPrice = totalPrice + commission;
 
-  const isFormValid = selectedRoom && date && startTime && endTime && participants;
+  const isFormValid = Boolean(selectedRoom && date && startTime && endTime && participants);
 
   const handleBooking = () => {
     if (!isFormValid) return;
@@ -188,7 +188,8 @@ export function CenterBooking({ center }: CenterBookingProps) {
           className="w-full"
           size="lg"
           disabled={
-            !isFormValid || (selectedRoomData && participants && parseInt(participants) > selectedRoomData.capacity)
+            !isFormValid ||
+            Boolean(selectedRoomData && participants && parseInt(participants) > selectedRoomData.capacity)
           }
           onClick={handleBooking}
         >

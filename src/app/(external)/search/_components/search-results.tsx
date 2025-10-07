@@ -4,20 +4,7 @@ import { useState, useEffect } from "react";
 
 import Link from "next/link";
 
-import {
-  Star,
-  MapPin,
-  Users,
-  Clock,
-  Wifi,
-  Car,
-  Coffee,
-  Heart,
-  Share2,
-  Filter,
-  Grid,
-  List
-} from "lucide-react";
+import { Star, MapPin, Users, Clock, Wifi, Car, Coffee, Heart, Share2, Filter, Grid, List } from "lucide-react";
 
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
@@ -113,22 +100,16 @@ export function SearchResults({ searchParams }: SearchResultsProps) {
       // Sort results
       switch (sortBy) {
         case "price-low":
-          filteredResults.sort((a, b) =>
-            parseInt(a.priceRange.split("-")[0]) - parseInt(b.priceRange.split("-")[0])
-          );
+          filteredResults.sort((a, b) => parseInt(a.priceRange.split("-")[0]) - parseInt(b.priceRange.split("-")[0]));
           break;
         case "price-high":
-          filteredResults.sort((a, b) =>
-            parseInt(b.priceRange.split("-")[0]) - parseInt(a.priceRange.split("-")[0])
-          );
+          filteredResults.sort((a, b) => parseInt(b.priceRange.split("-")[0]) - parseInt(a.priceRange.split("-")[0]));
           break;
         case "rating":
           filteredResults.sort((a, b) => b.rating - a.rating);
           break;
         case "distance":
-          filteredResults.sort((a, b) =>
-            parseFloat(a.distance) - parseFloat(b.distance)
-          );
+          filteredResults.sort((a, b) => parseFloat(a.distance) - parseFloat(b.distance));
           break;
       }
 
@@ -253,6 +234,7 @@ export function SearchResults({ searchParams }: SearchResultsProps) {
                             {result.location} • {result.distance}
                           </span>
                         </div>
+                      </div>
 
                       <p className="text-muted-foreground mb-3 line-clamp-2 text-sm">{result.description}</p>
 

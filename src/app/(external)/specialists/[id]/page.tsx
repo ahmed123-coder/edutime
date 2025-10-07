@@ -38,12 +38,13 @@ const mockSpecialist = {
 };
 
 interface SpecialistPageProps {
-  params: {
+  params: Promise<{
     id: string;
-  };
+  }>;
 }
 
 export async function generateMetadata({ params }: SpecialistPageProps): Promise<Metadata> {
+  const { id } = await params;
   const specialist = mockSpecialist;
 
   if (!specialist) {
@@ -59,7 +60,8 @@ export async function generateMetadata({ params }: SpecialistPageProps): Promise
   };
 }
 
-export default function SpecialistPage({ params }: SpecialistPageProps) {
+export default async function SpecialistPage({ params }: SpecialistPageProps) {
+  const { id } = await params;
   const specialist = mockSpecialist;
 
   if (!specialist) {

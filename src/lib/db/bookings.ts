@@ -1,4 +1,4 @@
-import { BookingStatus, PaymentMethod, PaymentStatus } from "../../generated/prisma";
+import { BookingStatus, PaymentMethod, PaymentStatus } from "@prisma/client";
 import { prisma } from "../prisma";
 
 export interface CreateBookingData {

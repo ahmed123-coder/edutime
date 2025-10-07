@@ -47,7 +47,7 @@ async function canAccessRoom(userRole: string, userId: string, roomId: string) {
 }
 
 // GET /api/rooms/[id] - Get specific room
-export async function GET(request: NextRequest, { params }: { params: { id: string } }) {
+export async function GET(request: NextRequest, { params }: { params: Promise<{ id: string }> }) {
   try {
     const session = await getServerSession(authOptions);
 
@@ -55,7 +55,7 @@ export async function GET(request: NextRequest, { params }: { params: { id: stri
       return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
     }
 
-    const roomId = params.id;
+    const { id: roomId } = await params;
 
     // Check permissions
     if (!(await canAccessRoom(session.user.role, session.user.id, roomId))) {
@@ -133,7 +133,7 @@ export async function GET(request: NextRequest, { params }: { params: { id: stri
 }
 
 // PUT /api/rooms/[id] - Update room
-export async function PUT(request: NextRequest, { params }: { params: { id: string } }) {
+export async function PUT(request: NextRequest, { params }: { params: Promise<{ id: string }> }) {
   try {
     const session = await getServerSession(authOptions);
 
@@ -141,7 +141,7 @@ export async function PUT(request: NextRequest, { params }: { params: { id: stri
       return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
     }
 
-    const roomId = params.id;
+    const { id: roomId } = await params;
 
     // Check permissions
     if (!(await canAccessRoom(session.user.role, session.user.id, roomId))) {
@@ -202,7 +202,7 @@ export async function PUT(request: NextRequest, { params }: { params: { id: stri
 }
 
 // DELETE /api/rooms/[id] - Delete room
-export async function DELETE(request: NextRequest, { params }: { params: { id: string } }) {
+export async function DELETE(request: NextRequest, { params }: { params: Promise<{ id: string }> }) {
   try {
     const session = await getServerSession(authOptions);
 
@@ -210,7 +210,7 @@ export async function DELETE(request: NextRequest, { params }: { params: { id: s
       return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
     }
 
-    const roomId = params.id;
+    const { id: roomId } = await params;
 
     // Only admins can delete rooms
     if (session.user.role !== "ADMIN") {

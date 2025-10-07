@@ -72,11 +72,7 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
           <SidebarMenuItem>
             <SidebarMenuButton asChild className="data-[slot=sidebar-menu-button]:!p-1.5">
               <Link href={defaultDashboardUrl}>
-                <img
-                  src={IMAGES.LOGO_RECTANGLE}
-                  alt="EduTime"
-                  className="h-8 w-auto"
-                />
+                <img src={IMAGES.LOGO_RECTANGLE} alt="EduTime" className="h-8 w-auto" />
               </Link>
             </SidebarMenuButton>
           </SidebarMenuItem>

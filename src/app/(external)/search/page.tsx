@@ -15,7 +15,7 @@ export const metadata: Metadata = {
 };
 
 interface SearchPageProps {
-  searchParams: {
+  searchParams: Promise<{
     q?: string;
     location?: string;
     category?: string;
@@ -28,10 +28,11 @@ interface SearchPageProps {
     amenities?: string;
     page?: string;
     view?: "list" | "map";
-  };
+  }>;
 }
 
-export default function SearchPage({ searchParams }: SearchPageProps) {
+export default async function SearchPage({ searchParams }: SearchPageProps) {
+  const resolvedSearchParams = await searchParams;
   return (
     <div className="bg-background min-h-screen">
       <SearchHeader />
@@ -41,7 +42,7 @@ export default function SearchPage({ searchParams }: SearchPageProps) {
           {/* Filters Sidebar */}
           <div className="lg:col-span-1">
             <Suspense fallback={<div>Chargement des filtres...</div>}>
-              <SearchFilters searchParams={searchParams} />
+              <SearchFilters searchParams={resolvedSearchParams} />
             </Suspense>
           </div>
 
@@ -51,14 +52,14 @@ export default function SearchPage({ searchParams }: SearchPageProps) {
               {/* Results List */}
               <div className="overflow-hidden">
                 <Suspense fallback={<div>Chargement des résultats...</div>}>
-                  <SearchResults searchParams={searchParams} />
+                  <SearchResults searchParams={resolvedSearchParams} />
                 </Suspense>
               </div>
 
               {/* Map */}
               <div className="hidden lg:block">
                 <Suspense fallback={<div>Chargement de la carte...</div>}>
-                  <SearchMap searchParams={searchParams} />
+                  <SearchMap searchParams={resolvedSearchParams} />
                 </Suspense>
               </div>
             </div>

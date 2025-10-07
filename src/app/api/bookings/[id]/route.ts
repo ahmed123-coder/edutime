@@ -76,7 +76,7 @@ function calculateBookingAmount(hourlyRate: number, startTime: string, endTime: 
 }
 
 // GET /api/bookings/[id] - Get specific booking
-export async function GET(request: NextRequest, { params }: { params: { id: string } }) {
+export async function GET(request: NextRequest, { params }: { params: Promise<{ id: string }> }) {
   try {
     const session = await getServerSession(authOptions);
 
@@ -84,7 +84,7 @@ export async function GET(request: NextRequest, { params }: { params: { id: stri
       return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
     }
 
-    const bookingId = params.id;
+    const { id: bookingId } = await params;
 
     // Check permissions
     if (!(await canAccessBooking(session.user.role, session.user.id, bookingId))) {
@@ -172,7 +172,7 @@ export async function GET(request: NextRequest, { params }: { params: { id: stri
 }
 
 // PUT /api/bookings/[id] - Update booking
-export async function PUT(request: NextRequest, { params }: { params: { id: string } }) {
+export async function PUT(request: NextRequest, { params }: { params: Promise<{ id: string }> }) {
   try {
     const session = await getServerSession(authOptions);
 
@@ -180,7 +180,7 @@ export async function PUT(request: NextRequest, { params }: { params: { id: stri
       return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
     }
 
-    const bookingId = params.id;
+    const { id: bookingId } = await params;
 
     // Check permissions
     if (!(await canAccessBooking(session.user.role, session.user.id, bookingId))) {
@@ -272,13 +272,17 @@ export async function PUT(request: NextRequest, { params }: { params: { id: stri
 
       // Recalculate amounts if time changed
       if (validatedData.startTime || validatedData.endTime) {
+        const startTimeStr = typeof newStartTime === "string" ? newStartTime : newStartTime.toTimeString().slice(0, 5);
+        const endTimeStr = typeof newEndTime === "string" ? newEndTime : newEndTime.toTimeString().slice(0, 5);
+
         const { totalAmount, commission } = calculateBookingAmount(
           Number(existingBooking.room.hourlyRate),
-          newStartTime,
-          newEndTime,
+          startTimeStr,
+          endTimeStr,
         );
-        validatedData.totalAmount = totalAmount;
-        validatedData.commission = commission;
+        // Add calculated fields to update data
+        (validatedData as any).totalAmount = totalAmount;
+        (validatedData as any).commission = commission;
       }
     }
 
@@ -342,7 +346,7 @@ export async function PUT(request: NextRequest, { params }: { params: { id: stri
 }
 
 // DELETE /api/bookings/[id] - Delete booking
-export async function DELETE(request: NextRequest, { params }: { params: { id: string } }) {
+export async function DELETE(request: NextRequest, { params }: { params: Promise<{ id: string }> }) {
   try {
     const session = await getServerSession(authOptions);
 
@@ -350,7 +354,7 @@ export async function DELETE(request: NextRequest, { params }: { params: { id: s
       return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
     }
 
-    const bookingId = params.id;
+    const { id: bookingId } = await params;
 
     // Check permissions
     if (!(await canAccessBooking(session.user.role, session.user.id, bookingId))) {

@@ -50,10 +50,7 @@ export async function POST(request: NextRequest, { params }: { params: Promise<{
 
     // Only CENTER_OWNER role users can be assigned as owners
     if (user.role !== "CENTER_OWNER") {
-      return NextResponse.json(
-        { error: "User must have CENTER_OWNER role to be assigned as owner" },
-        { status: 400 },
-      );
+      return NextResponse.json({ error: "User must have CENTER_OWNER role to be assigned as owner" }, { status: 400 });
     }
 
     // Check if user is already a member of this organization

@@ -83,13 +83,14 @@ const mockCenter = {
 };
 
 interface CenterPageProps {
-  params: {
+  params: Promise<{
     id: string;
-  };
+  }>;
 }
 
 export async function generateMetadata({ params }: CenterPageProps): Promise<Metadata> {
   // In real app, fetch center data
+  const { id } = await params;
   const center = mockCenter;
 
   if (!center) {
@@ -113,8 +114,9 @@ export async function generateMetadata({ params }: CenterPageProps): Promise<Met
   };
 }
 
-export default function CenterPage({ params }: CenterPageProps) {
+export default async function CenterPage({ params }: CenterPageProps) {
   // In real app, fetch center data based on params.id
+  const { id } = await params;
   const center = mockCenter;
 
   if (!center) {

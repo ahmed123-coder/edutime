@@ -61,7 +61,9 @@ export function LayoutControls(props: LayoutControlsProps) {
         <div className="flex flex-col gap-5">
           <div className="space-y-1.5">
             <h4 className="text-sm leading-none font-medium">Paramètres de mise en page</h4>
-            <p className="text-muted-foreground text-xs">Personnalisez vos préférences de mise en page du tableau de bord.</p>
+            <p className="text-muted-foreground text-xs">
+              Personnalisez vos préférences de mise en page du tableau de bord.
+            </p>
           </div>
           <div className="space-y-3">
             <div className="space-y-1">

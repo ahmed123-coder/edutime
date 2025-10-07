@@ -10,7 +10,6 @@ import {
   Lock,
   Fingerprint,
   SquareArrowUpRight,
-  LayoutDashboard,
   ChartBar,
   Banknote,
   Gauge,

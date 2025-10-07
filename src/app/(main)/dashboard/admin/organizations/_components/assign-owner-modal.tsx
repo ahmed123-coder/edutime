@@ -134,7 +134,15 @@ export function AssignOwnerModal({ open, onOpenChange, organization, onOwnerAssi
     }
   };
 
-  const UserCard = ({ user, isOwner = false, canPromote = false }: { user: User; isOwner?: boolean; canPromote?: boolean }) => (
+  const UserCard = ({
+    user,
+    isOwner = false,
+    canPromote = false,
+  }: {
+    user: User;
+    isOwner?: boolean;
+    canPromote?: boolean;
+  }) => (
     <div className="flex items-center justify-between rounded-lg border p-3">
       <div className="flex items-center gap-3">
         <Avatar className="h-10 w-10">
@@ -157,11 +165,7 @@ export function AssignOwnerModal({ open, onOpenChange, organization, onOwnerAssi
             Remove
           </Button>
         ) : (
-          <Button
-            variant={canPromote ? "secondary" : "default"}
-            size="sm"
-            onClick={() => handleAssignOwner(user.id)}
-          >
+          <Button variant={canPromote ? "secondary" : "default"} size="sm" onClick={() => handleAssignOwner(user.id)}>
             <UserPlus className="mr-1 h-3 w-3" />
             {canPromote ? "Promote" : "Assign"}
           </Button>
@@ -184,7 +188,7 @@ export function AssignOwnerModal({ open, onOpenChange, organization, onOwnerAssi
           <div className="space-y-4">
             {/* Search */}
             <div className="relative">
-              <Search className="text-muted-foreground absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2" />
+              <Search className="text-muted-foreground absolute top-1/2 left-3 h-4 w-4 -translate-y-1/2" />
               <Input
                 placeholder="Search users by name or email..."
                 value={search}
@@ -250,13 +254,18 @@ export function AssignOwnerModal({ open, onOpenChange, organization, onOwnerAssi
                 )}
 
                 {/* No results */}
-                {!loading && users.available.length === 0 && users.currentOwners.length === 0 && users.currentNonOwners.length === 0 && (
-                  <div className="text-muted-foreground py-8 text-center">
-                    <UserPlus className="mx-auto mb-2 h-8 w-8" />
-                    <p>No users found</p>
-                    <p className="text-sm">Try adjusting your search or check if there are any CENTER_OWNER role users.</p>
-                  </div>
-                )}
+                {!loading &&
+                  users.available.length === 0 &&
+                  users.currentOwners.length === 0 &&
+                  users.currentNonOwners.length === 0 && (
+                    <div className="text-muted-foreground py-8 text-center">
+                      <UserPlus className="mx-auto mb-2 h-8 w-8" />
+                      <p>No users found</p>
+                      <p className="text-sm">
+                        Try adjusting your search or check if there are any CENTER_OWNER role users.
+                      </p>
+                    </div>
+                  )}
 
                 {loading && (
                   <div className="text-muted-foreground py-8 text-center">

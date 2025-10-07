@@ -2,9 +2,9 @@ import { NextRequest, NextResponse } from "next/server";
 
 import bcrypt from "bcryptjs";
 
-import { UserRole } from '@/generated/prisma';
-import { prisma } from '@/lib/prisma';
-import { createUserSchema } from '@/lib/validations';
+import { UserRole } from "@prisma/client";
+import { prisma } from "@/lib/prisma";
+import { createUserSchema } from "@/lib/validations";
 import { sendEmail, generateVerificationEmailHtml } from "@/lib/email";
 
 export async function POST(request: NextRequest) {
@@ -24,9 +24,7 @@ export async function POST(request: NextRequest) {
     }
 
     // Hash password
-    const hashedPassword = validatedData.password
-      ? await bcrypt.hash(validatedData.password, 12)
-      : undefined;
+    const hashedPassword = validatedData.password ? await bcrypt.hash(validatedData.password, 12) : undefined;
 
     // Create user
     const user = await prisma.user.create({
@@ -79,7 +77,7 @@ export async function POST(request: NextRequest) {
         user,
       },
       { status: 201 },
-
+    );
   } catch (error: any) {
     console.error("Registration error:", error);
 
