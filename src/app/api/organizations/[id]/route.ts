@@ -14,9 +14,10 @@ const updateOrganizationSchema = z.object({
     .object({
       street: z.string(),
       city: z.string(),
-      state: z.string(),
+      state: z.string().optional(),
       country: z.string(),
-      zipCode: z.string(),
+      zipCode: z.string().optional(),
+      postalCode: z.string().optional(),
     })
     .optional(),
   coordinates: z
@@ -26,8 +27,17 @@ const updateOrganizationSchema = z.object({
     })
     .optional(),
   phone: z.string().optional(),
-  email: z.string().email().optional(),
-  website: z.string().url().optional(),
+  email: z.string().optional().refine((val) => !val || z.string().email().safeParse(val).success, {
+    message: "Invalid email format"
+  }),
+  website: z.string().optional().refine((val) => !val || z.string().url().safeParse(val).success, {
+    message: "Invalid URL format"
+  }),
+  hours: z.record(z.object({
+    open: z.string(),
+    close: z.string(),
+    closed: z.boolean()
+  })).optional(),
   verified: z.boolean().optional(),
   active: z.boolean().optional(),
 });

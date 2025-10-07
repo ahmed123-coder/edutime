@@ -1,6 +1,7 @@
 "use client";
 
 import { useState, useEffect } from "react";
+import { useRouter } from "next/navigation";
 
 import {
   Plus,
@@ -91,6 +92,7 @@ const subscriptionColors = {
 };
 
 export function OrganizationsManagement() {
+  const router = useRouter();
   const [organizations, setOrganizations] = useState<Organization[]>([]);
   const [loading, setLoading] = useState(true);
   const [search, setSearch] = useState("");
@@ -375,7 +377,7 @@ export function OrganizationsManagement() {
                             <Eye className="mr-2 h-4 w-4" />
                             View Details
                           </DropdownMenuItem>
-                          <DropdownMenuItem>
+                          <DropdownMenuItem onClick={() => router.push(`/dashboard/admin/organizations/${org.id}/edit`)}>
                             <Edit className="mr-2 h-4 w-4" />
                             Edit Organization
                           </DropdownMenuItem>
