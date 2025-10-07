@@ -9,6 +9,7 @@ import { prisma } from "@/lib/db";
 const updateOrganizationSchema = z.object({
   name: z.string().min(1).optional(),
   description: z.string().optional(),
+  logo: z.string().optional(),
   type: z.enum(["TRAINING_CENTER", "PARTNER_SERVICE"]).optional(),
   address: z
     .object({
@@ -210,7 +211,7 @@ export async function DELETE(request: NextRequest, { params }: { params: Promise
     }
 
     // Delete organization and all related data
-    await prisma.$transaction(async (tx) => {
+    await prisma.$transaction(async (tx: any) => {
       // Delete organization members
       await tx.organizationMember.deleteMany({
         where: { organizationId: id },

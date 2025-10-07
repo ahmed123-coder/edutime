@@ -1,8 +1,8 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import { useRouter } from "next/navigation";
-import { Camera, MapPin, Phone, Mail, Globe, Clock, Save, ArrowLeft } from "lucide-react";
+import { Camera, MapPin, Phone, Mail, Globe, Clock, Save, ArrowLeft, Upload } from "lucide-react";
 import { toast } from "sonner";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Badge } from "@/components/ui/badge";
@@ -42,8 +42,11 @@ export function EditOrganizationProfile({ organizationId }: EditOrganizationProf
   const [organization, setOrganization] = useState<Organization | null>(null);
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
+  const [uploading, setUploading] = useState(false);
+  const fileInputRef = useRef<HTMLInputElement>(null);
   const [formData, setFormData] = useState({
     name: "",
+    logo: "",
     description: "",
     type: "",
     phone: "",
@@ -82,6 +85,7 @@ export function EditOrganizationProfile({ organizationId }: EditOrganizationProf
       setOrganization(data.organization);
       setFormData({
         name: data.organization.name || "",
+        logo: data.organization.logo || "",
         description: data.organization.description || "",
         type: data.organization.type || "",
         phone: data.organization.phone || "",
@@ -114,6 +118,71 @@ export function EditOrganizationProfile({ organizationId }: EditOrganizationProf
     }
   };
 
+  const handleFileSelect = async (event: React.ChangeEvent<HTMLInputElement>) => {
+    const file = event.target.files?.[0];
+    if (!file) return;
+
+    // Validate file type
+    if (!file.type.startsWith("image/")) {
+      toast.error("Please select a valid image file");
+      return;
+    }
+
+    // Validate file size (max 5MB)
+    if (file.size > 5 * 1024 * 1024) {
+      toast.error("File size must be less than 5MB");
+      return;
+    }
+
+    try {
+      setUploading(true);
+
+      const formDataUpload = new FormData();
+      formDataUpload.append("file", file);
+
+      const response = await fetch("/api/upload", {
+        method: "POST",
+        body: formDataUpload,
+      });
+
+      if (!response.ok) {
+        const error = await response.json();
+        throw new Error(error.error || "Upload failed");
+      }
+
+      const data = await response.json();
+
+      // Update local state
+      setFormData({ ...formData, logo: data.url });
+      setOrganization(prev => prev ? { ...prev, logo: data.url } : null);
+
+      // Save to database immediately
+      const updateResponse = await fetch(`/api/organizations/${organizationId}`, {
+        method: "PUT",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ logo: data.url })
+      });
+
+      if (!updateResponse.ok) {
+        throw new Error("Failed to save avatar to database");
+      }
+
+      toast.success("Avatar uploaded and saved successfully");
+    } catch (error) {
+      toast.error(error instanceof Error ? error.message : "Failed to upload avatar");
+    } finally {
+      setUploading(false);
+      // Reset file input
+      if (fileInputRef.current) {
+        fileInputRef.current.value = "";
+      }
+    }
+  };
+
+  const handleAvatarClick = () => {
+    fileInputRef.current?.click();
+  };
+
   const handleSave = async () => {
     try {
       setSaving(true);
@@ -124,7 +193,7 @@ export function EditOrganizationProfile({ organizationId }: EditOrganizationProf
       });
 
       if (!response.ok) throw new Error("Failed to update organization");
-      
+
       toast.success("Organization updated successfully");
       router.push("/dashboard/admin/organizations");
     } catch (error) {
@@ -177,7 +246,7 @@ export function EditOrganizationProfile({ organizationId }: EditOrganizationProf
             {/* Profile Picture */}
             <div className="relative">
               <Avatar className="h-40 w-40 border-4 border-white shadow-lg">
-                <AvatarImage src={organization.logo} alt={organization.name} />
+                <AvatarImage src={formData.logo || organization.logo} alt={organization.name} />
                 <AvatarFallback className="text-2xl bg-white">
                   {organization.name.charAt(0)}
                 </AvatarFallback>
@@ -186,9 +255,22 @@ export function EditOrganizationProfile({ organizationId }: EditOrganizationProf
                 size="sm"
                 variant="secondary"
                 className="absolute bottom-2 right-2 rounded-full h-8 w-8 p-0"
+                onClick={handleAvatarClick}
+                disabled={uploading}
               >
-                <Camera className="h-4 w-4" />
+                {uploading ? (
+                  <div className="h-4 w-4 animate-spin rounded-full border-2 border-current border-t-transparent" />
+                ) : (
+                  <Camera className="h-4 w-4" />
+                )}
               </Button>
+              <input
+                ref={fileInputRef}
+                type="file"
+                accept="image/*"
+                onChange={handleFileSelect}
+                className="hidden"
+              />
             </div>
 
             {/* Basic Info */}
