@@ -3,7 +3,7 @@
 import { useState } from "react";
 import { ChevronLeft, ChevronRight, X, Upload, Trash2 } from "lucide-react";
 import { Button } from "@/components/ui/button";
-import { Dialog, DialogContent } from "@/components/ui/dialog";
+import { Dialog, DialogContent, DialogTitle, DialogDescription } from "@/components/ui/dialog";
 import { cn } from "@/lib/utils";
 
 interface ImageGalleryProps {
@@ -182,6 +182,8 @@ export function ImageGallery({
 
       {/* Lightbox Modal */}
       <Dialog open={lightboxOpen} onOpenChange={setLightboxOpen}>
+        <DialogTitle className="sr-only">Image Gallery Lightbox</DialogTitle>
+        <DialogDescription className="sr-only">View and navigate through room images</DialogDescription>
         <DialogContent className="max-w-4xl max-h-[90vh] p-0">
           <div className="relative">
             <img

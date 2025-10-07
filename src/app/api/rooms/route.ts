@@ -90,7 +90,7 @@ export async function GET(request: NextRequest) {
       });
 
       whereClause.organizationId = {
-        in: userOrganizations.map((org) => org.organizationId),
+        in: userOrganizations.map((org: { organizationId: string }) => org.organizationId),
       };
     }
 

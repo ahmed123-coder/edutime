@@ -1,7 +1,7 @@
 "use client";
 
 import { useState, useEffect, useCallback } from "react";
-import { Plus, Edit, Trash2, Check } from "lucide-react";
+import { Plus, Edit, Trash2, Check, Star, X } from "lucide-react";
 import { toast } from "sonner";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
@@ -23,6 +23,7 @@ interface Room {
   equipment?: string[];
   amenities?: string[];
   photos?: string[];
+  defaultPhoto?: string;
   active: boolean;
 }
 
@@ -53,7 +54,15 @@ function RoomModal({
   onSave,
   availableEquipment,
   availableAmenities,
-  onUploadImages
+  onUploadImages,
+  onSetDefaultPhoto,
+  onMovePhoto,
+  onRemovePhoto,
+  onDragStart,
+  onDragOver,
+  onDrop,
+  onDragEnd,
+  draggedIndex
 }: {
   open: boolean;
   onOpenChange: (open: boolean) => void;
@@ -64,6 +73,14 @@ function RoomModal({
   availableEquipment: Equipment[];
   availableAmenities: Amenity[];
   onUploadImages: (files: FileList) => Promise<string[]>;
+  onSetDefaultPhoto: (photoUrl: string) => void;
+  onMovePhoto: (fromIndex: number, toIndex: number) => void;
+  onRemovePhoto: (index: number) => void;
+  onDragStart: (e: React.DragEvent, index: number) => void;
+  onDragOver: (e: React.DragEvent) => void;
+  onDrop: (e: React.DragEvent, index: number) => void;
+  onDragEnd: () => void;
+  draggedIndex: number | null;
 }) {
   const toggleEquipment = (equipmentId: string) => {
     const current = formData.equipment || [];
@@ -189,13 +206,113 @@ function RoomModal({
 
           <div>
             <Label>Images de la salle</Label>
-            <div className="mt-2">
-              <ImageGallery
-                images={formData.photos}
-                onImagesChange={(photos) => setFormData({ ...formData, photos })}
-                editable={true}
-                onUpload={onUploadImages}
-              />
+            <div className="mt-2 space-y-4">
+              {/* Upload Section */}
+              <div>
+                <input
+                  type="file"
+                  multiple
+                  accept="image/*"
+                  onChange={(e) => {
+                    if (e.target.files && e.target.files.length > 0) {
+                      onUploadImages(e.target.files).then((urls) => {
+                        setFormData({
+                          ...formData,
+                          photos: [...formData.photos, ...urls],
+                          defaultPhoto: formData.defaultPhoto || urls[0]
+                        });
+                      }).catch((error) => {
+                        console.error('Upload failed:', error);
+                        // You might want to show a toast here
+                      });
+                    }
+                    e.target.value = '';
+                  }}
+                  className="hidden"
+                  id="room-images-upload"
+                />
+                <Button
+                  type="button"
+                  variant="outline"
+                  onClick={() => document.getElementById('room-images-upload')?.click()}
+                  className="w-full"
+                >
+                  <Plus className="h-4 w-4 mr-2" />
+                  Ajouter des images
+                </Button>
+              </div>
+
+              {/* Images Grid */}
+              {formData.photos.length > 0 ? (
+                <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
+                   {formData.photos.map((photo: string, index: number) => (
+                     <div
+                       key={index}
+                       draggable
+                       onDragStart={(e) => onDragStart(e, index)}
+                       onDragOver={onDragOver}
+                       onDrop={(e) => onDrop(e, index)}
+                       onDragEnd={onDragEnd}
+                       className={cn(
+                         "relative group border rounded-lg overflow-hidden cursor-move transition-all",
+                         draggedIndex === index && "opacity-50 scale-95"
+                       )}
+                     >
+                       <img
+                         src={photo}
+                         alt={`Room image ${index + 1}`}
+                         className="w-full h-24 object-cover"
+                       />
+
+                       {/* Small Default Button - Top Left */}
+                       <Button
+                         type="button"
+                         variant="secondary"
+                         size="sm"
+                         onClick={() => onSetDefaultPhoto(photo)}
+                         className={cn(
+                           "absolute top-1 left-1 h-6 w-6 p-0 opacity-0 group-hover:opacity-100 transition-opacity",
+                           formData.defaultPhoto === photo && "opacity-100 bg-yellow-500 hover:bg-yellow-600"
+                         )}
+                         title="Set as default"
+                       >
+                         <Star className={cn(
+                           "h-3 w-3",
+                           formData.defaultPhoto === photo ? "fill-current text-white" : "text-gray-400"
+                         )} />
+                       </Button>
+
+                       {/* Delete Button - Top Right */}
+                       <Button
+                         type="button"
+                         variant="secondary"
+                         size="sm"
+                         onClick={() => onRemovePhoto(index)}
+                         className="absolute top-1 right-1 h-6 w-6 p-0 opacity-0 group-hover:opacity-100 transition-opacity text-red-500 hover:text-red-600 bg-black/50 hover:bg-black/70"
+                         title="Remove image"
+                       >
+                         <X className="h-3 w-3" />
+                       </Button>
+
+                       {/* Drag Handle - Bottom */}
+                       <div className="absolute bottom-0 left-0 right-0 bg-black/70 text-white text-xs py-1 text-center opacity-0 group-hover:opacity-100 transition-opacity">
+                         Drag to reorder
+                       </div>
+
+                       {/* Default Badge */}
+                       {formData.defaultPhoto === photo && (
+                         <div className="absolute top-1 left-1 bg-yellow-500 text-white text-xs px-1 py-0.5 rounded flex items-center gap-0.5">
+                           <Star className="h-2.5 w-2.5 fill-current" />
+                         </div>
+                       )}
+                     </div>
+                   ))}
+                 </div>
+              ) : (
+                <div className="text-center py-8 border-2 border-dashed border-muted-foreground/25 rounded-lg">
+                  <p className="text-muted-foreground">Aucune image ajoutée</p>
+                </div>
+              )}
             </div>
           </div>
         </div>
@@ -230,6 +347,7 @@ export function RoomsManagement({ organizationId }: RoomsManagementProps) {
     equipment: [] as string[],
     amenities: [] as string[],
     photos: [] as string[],
+    defaultPhoto: "",
     active: true
   });
 
@@ -288,6 +406,53 @@ export function RoomsManagement({ organizationId }: RoomsManagementProps) {
     return uploadedUrls;
   };
 
+  const [draggedIndex, setDraggedIndex] = useState<number | null>(null);
+
+  const setDefaultPhoto = (photoUrl: string) => {
+    setFormData({ ...formData, defaultPhoto: photoUrl });
+  };
+
+  const movePhoto = (fromIndex: number, toIndex: number) => {
+    const newPhotos = [...formData.photos];
+    const [moved] = newPhotos.splice(fromIndex, 1);
+    newPhotos.splice(toIndex, 0, moved);
+    setFormData({ ...formData, photos: newPhotos });
+  };
+
+  const removePhoto = (index: number) => {
+    const newPhotos = formData.photos.filter((_, i) => i !== index);
+    const newDefaultPhoto = formData.defaultPhoto === formData.photos[index]
+      ? (newPhotos.length > 0 ? newPhotos[0] : "")
+      : formData.defaultPhoto;
+    setFormData({
+      ...formData,
+      photos: newPhotos,
+      defaultPhoto: newDefaultPhoto
+    });
+  };
+
+  const handleDragStart = (e: React.DragEvent, index: number) => {
+    setDraggedIndex(index);
+    e.dataTransfer.effectAllowed = 'move';
+  };
+
+  const handleDragOver = (e: React.DragEvent) => {
+    e.preventDefault();
+    e.dataTransfer.dropEffect = 'move';
+  };
+
+  const handleDrop = (e: React.DragEvent, dropIndex: number) => {
+    e.preventDefault();
+    if (draggedIndex !== null && draggedIndex !== dropIndex) {
+      movePhoto(draggedIndex, dropIndex);
+    }
+    setDraggedIndex(null);
+  };
+
+  const handleDragEnd = () => {
+    setDraggedIndex(null);
+  };
+
   const fetchRooms = async () => {
     try {
       const response = await fetch(`/api/organizations/${organizationId}/rooms`);
@@ -311,6 +476,7 @@ export function RoomsManagement({ organizationId }: RoomsManagementProps) {
       equipment: [],
       amenities: [],
       photos: [],
+      defaultPhoto: "",
       active: true
     });
   }, []);
@@ -332,6 +498,7 @@ export function RoomsManagement({ organizationId }: RoomsManagementProps) {
       equipment: room.equipment || [],
       amenities: room.amenities || [],
       photos: room.photos || [],
+      defaultPhoto: room.defaultPhoto || (room.photos && room.photos.length > 0 ? room.photos[0] : ""),
       active: room.active
     });
     setSelectedRoom(room);
@@ -346,9 +513,9 @@ export function RoomsManagement({ organizationId }: RoomsManagementProps) {
         : `/api/rooms`;
       
       const method = selectedRoom ? "PUT" : "POST";
-      const payload = selectedRoom 
-        ? formData 
-        : { ...formData, organizationId };
+      const payload = selectedRoom
+        ? formData
+        : { ...formData, organizationId, defaultPhoto: formData.defaultPhoto || (formData.photos.length > 0 ? formData.photos[0] : "") };
 
       const response = await fetch(url, {
         method,
@@ -418,10 +585,33 @@ export function RoomsManagement({ organizationId }: RoomsManagementProps) {
                 <div className="flex items-start justify-between">
                   <div className="flex-1">
                     <div className="flex items-center gap-3 mb-2">
-                      <CardTitle className="text-2xl">{room.name}</CardTitle>
-                      <Badge variant={room.active ? "default" : "secondary"} className="text-sm">
-                        {room.active ? "Active" : "Inactive"}
-                      </Badge>
+                      {room.photos && room.photos.length > 0 && (
+                        <div className="relative">
+                          <img
+                            src={room.defaultPhoto || room.photos[0]}
+                            alt={room.name}
+                            className="w-16 h-16 object-cover rounded-lg border"
+                          />
+                          {room.defaultPhoto && (
+                            <div className="absolute -top-1 -right-1 bg-yellow-500 text-white text-xs p-1 rounded-full">
+                              <Star className="h-3 w-3 fill-current" />
+                            </div>
+                          )}
+                        </div>
+                      )}
+                      <div>
+                        <CardTitle className="text-2xl">{room.name}</CardTitle>
+                        <div className="flex items-center gap-2 mt-1">
+                          <Badge variant={room.active ? "default" : "secondary"} className="text-xs">
+                            {room.active ? "Active" : "Inactive"}
+                          </Badge>
+                          {room.photos && room.photos.length > 0 && (
+                            <span className="text-xs text-muted-foreground">
+                              {room.photos.length} photo{room.photos.length > 1 ? 's' : ''}
+                            </span>
+                          )}
+                        </div>
+                      </div>
                     </div>
                     {room.description && (
                       <CardDescription className="text-base">
@@ -534,6 +724,14 @@ export function RoomsManagement({ organizationId }: RoomsManagementProps) {
         availableEquipment={availableEquipment}
         availableAmenities={availableAmenities}
         onUploadImages={uploadImages}
+        onSetDefaultPhoto={setDefaultPhoto}
+        onMovePhoto={movePhoto}
+        onRemovePhoto={removePhoto}
+        onDragStart={handleDragStart}
+        onDragOver={handleDragOver}
+        onDrop={handleDrop}
+        onDragEnd={handleDragEnd}
+        draggedIndex={draggedIndex}
       />
       
       <RoomModal
@@ -546,6 +744,14 @@ export function RoomsManagement({ organizationId }: RoomsManagementProps) {
         availableEquipment={availableEquipment}
         availableAmenities={availableAmenities}
         onUploadImages={uploadImages}
+        onSetDefaultPhoto={setDefaultPhoto}
+        onMovePhoto={movePhoto}
+        onRemovePhoto={removePhoto}
+        onDragStart={handleDragStart}
+        onDragOver={handleDragOver}
+        onDrop={handleDrop}
+        onDragEnd={handleDragEnd}
+        draggedIndex={draggedIndex}
       />
     </div>
   );
