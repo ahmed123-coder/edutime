@@ -13,6 +13,8 @@ import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Switch } from "@/components/ui/switch";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { RoomsManagement } from "./rooms-management";
 
 interface Organization {
   id: string;
@@ -228,7 +230,15 @@ export function EditOrganizationProfile({ organizationId }: EditOrganizationProf
           </div>
 
           {/* Main Content */}
-          <div className="mt-8 grid grid-cols-1 lg:grid-cols-3 gap-6">
+          <div className="mt-8">
+            <Tabs defaultValue="general" className="w-full">
+              <TabsList className="grid w-full grid-cols-2">
+                <TabsTrigger value="general">Informations générales</TabsTrigger>
+                <TabsTrigger value="rooms">Salles</TabsTrigger>
+              </TabsList>
+              
+              <TabsContent value="general" className="mt-6">
+                <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
             {/* Left Column - Contact & Settings */}
             <div className="space-y-6">
               {/* Contact Information */}
@@ -426,6 +436,13 @@ export function EditOrganizationProfile({ organizationId }: EditOrganizationProf
                 </CardContent>
               </Card>
             </div>
+                </div>
+              </TabsContent>
+              
+              <TabsContent value="rooms" className="mt-6">
+                <RoomsManagement organizationId={organizationId} />
+              </TabsContent>
+            </Tabs>
           </div>
         </div>
       </div>

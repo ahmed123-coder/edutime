@@ -235,6 +235,34 @@ enum MemberRole {
 }
 
 // ============================================================================
+// EQUIPMENT AND AMENITIES MANAGEMENT
+// ============================================================================
+
+model Equipment {
+  id          String   @id @default(cuid())
+  name        String   @unique
+  description String?
+  category    String?
+  active      Boolean  @default(true)
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  @@map("equipment")
+}
+
+model Amenity {
+  id          String   @id @default(cuid())
+  name        String   @unique
+  description String?
+  category    String?
+  active      Boolean  @default(true)
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  @@map("amenities")
+}
+
+// ============================================================================
 // ROOMS AND SPACES MANAGEMENT
 // ============================================================================
 
@@ -246,8 +274,8 @@ model Room {
   capacity       Int
   area           Float?       // Square meters
   hourlyRate     Decimal      @db.Decimal(10,2)
-  equipment      Json?        // Array of equipment
-  amenities      Json?        // Array of amenities
+  equipment      String[]     // Array of equipment IDs
+  amenities      String[]     // Array of amenity IDs
   photos         Json?        // Array of photo URLs
   active         Boolean      @default(true)
   createdAt      DateTime     @default(now())

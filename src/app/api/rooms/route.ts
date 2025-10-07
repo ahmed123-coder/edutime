@@ -13,7 +13,7 @@ const createRoomSchema = z.object({
   description: z.string().optional(),
   capacity: z.number().int().min(1),
   area: z.number().positive().optional(),
-  hourlyRate: z.number().positive(),
+  hourlyRate: z.union([z.number(), z.string()]).transform((val) => typeof val === 'string' ? parseFloat(val) : val).refine((val) => val > 0, { message: "Hourly rate must be positive" }),
   equipment: z.array(z.string()).optional(),
   amenities: z.array(z.string()).optional(),
   photos: z.array(z.string().url()).optional(),
