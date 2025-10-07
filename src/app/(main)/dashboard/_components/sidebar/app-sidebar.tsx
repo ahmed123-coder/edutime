@@ -13,6 +13,7 @@ import {
   SidebarMenu,
   SidebarMenuButton,
   SidebarMenuItem,
+  useSidebar,
 } from "@/components/ui/sidebar";
 import { IMAGES } from "@/lib/images";
 import { getSidebarItems, getDefaultDashboardUrl } from "@/navigation/sidebar/get-sidebar-items";
@@ -59,6 +60,7 @@ const data = {
 
 export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
   const { data: session, status } = useSession();
+  const { state } = useSidebar();
   const userRole = session?.user?.role;
 
   // Show loading state or default items while session is loading
@@ -70,9 +72,9 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
       <SidebarHeader>
         <SidebarMenu>
           <SidebarMenuItem>
-            <SidebarMenuButton asChild className="data-[slot=sidebar-menu-button]:!p-1.5">
+            <SidebarMenuButton asChild className={state === "collapsed" ? "data-[slot=sidebar-menu-button]:!p-0" : "data-[slot=sidebar-menu-button]:!p-1.5"}>
               <Link href={defaultDashboardUrl}>
-                <img src={IMAGES.LOGO_RECTANGLE} alt="EduTime" className="h-8 w-auto" />
+                <img src={state === "collapsed" ? IMAGES.LOGO_SQUARE : IMAGES.LOGO_RECTANGLE} alt="EduTime" className={state === "collapsed" ? "h-10 w-10" : "h-10 w-auto"} />
               </Link>
             </SidebarMenuButton>
           </SidebarMenuItem>
