@@ -11,6 +11,7 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import { cn } from "@/lib/utils";
+import { ImageGallery } from "@/components/image-gallery";
 
 interface Room {
   id: string;
@@ -43,24 +44,26 @@ interface RoomsManagementProps {
   organizationId: string;
 }
 
-function RoomModal({ 
-  open, 
-  onOpenChange, 
-  title, 
-  formData, 
-  setFormData, 
+function RoomModal({
+  open,
+  onOpenChange,
+  title,
+  formData,
+  setFormData,
   onSave,
   availableEquipment,
-  availableAmenities
-}: { 
-  open: boolean; 
-  onOpenChange: (open: boolean) => void; 
+  availableAmenities,
+  onUploadImages
+}: {
+  open: boolean;
+  onOpenChange: (open: boolean) => void;
   title: string;
   formData: any;
   setFormData: (data: any) => void;
   onSave: () => void;
   availableEquipment: Equipment[];
   availableAmenities: Amenity[];
+  onUploadImages: (files: FileList) => Promise<string[]>;
 }) {
   const toggleEquipment = (equipmentId: string) => {
     const current = formData.equipment || [];
@@ -183,6 +186,18 @@ function RoomModal({
               })}
             </div>
           </div>
+
+          <div>
+            <Label>Images de la salle</Label>
+            <div className="mt-2">
+              <ImageGallery
+                images={formData.photos}
+                onImagesChange={(photos) => setFormData({ ...formData, photos })}
+                editable={true}
+                onUpload={onUploadImages}
+              />
+            </div>
+          </div>
         </div>
         
         <DialogFooter>
@@ -246,6 +261,31 @@ export function RoomsManagement({ organizationId }: RoomsManagementProps) {
     } catch (error) {
       console.error('Failed to fetch amenities:', error);
     }
+  };
+
+  const uploadImages = async (files: FileList): Promise<string[]> => {
+    const uploadedUrls: string[] = [];
+
+    for (const file of Array.from(files)) {
+      const formData = new FormData();
+      formData.append('file', file);
+      formData.append('type', 'room');
+
+      const response = await fetch('/api/upload', {
+        method: 'POST',
+        body: formData,
+      });
+
+      if (!response.ok) {
+        const errorData = await response.json().catch(() => ({}));
+        throw new Error(`Failed to upload ${file.name}: ${errorData.error || 'Unknown error'}`);
+      }
+
+      const data = await response.json();
+      uploadedUrls.push(data.url);
+    }
+
+    return uploadedUrls;
   };
 
   const fetchRooms = async () => {
@@ -371,68 +411,112 @@ export function RoomsManagement({ organizationId }: RoomsManagementProps) {
           </CardContent>
         </Card>
       ) : (
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+        <div className="space-y-6">
           {rooms.map((room) => (
-            <Card key={room.id}>
-              <CardHeader className="pb-3">
-                <div className="flex items-center justify-between">
-                  <CardTitle className="text-lg">{room.name}</CardTitle>
-                  <Badge variant={room.active ? "default" : "secondary"}>
-                    {room.active ? "Active" : "Inactive"}
-                  </Badge>
-                </div>
-                {room.description && (
-                  <CardDescription className="line-clamp-2">
-                    {room.description}
-                  </CardDescription>
-                )}
-              </CardHeader>
-              <CardContent>
-                <div className="space-y-2 text-sm">
-                  <div className="flex justify-between">
-                    <span className="text-muted-foreground">Capacité:</span>
-                    <span>{room.capacity} personnes</span>
-                  </div>
-                  {room.area && (
-                    <div className="flex justify-between">
-                      <span className="text-muted-foreground">Surface:</span>
-                      <span>{room.area} m²</span>
+            <Card key={room.id} className="w-full">
+              <CardHeader className="pb-4">
+                <div className="flex items-start justify-between">
+                  <div className="flex-1">
+                    <div className="flex items-center gap-3 mb-2">
+                      <CardTitle className="text-2xl">{room.name}</CardTitle>
+                      <Badge variant={room.active ? "default" : "secondary"} className="text-sm">
+                        {room.active ? "Active" : "Inactive"}
+                      </Badge>
                     </div>
-                  )}
-                  <div className="flex justify-between">
-                    <span className="text-muted-foreground">Tarif:</span>
-                    <span>{room.hourlyRate} TND/h</span>
+                    {room.description && (
+                      <CardDescription className="text-base">
+                        {room.description}
+                      </CardDescription>
+                    )}
                   </div>
-                  {room.equipment && room.equipment.length > 0 && (
-                    <div>
-                      <span className="text-muted-foreground">Équipements:</span>
-                      <div className="flex flex-wrap gap-1 mt-1">
-                        {room.equipment.slice(0, 3).map((equipmentId, index) => {
-                          const equipment = availableEquipment.find(e => e.id === equipmentId);
-                          return equipment ? (
-                            <Badge key={index} variant="outline" className="text-xs">
-                              {equipment.name}
-                            </Badge>
-                          ) : null;
-                        })}
-                        {room.equipment.length > 3 && (
-                          <Badge variant="outline" className="text-xs">
-                            +{room.equipment.length - 3}
-                          </Badge>
-                        )}
+                  <div className="flex gap-2 ml-4">
+                    <Button size="sm" variant="outline" onClick={() => handleEdit(room)}>
+                      <Edit className="h-4 w-4 mr-2" />
+                      Modifier
+                    </Button>
+                    <Button size="sm" variant="outline" onClick={() => handleDelete(room.id)}>
+                      <Trash2 className="h-4 w-4 mr-2" />
+                      Supprimer
+                    </Button>
+                  </div>
+                </div>
+              </CardHeader>
+
+              <CardContent className="p-6">
+                <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+                  {/* Left Column - Room Details */}
+                  <div className="space-y-6">
+                    {/* Room Details */}
+                    <div className="grid grid-cols-2 gap-4">
+                      <div className="bg-muted/50 p-4 rounded-lg">
+                        <div className="text-2xl font-bold text-primary">{room.capacity}</div>
+                        <div className="text-muted-foreground text-sm">Capacité (personnes)</div>
+                      </div>
+                      {room.area && (
+                        <div className="bg-muted/50 p-4 rounded-lg">
+                          <div className="text-2xl font-bold text-primary">{room.area}</div>
+                          <div className="text-muted-foreground text-sm">Surface (m²)</div>
+                        </div>
+                      )}
+                      <div className="bg-muted/50 p-4 rounded-lg">
+                        <div className="text-2xl font-bold text-primary">{room.hourlyRate}</div>
+                        <div className="text-muted-foreground text-sm">Tarif horaire (TND)</div>
+                      </div>
+                      <div className="bg-muted/50 p-4 rounded-lg">
+                        <div className="text-2xl font-bold text-primary">{room.photos?.length || 0}</div>
+                        <div className="text-muted-foreground text-sm">Images</div>
                       </div>
                     </div>
-                  )}
-                </div>
-                <div className="flex gap-2 mt-4">
-                  <Button size="sm" variant="outline" onClick={() => handleEdit(room)}>
-                    <Edit className="h-3 w-3 mr-1" />
-                    Modifier
-                  </Button>
-                  <Button size="sm" variant="outline" onClick={() => handleDelete(room.id)}>
-                    <Trash2 className="h-3 w-3 mr-1" />
-                    Supprimer
-                  </Button>
+
+                    {/* Equipment */}
+                    {room.equipment && room.equipment.length > 0 && (
+                      <div>
+                        <Label className="text-base font-semibold mb-2 block">Équipements</Label>
+                        <div className="flex flex-wrap gap-2">
+                          {room.equipment.map((equipmentId, index) => {
+                            const equipment = availableEquipment.find(e => e.id === equipmentId);
+                            return equipment ? (
+                              <Badge key={index} variant="outline" className="px-3 py-1 text-sm">
+                                {equipment.name}
+                              </Badge>
+                            ) : null;
+                          })}
+                        </div>
+                      </div>
+                    )}
+
+                    {/* Amenities */}
+                    {room.amenities && room.amenities.length > 0 && (
+                      <div>
+                        <Label className="text-base font-semibold mb-2 block">Commodités</Label>
+                        <div className="flex flex-wrap gap-2">
+                          {room.amenities.map((amenityId, index) => {
+                            const amenity = availableAmenities.find(a => a.id === amenityId);
+                            return amenity ? (
+                              <Badge key={index} variant="outline" className="px-3 py-1 text-sm">
+                                {amenity.name}
+                              </Badge>
+                            ) : null;
+                          })}
+                        </div>
+                      </div>
+                    )}
+                  </div>
+
+                  {/* Right Column - Image Gallery */}
+                  <div className="space-y-4">
+                    <Label className="text-base font-semibold block">Images de la salle</Label>
+                    {room.photos && room.photos.length > 0 ? (
+                      <ImageGallery
+                        images={room.photos}
+                        className="w-full"
+                      />
+                    ) : (
+                      <div className="text-center py-12 border-2 border-dashed border-muted-foreground/25 rounded-lg">
+                        <p className="text-muted-foreground">Aucune image pour cette salle</p>
+                      </div>
+                    )}
+                  </div>
                 </div>
               </CardContent>
             </Card>
@@ -449,6 +533,7 @@ export function RoomsManagement({ organizationId }: RoomsManagementProps) {
         onSave={handleSave}
         availableEquipment={availableEquipment}
         availableAmenities={availableAmenities}
+        onUploadImages={uploadImages}
       />
       
       <RoomModal
@@ -460,6 +545,7 @@ export function RoomsManagement({ organizationId }: RoomsManagementProps) {
         onSave={handleSave}
         availableEquipment={availableEquipment}
         availableAmenities={availableAmenities}
+        onUploadImages={uploadImages}
       />
     </div>
   );

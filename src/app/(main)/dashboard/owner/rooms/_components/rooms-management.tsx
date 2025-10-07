@@ -31,6 +31,7 @@ import {
 } from "@/components/ui/dropdown-menu";
 import { Input } from "@/components/ui/input";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import { ImageGallery } from "@/components/image-gallery";
 
 interface Room {
   id: string;
@@ -208,91 +209,143 @@ export function RoomsManagement() {
         </CardContent>
       </Card>
 
-      {/* Rooms Grid */}
-      <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
+      {/* Rooms List */}
+      <div className="space-y-6">
         {loading ? (
-          <div className="col-span-full py-8 text-center">Loading rooms...</div>
+          <div className="py-8 text-center">Loading rooms...</div>
         ) : rooms.length === 0 ? (
-          <div className="col-span-full py-8 text-center">No rooms found</div>
+          <div className="py-8 text-center">No rooms found</div>
         ) : (
           rooms.map((room) => (
-            <Card key={room.id} className="transition-shadow hover:shadow-md">
-              <CardHeader className="pb-3">
+            <Card key={room.id} className="w-full">
+              <CardHeader className="pb-4">
                 <div className="flex items-start justify-between">
-                  <div className="flex items-center gap-3">
-                    <div className="bg-muted flex h-12 w-12 items-center justify-center rounded">
-                      <Building2 className="h-6 w-6" />
+                  <div className="flex-1">
+                    <div className="flex items-center gap-3 mb-2">
+                      <div className="bg-muted flex h-12 w-12 items-center justify-center rounded">
+                        <Building2 className="h-6 w-6" />
+                      </div>
+                      <div>
+                        <CardTitle className="text-2xl">{room.name}</CardTitle>
+                        <p className="text-muted-foreground">{room.organization.name}</p>
+                      </div>
                     </div>
-                    <div>
-                      <CardTitle className="text-lg">{room.name}</CardTitle>
-                      <p className="text-muted-foreground text-sm">{room.organization.name}</p>
-                    </div>
+                    {room.description && (
+                      <CardDescription className="text-base mt-2">
+                        {room.description}
+                      </CardDescription>
+                    )}
                   </div>
-                  <DropdownMenu>
-                    <DropdownMenuTrigger asChild>
-                      <Button variant="ghost" className="h-8 w-8 p-0">
-                        <MoreHorizontal className="h-4 w-4" />
-                      </Button>
-                    </DropdownMenuTrigger>
-                    <DropdownMenuContent align="end">
-                      <DropdownMenuItem>
-                        <Eye className="mr-2 h-4 w-4" />
-                        View Details
-                      </DropdownMenuItem>
-                      <DropdownMenuItem>
-                        <Edit className="mr-2 h-4 w-4" />
-                        Edit Room
-                      </DropdownMenuItem>
-                    </DropdownMenuContent>
-                  </DropdownMenu>
+                  <div className="flex items-center gap-2">
+                    <Badge variant={room.active ? "default" : "destructive"}>
+                      {room.active ? "Active" : "Inactive"}
+                    </Badge>
+                    <DropdownMenu>
+                      <DropdownMenuTrigger asChild>
+                        <Button variant="ghost" className="h-8 w-8 p-0">
+                          <MoreHorizontal className="h-4 w-4" />
+                        </Button>
+                      </DropdownMenuTrigger>
+                      <DropdownMenuContent align="end">
+                        <DropdownMenuItem>
+                          <Eye className="mr-2 h-4 w-4" />
+                          View Details
+                        </DropdownMenuItem>
+                        <DropdownMenuItem>
+                          <Edit className="mr-2 h-4 w-4" />
+                          Edit Room
+                        </DropdownMenuItem>
+                      </DropdownMenuContent>
+                    </DropdownMenu>
+                  </div>
                 </div>
               </CardHeader>
-              <CardContent className="space-y-4">
-                {/* Description */}
-                {room.description && <p className="text-muted-foreground line-clamp-2 text-sm">{room.description}</p>}
 
-                {/* Key Info */}
-                <div className="grid grid-cols-2 gap-4 text-sm">
-                  <div className="flex items-center gap-2">
-                    <Users className="text-muted-foreground h-4 w-4" />
-                    <span>{room.capacity} people</span>
-                  </div>
-                  <div className="flex items-center gap-2">
-                    <DollarSign className="text-muted-foreground h-4 w-4" />
-                    <span>{formatCurrency(room.hourlyRate)}/hr</span>
-                  </div>
-                  {room.area && (
-                    <div className="flex items-center gap-2">
-                      <MapPin className="text-muted-foreground h-4 w-4" />
-                      <span>{room.area}m²</span>
+              <CardContent className="p-6">
+                <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+                  {/* Left Column - Room Details */}
+                  <div className="space-y-6">
+                    {/* Room Details */}
+                    <div className="grid grid-cols-2 gap-4">
+                      <div className="bg-muted/50 p-4 rounded-lg">
+                        <div className="flex items-center gap-2 mb-1">
+                          <Users className="text-muted-foreground h-5 w-5" />
+                          <div className="text-2xl font-bold text-primary">{room.capacity}</div>
+                        </div>
+                        <div className="text-muted-foreground text-sm">Capacity</div>
+                      </div>
+                      <div className="bg-muted/50 p-4 rounded-lg">
+                        <div className="flex items-center gap-2 mb-1">
+                          <DollarSign className="text-muted-foreground h-5 w-5" />
+                          <div className="text-2xl font-bold text-primary">{formatCurrency(room.hourlyRate)}</div>
+                        </div>
+                        <div className="text-muted-foreground text-sm">Hourly Rate</div>
+                      </div>
+                      {room.area && (
+                        <div className="bg-muted/50 p-4 rounded-lg">
+                          <div className="flex items-center gap-2 mb-1">
+                            <MapPin className="text-muted-foreground h-5 w-5" />
+                            <div className="text-2xl font-bold text-primary">{room.area}</div>
+                          </div>
+                          <div className="text-muted-foreground text-sm">Area (m²)</div>
+                        </div>
+                      )}
+                      <div className="bg-muted/50 p-4 rounded-lg">
+                        <div className="flex items-center gap-2 mb-1">
+                          <Calendar className="text-muted-foreground h-5 w-5" />
+                          <div className="text-2xl font-bold text-primary">{room._count.bookings}</div>
+                        </div>
+                        <div className="text-muted-foreground text-sm">Total Bookings</div>
+                      </div>
                     </div>
-                  )}
-                  <div className="flex items-center gap-2">
-                    <Calendar className="text-muted-foreground h-4 w-4" />
-                    <span>{room._count.bookings} bookings</span>
+
+                    {/* Amenities */}
+                    {renderAmenities(room.amenities) && (
+                      <div>
+                        <h4 className="text-lg font-semibold mb-2">Amenities</h4>
+                        {renderAmenities(room.amenities)}
+                      </div>
+                    )}
+
+                    {/* Equipment */}
+                    {room.equipment && room.equipment.length > 0 && (
+                      <div>
+                        <h4 className="text-lg font-semibold mb-2">Equipment</h4>
+                        <div className="flex flex-wrap gap-2">
+                          {room.equipment.map((equipmentId, index) => (
+                            <Badge key={index} variant="outline" className="px-3 py-1">
+                              {equipmentId}
+                            </Badge>
+                          ))}
+                        </div>
+                      </div>
+                    )}
+
+                    {/* Footer */}
+                    <div className="flex items-center justify-between pt-4 border-t">
+                      <span className="text-muted-foreground text-sm">
+                        Created {formatDate(room.createdAt)}
+                      </span>
+                      <div className="text-sm text-muted-foreground">
+                        {room.photos?.length || 0} images
+                      </div>
+                    </div>
                   </div>
-                </div>
 
-                {/* Amenities */}
-                {renderAmenities(room.amenities)}
-
-                {/* Equipment */}
-                {room.equipment && room.equipment.length > 0 && (
-                  <div className="text-sm">
-                    <span className="font-medium">Equipment: </span>
-                    <span className="text-muted-foreground">
-                      {room.equipment.slice(0, 2).join(", ")}
-                      {room.equipment.length > 2 && ` +${room.equipment.length - 2} more`}
-                    </span>
+                  {/* Right Column - Image Gallery */}
+                  <div className="space-y-4">
+                    <h4 className="text-lg font-semibold">Room Images</h4>
+                    {room.photos && room.photos.length > 0 ? (
+                      <ImageGallery
+                        images={room.photos}
+                        className="w-full"
+                      />
+                    ) : (
+                      <div className="text-center py-12 border-2 border-dashed border-muted-foreground/25 rounded-lg">
+                        <p className="text-muted-foreground">No images available for this room</p>
+                      </div>
+                    )}
                   </div>
-                )}
-
-                {/* Status and Date */}
-                <div className="flex items-center justify-between">
-                  <Badge variant={room.active ? "default" : "destructive"} className="text-xs">
-                    {room.active ? "Active" : "Inactive"}
-                  </Badge>
-                  <span className="text-muted-foreground text-xs">Created {formatDate(room.createdAt)}</span>
                 </div>
               </CardContent>
             </Card>

@@ -15,7 +15,7 @@ const updateRoomSchema = z.object({
   hourlyRate: z.union([z.number(), z.string()]).transform((val) => typeof val === 'string' ? parseFloat(val) : val).refine((val) => val > 0, { message: "Hourly rate must be positive" }).optional(),
   equipment: z.array(z.string()).optional(),
   amenities: z.array(z.string()).optional(),
-  photos: z.array(z.string().url()).optional(),
+  photos: z.array(z.string()).optional(),
   active: z.boolean().optional(),
 });
 

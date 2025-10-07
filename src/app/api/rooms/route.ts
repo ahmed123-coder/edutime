@@ -27,7 +27,7 @@ const updateRoomSchema = z.object({
   hourlyRate: z.number().positive().optional(),
   equipment: z.array(z.string()).optional(),
   amenities: z.array(z.string()).optional(),
-  photos: z.array(z.string().url()).optional(),
+  photos: z.array(z.string()).optional(),
   active: z.boolean().optional(),
 });
 

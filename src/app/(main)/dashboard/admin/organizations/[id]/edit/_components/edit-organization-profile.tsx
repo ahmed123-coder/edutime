@@ -215,53 +215,50 @@ export function EditOrganizationProfile({ organizationId }: EditOrganizationProf
 
   return (
     <div className="min-h-screen bg-gray-50">
-      {/* Cover Photo Section */}
-      <div className="relative h-80 bg-gradient-to-r from-blue-600 to-purple-600">
-        <div className="absolute inset-0 bg-black/20" />
-        <Button
-          variant="ghost"
-          size="sm"
-          className="absolute top-4 left-4 text-white hover:bg-white/20"
-          onClick={() => router.push("/dashboard/admin/organizations")}
-        >
-          <ArrowLeft className="h-4 w-4 mr-2" />
-          Back to Organizations
-        </Button>
-        <Button
-          variant="secondary"
-          size="sm"
-          className="absolute top-4 right-4"
-          onClick={handleSave}
-          disabled={saving}
-        >
-          <Save className="h-4 w-4 mr-2" />
-          {saving ? "Saving..." : "Save Changes"}
-        </Button>
+      {/* Header Section */}
+      <div className="bg-white border-b px-6 py-4">
+        <div className="flex items-center justify-between">
+          <Button
+            variant="ghost"
+            size="sm"
+            onClick={() => router.push("/dashboard/admin/organizations")}
+          >
+            <ArrowLeft className="h-4 w-4 mr-2" />
+            Back to Organizations
+          </Button>
+          <Button
+            onClick={handleSave}
+            disabled={saving}
+          >
+            <Save className="h-4 w-4 mr-2" />
+            {saving ? "Saving..." : "Save Changes"}
+          </Button>
+        </div>
       </div>
 
       {/* Profile Section */}
-      <div className="relative -mt-20 px-6">
+      <div className="px-6 py-6">
         <div className="max-w-4xl mx-auto">
           <div className="flex flex-col md:flex-row items-start gap-6">
             {/* Profile Picture */}
             <div className="relative">
-              <Avatar className="h-40 w-40 border-4 border-white shadow-lg">
+              <Avatar className="h-20 w-20 border-2 border-gray-200">
                 <AvatarImage src={formData.logo || organization.logo} alt={organization.name} />
-                <AvatarFallback className="text-2xl bg-white">
+                <AvatarFallback className="text-lg">
                   {organization.name.charAt(0)}
                 </AvatarFallback>
               </Avatar>
               <Button
                 size="sm"
                 variant="secondary"
-                className="absolute bottom-2 right-2 rounded-full h-8 w-8 p-0"
+                className="absolute bottom-0 right-0 rounded-full h-6 w-6 p-0"
                 onClick={handleAvatarClick}
                 disabled={uploading}
               >
                 {uploading ? (
-                  <div className="h-4 w-4 animate-spin rounded-full border-2 border-current border-t-transparent" />
+                  <div className="h-3 w-3 animate-spin rounded-full border-2 border-current border-t-transparent" />
                 ) : (
-                  <Camera className="h-4 w-4" />
+                  <Camera className="h-3 w-3" />
                 )}
               </Button>
               <input

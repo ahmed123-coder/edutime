@@ -14,6 +14,7 @@ export async function POST(request: NextRequest) {
 
     const formData = await request.formData();
     const file = formData.get("file") as File;
+    const type = (formData.get("type") as string) || "general";
 
     if (!file) {
       return NextResponse.json({ error: "No file provided" }, { status: 400 });
@@ -35,18 +36,28 @@ export async function POST(request: NextRequest) {
     const extension = file.name.split(".").pop();
     const filename = `${timestamp}-${random}.${extension}`;
 
-    // Ensure avatars directory exists
-    const avatarsDir = join(process.cwd(), "public", "avatars");
-    await mkdir(avatarsDir, { recursive: true });
+    // Determine directory based on type
+    let subDir = "general";
+    if (type === "room") {
+      subDir = "rooms";
+    } else if (type === "logo" || type === "organization") {
+      subDir = "organizations";
+    } else if (type === "avatar") {
+      subDir = "avatars";
+    }
+
+    // Ensure directory exists
+    const uploadDir = join(process.cwd(), "public", "uploads", subDir);
+    await mkdir(uploadDir, { recursive: true });
 
     // Save file
     const bytes = await file.arrayBuffer();
     const buffer = Buffer.from(bytes);
-    const filepath = join(avatarsDir, filename);
+    const filepath = join(uploadDir, filename);
     await writeFile(filepath, buffer);
 
     // Return public URL
-    const url = `/avatars/${filename}`;
+    const url = `/uploads/${subDir}/${filename}`;
 
     return NextResponse.json({ url });
   } catch (error) {
