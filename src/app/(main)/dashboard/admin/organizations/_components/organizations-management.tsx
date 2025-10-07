@@ -178,26 +178,26 @@ export function OrganizationsManagement() {
       {/* Header */}
       <div className="flex items-center justify-between">
         <div>
-          <h1 className="text-3xl font-bold tracking-tight">Organizations Management</h1>
-          <p className="text-muted-foreground">Manage training centers and partner organizations</p>
+          <h1 className="text-3xl font-bold tracking-tight">Gestion des Organisations</h1>
+          <p className="text-muted-foreground">Gérer les centres de formation et organisations partenaires</p>
         </div>
         <Button onClick={() => setCreateModalOpen(true)}>
           <Plus className="mr-2 h-4 w-4" />
-          Add Organization
+          Ajouter une Organisation
         </Button>
       </div>
 
       {/* Filters */}
       <Card>
         <CardHeader>
-          <CardTitle>Filters</CardTitle>
-          <CardDescription>Filter and search organizations</CardDescription>
+          <CardTitle>Filtres</CardTitle>
+          <CardDescription>Filtrer et rechercher des organisations</CardDescription>
         </CardHeader>
         <CardContent>
           <div className="flex gap-4">
             <div className="flex-1">
               <Input
-                placeholder="Search organizations..."
+                placeholder="Rechercher des organisations..."
                 value={search}
                 onChange={(e) => setSearch(e.target.value)}
                 className="max-w-sm"
@@ -205,22 +205,22 @@ export function OrganizationsManagement() {
             </div>
             <Select value={typeFilter} onValueChange={setTypeFilter}>
               <SelectTrigger className="w-[180px]">
-                <SelectValue placeholder="Filter by type" />
+                <SelectValue placeholder="Filtrer par type" />
               </SelectTrigger>
               <SelectContent>
-                <SelectItem value="all-types">All types</SelectItem>
-                <SelectItem value="TRAINING_CENTER">Training Center</SelectItem>
-                <SelectItem value="PARTNER_SERVICE">Partner Service</SelectItem>
+                <SelectItem value="all-types">Tous les types</SelectItem>
+                <SelectItem value="TRAINING_CENTER">Centre de Formation</SelectItem>
+                <SelectItem value="PARTNER_SERVICE">Service Partenaire</SelectItem>
               </SelectContent>
             </Select>
             <Select value={verifiedFilter} onValueChange={setVerifiedFilter}>
               <SelectTrigger className="w-[180px]">
-                <SelectValue placeholder="Filter by verification" />
+                <SelectValue placeholder="Filtrer par vérification" />
               </SelectTrigger>
               <SelectContent>
-                <SelectItem value="all-statuses">All statuses</SelectItem>
-                <SelectItem value="true">Verified</SelectItem>
-                <SelectItem value="false">Unverified</SelectItem>
+                <SelectItem value="all-statuses">Tous les statuts</SelectItem>
+                <SelectItem value="true">Vérifiées</SelectItem>
+                <SelectItem value="false">Non vérifiées</SelectItem>
               </SelectContent>
             </Select>
             <Select value={activeFilter} onValueChange={setActiveFilter}>
@@ -228,9 +228,9 @@ export function OrganizationsManagement() {
                 <SelectValue placeholder="Filter by status" />
               </SelectTrigger>
               <SelectContent>
-                <SelectItem value="all-statuses">All statuses</SelectItem>
-                <SelectItem value="true">Active</SelectItem>
-                <SelectItem value="false">Inactive</SelectItem>
+                <SelectItem value="all-statuses">Tous les statuts</SelectItem>
+                <SelectItem value="true">Actives</SelectItem>
+                <SelectItem value="false">Inactives</SelectItem>
               </SelectContent>
             </Select>
           </div>
@@ -240,9 +240,9 @@ export function OrganizationsManagement() {
       {/* Organizations Table */}
       <Card>
         <CardHeader>
-          <CardTitle>Organizations ({pagination.total})</CardTitle>
+          <CardTitle>Organisations ({pagination.total})</CardTitle>
           <CardDescription>
-            Showing {organizations.length} of {pagination.total} organizations
+            Affichage de {organizations.length} sur {pagination.total} organisations
           </CardDescription>
         </CardHeader>
         <CardContent>

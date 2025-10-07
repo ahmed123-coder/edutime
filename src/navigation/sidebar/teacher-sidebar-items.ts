@@ -43,10 +43,10 @@ export interface NavGroup {
 export const teacherSidebarItems: NavGroup[] = [
   {
     id: 1,
-    label: "Overview",
+    label: "Vue d'ensemble",
     items: [
       {
-        title: "Dashboard",
+        title: "Tableau de bord",
         url: "/dashboard/teacher",
         icon: LayoutDashboard,
       },
@@ -54,46 +54,46 @@ export const teacherSidebarItems: NavGroup[] = [
   },
   {
     id: 2,
-    label: "Find & Book",
+    label: "Rechercher et réserver",
     items: [
       {
-        title: "Search Centers",
+        title: "Rechercher des centres",
         url: "/dashboard/teacher/search",
         icon: Search,
         subItems: [
-          { title: "Map View", url: "/dashboard/teacher/search/map" },
-          { title: "List View", url: "/dashboard/teacher/search/list" },
-          { title: "Saved Searches", url: "/dashboard/teacher/search/saved" },
+          { title: "Vue carte", url: "/dashboard/teacher/search/map" },
+          { title: "Vue liste", url: "/dashboard/teacher/search/list" },
+          { title: "Recherches sauvegardées", url: "/dashboard/teacher/search/saved" },
         ],
       },
       {
-        title: "Favorites",
+        title: "Favoris",
         url: "/dashboard/teacher/favorites",
         icon: Heart,
         subItems: [
-          { title: "Favorite Centers", url: "/dashboard/teacher/favorites/centers" },
-          { title: "Favorite Rooms", url: "/dashboard/teacher/favorites/rooms" },
+          { title: "Centres favoris", url: "/dashboard/teacher/favorites/centers" },
+          { title: "Salles favorites", url: "/dashboard/teacher/favorites/rooms" },
         ],
       },
     ],
   },
   {
     id: 3,
-    label: "My Bookings",
+    label: "Mes réservations",
     items: [
       {
-        title: "Bookings",
+        title: "Réservations",
         url: "/dashboard/teacher/bookings",
         icon: Calendar,
         subItems: [
-          { title: "Upcoming", url: "/dashboard/teacher/bookings?status=upcoming" },
-          { title: "Past Bookings", url: "/dashboard/teacher/bookings?status=past" },
-          { title: "Cancelled", url: "/dashboard/teacher/bookings?status=cancelled" },
-          { title: "Calendar View", url: "/dashboard/teacher/bookings/calendar" },
+          { title: "À venir", url: "/dashboard/teacher/bookings?status=upcoming" },
+          { title: "Réservations passées", url: "/dashboard/teacher/bookings?status=past" },
+          { title: "Annulées", url: "/dashboard/teacher/bookings?status=cancelled" },
+          { title: "Vue calendrier", url: "/dashboard/teacher/bookings/calendar" },
         ],
       },
       {
-        title: "Quick Book",
+        title: "Réservation rapide",
         url: "/dashboard/teacher/quick-book",
         icon: Clock,
         isNew: true,
@@ -102,65 +102,65 @@ export const teacherSidebarItems: NavGroup[] = [
   },
   {
     id: 4,
-    label: "Teaching",
+    label: "Enseignement",
     items: [
       {
-        title: "My Classes",
+        title: "Mes cours",
         url: "/dashboard/teacher/classes",
         icon: BookOpen,
         subItems: [
-          { title: "Current Classes", url: "/dashboard/teacher/classes/current" },
-          { title: "Class History", url: "/dashboard/teacher/classes/history" },
-          { title: "Class Materials", url: "/dashboard/teacher/classes/materials" },
+          { title: "Cours actuels", url: "/dashboard/teacher/classes/current" },
+          { title: "Historique des cours", url: "/dashboard/teacher/classes/history" },
+          { title: "Matériel de cours", url: "/dashboard/teacher/classes/materials" },
         ],
       },
       {
-        title: "Students",
+        title: "Étudiants",
         url: "/dashboard/teacher/students",
         icon: User,
         subItems: [
-          { title: "Current Students", url: "/dashboard/teacher/students/current" },
-          { title: "Student Progress", url: "/dashboard/teacher/students/progress" },
+          { title: "Étudiants actuels", url: "/dashboard/teacher/students/current" },
+          { title: "Progrès des étudiants", url: "/dashboard/teacher/students/progress" },
         ],
       },
     ],
   },
   {
     id: 5,
-    label: "Financial",
+    label: "Financier",
     items: [
       {
-        title: "Payments",
+        title: "Paiements",
         url: "/dashboard/teacher/payments",
         icon: CreditCard,
         subItems: [
-          { title: "Payment History", url: "/dashboard/teacher/payments/history" },
-          { title: "Pending Payments", url: "/dashboard/teacher/payments/pending" },
-          { title: "Payment Methods", url: "/dashboard/teacher/payments/methods" },
+          { title: "Historique des paiements", url: "/dashboard/teacher/payments/history" },
+          { title: "Paiements en attente", url: "/dashboard/teacher/payments/pending" },
+          { title: "Méthodes de paiement", url: "/dashboard/teacher/payments/methods" },
         ],
       },
       {
-        title: "Expenses",
+        title: "Dépenses",
         url: "/dashboard/teacher/expenses",
         icon: FileText,
         subItems: [
-          { title: "Booking Expenses", url: "/dashboard/teacher/expenses/bookings" },
-          { title: "Tax Documents", url: "/dashboard/teacher/expenses/tax" },
+          { title: "Dépenses de réservation", url: "/dashboard/teacher/expenses/bookings" },
+          { title: "Documents fiscaux", url: "/dashboard/teacher/expenses/tax" },
         ],
       },
     ],
   },
   {
     id: 6,
-    label: "Community",
+    label: "Communauté",
     items: [
       {
-        title: "Reviews",
+        title: "Avis",
         url: "/dashboard/teacher/reviews",
         icon: Star,
         subItems: [
-          { title: "My Reviews", url: "/dashboard/teacher/reviews/received" },
-          { title: "Write Reviews", url: "/dashboard/teacher/reviews/write" },
+          { title: "Mes avis", url: "/dashboard/teacher/reviews/received" },
+          { title: "Rédiger des avis", url: "/dashboard/teacher/reviews/write" },
         ],
       },
       {
@@ -168,7 +168,7 @@ export const teacherSidebarItems: NavGroup[] = [
         url: "/dashboard/teacher/messages",
         icon: MessageSquare,
         subItems: [
-          { title: "Center Owners", url: "/dashboard/teacher/messages/owners" },
+          { title: "Propriétaires de centres", url: "/dashboard/teacher/messages/owners" },
           { title: "Support", url: "/dashboard/teacher/messages/support" },
         ],
       },
@@ -176,26 +176,26 @@ export const teacherSidebarItems: NavGroup[] = [
   },
   {
     id: 7,
-    label: "Account",
+    label: "Compte",
     items: [
       {
-        title: "Profile",
+        title: "Profil",
         url: "/dashboard/teacher/profile",
         icon: User,
         subItems: [
-          { title: "Personal Info", url: "/dashboard/teacher/profile" },
-          { title: "Teaching Credentials", url: "/dashboard/teacher/profile/credentials" },
-          { title: "Verification", url: "/dashboard/teacher/profile/verification" },
+          { title: "Informations personnelles", url: "/dashboard/teacher/profile" },
+          { title: "Diplômes d'enseignement", url: "/dashboard/teacher/profile/credentials" },
+          { title: "Vérification", url: "/dashboard/teacher/profile/verification" },
         ],
       },
       {
-        title: "Settings",
+        title: "Paramètres",
         url: "/dashboard/teacher/settings",
         icon: Settings,
         subItems: [
-          { title: "Preferences", url: "/dashboard/teacher/settings/preferences" },
+          { title: "Préférences", url: "/dashboard/teacher/settings/preferences" },
           { title: "Notifications", url: "/dashboard/teacher/settings/notifications" },
-          { title: "Privacy", url: "/dashboard/teacher/settings/privacy" },
+          { title: "Confidentialité", url: "/dashboard/teacher/settings/privacy" },
         ],
       },
     ],

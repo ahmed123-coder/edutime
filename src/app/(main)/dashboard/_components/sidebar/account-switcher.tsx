@@ -123,11 +123,11 @@ export function AccountSwitcher({
         <DropdownMenuGroup>
           <DropdownMenuItem>
             <BadgeCheck />
-            Account
+            Compte
           </DropdownMenuItem>
           <DropdownMenuItem>
             <CreditCard />
-            Billing
+            Facturation
           </DropdownMenuItem>
           <DropdownMenuItem>
             <Bell />
@@ -141,7 +141,7 @@ export function AccountSwitcher({
           className="text-red-600 focus:bg-red-50 focus:text-red-600"
         >
           {isLoggingOut ? <Loader2 className="h-4 w-4 animate-spin" /> : <LogOut />}
-          {isLoggingOut ? "Logging out..." : "Log out"}
+          {isLoggingOut ? "Déconnexion..." : "Se déconnecter"}
         </DropdownMenuItem>
       </DropdownMenuContent>
     </DropdownMenu>

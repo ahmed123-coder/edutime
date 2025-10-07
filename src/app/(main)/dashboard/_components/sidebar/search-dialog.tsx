@@ -15,16 +15,16 @@ import {
 } from "@/components/ui/command";
 
 const searchItems = [
-  { group: "Dashboards", icon: LayoutDashboard, label: "Default" },
-  { group: "Dashboards", icon: ChartBar, label: "CRM", disabled: true },
-  { group: "Dashboards", icon: Gauge, label: "Analytics", disabled: true },
-  { group: "Dashboards", icon: ShoppingBag, label: "E-Commerce", disabled: true },
-  { group: "Dashboards", icon: GraduationCap, label: "Academy", disabled: true },
-  { group: "Dashboards", icon: Forklift, label: "Logistics", disabled: true },
-  { group: "Authentication", label: "Login v1" },
-  { group: "Authentication", label: "Login v2" },
-  { group: "Authentication", label: "Register v1" },
-  { group: "Authentication", label: "Register v2" },
+  { group: "Tableaux de bord", icon: LayoutDashboard, label: "Par défaut" },
+  { group: "Tableaux de bord", icon: ChartBar, label: "CRM", disabled: true },
+  { group: "Tableaux de bord", icon: Gauge, label: "Analytiques", disabled: true },
+  { group: "Tableaux de bord", icon: ShoppingBag, label: "E-Commerce", disabled: true },
+  { group: "Tableaux de bord", icon: GraduationCap, label: "Académie", disabled: true },
+  { group: "Tableaux de bord", icon: Forklift, label: "Logistique", disabled: true },
+  { group: "Authentification", label: "Connexion v1" },
+  { group: "Authentification", label: "Connexion v2" },
+  { group: "Authentification", label: "Inscription v1" },
+  { group: "Authentification", label: "Inscription v2" },
 ];
 
 export function SearchDialog() {
@@ -48,15 +48,15 @@ export function SearchDialog() {
         onClick={() => setOpen(true)}
       >
         <Search className="size-4" />
-        Search
+        Rechercher
         <kbd className="bg-muted inline-flex h-5 items-center gap-1 rounded border px-1.5 text-[10px] font-medium select-none">
           <span className="text-xs">⌘</span>J
         </kbd>
       </Button>
       <CommandDialog open={open} onOpenChange={setOpen}>
-        <CommandInput placeholder="Search dashboards, users, and more…" />
+        <CommandInput placeholder="Rechercher des tableaux de bord, utilisateurs, et plus…" />
         <CommandList>
-          <CommandEmpty>No results found.</CommandEmpty>
+          <CommandEmpty>Aucun résultat trouvé.</CommandEmpty>
           {[...new Set(searchItems.map((item) => item.group))].map((group, i) => (
             <React.Fragment key={group}>
               {i !== 0 && <CommandSeparator />}

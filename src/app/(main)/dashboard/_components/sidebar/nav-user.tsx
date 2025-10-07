@@ -64,8 +64,8 @@ export function NavUser({
               </AvatarFallback>
             </Avatar>
             <div className="grid flex-1 text-left text-sm leading-tight">
-              <span className="truncate font-medium">Loading...</span>
-              <span className="text-muted-foreground truncate text-xs">Please wait</span>
+              <span className="truncate font-medium">Chargement...</span>
+              <span className="text-muted-foreground truncate text-xs">Veuillez patienter</span>
             </div>
           </SidebarMenuButton>
         </SidebarMenuItem>
@@ -119,11 +119,11 @@ export function NavUser({
             <DropdownMenuGroup>
               <DropdownMenuItem>
                 <CircleUser />
-                Account
+                Compte
               </DropdownMenuItem>
               <DropdownMenuItem>
                 <CreditCard />
-                Billing
+                Facturation
               </DropdownMenuItem>
               <DropdownMenuItem>
                 <MessageSquareDot />
@@ -137,7 +137,7 @@ export function NavUser({
               className="text-red-600 focus:bg-red-50 focus:text-red-600"
             >
               {isLoggingOut ? <Loader2 className="h-4 w-4 animate-spin" /> : <LogOut />}
-              {isLoggingOut ? "Logging out..." : "Log out"}
+              {isLoggingOut ? "Déconnexion..." : "Se déconnecter"}
             </DropdownMenuItem>
           </DropdownMenuContent>
         </DropdownMenu>

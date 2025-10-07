@@ -142,8 +142,8 @@ export function RoomsManagement() {
       {/* Header */}
       <div className="flex items-center justify-between">
         <div>
-          <h1 className="text-3xl font-bold tracking-tight">Rooms Management</h1>
-          <p className="text-muted-foreground">Manage training rooms and spaces across all organizations</p>
+          <h1 className="text-3xl font-bold tracking-tight">Gestion des Salles</h1>
+          <p className="text-muted-foreground">Gérer les salles de formation et espaces dans toutes les organisations</p>
         </div>
         <Button>
           <Plus className="mr-2 h-4 w-4" />

@@ -43,15 +43,15 @@ export interface NavGroup {
 export const ownerSidebarItems: NavGroup[] = [
   {
     id: 1,
-    label: "Overview",
+    label: "Vue d'ensemble",
     items: [
       {
-        title: "Dashboard",
+        title: "Tableau de bord",
         url: "/dashboard/owner",
         icon: LayoutDashboard,
       },
       {
-        title: "Analytics",
+        title: "Analytiques",
         url: "/dashboard/owner/analytics",
         icon: BarChart3,
       },
@@ -59,96 +59,96 @@ export const ownerSidebarItems: NavGroup[] = [
   },
   {
     id: 2,
-    label: "My Center",
+    label: "Mon centre",
     items: [
       {
-        title: "Center Profile",
+        title: "Profil du centre",
         url: "/dashboard/owner/center",
         icon: Building2,
         subItems: [
-          { title: "Basic Info", url: "/dashboard/owner/center" },
-          { title: "Location & Map", url: "/dashboard/owner/center/location" },
-          { title: "Photos & Media", url: "/dashboard/owner/center/media" },
-          { title: "Amenities", url: "/dashboard/owner/center/amenities" },
+          { title: "Informations de base", url: "/dashboard/owner/center" },
+          { title: "Localisation et carte", url: "/dashboard/owner/center/location" },
+          { title: "Photos et médias", url: "/dashboard/owner/center/media" },
+          { title: "Équipements", url: "/dashboard/owner/center/amenities" },
         ],
       },
       {
-        title: "Rooms & Spaces",
+        title: "Salles et espaces",
         url: "/dashboard/owner/rooms",
         icon: MapPin,
         subItems: [
-          { title: "All Rooms", url: "/dashboard/owner/rooms" },
-          { title: "Add New Room", url: "/dashboard/owner/rooms/new" },
-          { title: "Room Types", url: "/dashboard/owner/rooms/types" },
+          { title: "Toutes les salles", url: "/dashboard/owner/rooms" },
+          { title: "Ajouter une nouvelle salle", url: "/dashboard/owner/rooms/new" },
+          { title: "Types de salles", url: "/dashboard/owner/rooms/types" },
         ],
       },
       {
-        title: "Availability",
+        title: "Disponibilité",
         url: "/dashboard/owner/availability",
         icon: Clock,
         subItems: [
-          { title: "Schedule", url: "/dashboard/owner/availability" },
-          { title: "Blocked Dates", url: "/dashboard/owner/availability/blocked" },
-          { title: "Special Hours", url: "/dashboard/owner/availability/special" },
+          { title: "Planning", url: "/dashboard/owner/availability" },
+          { title: "Dates bloquées", url: "/dashboard/owner/availability/blocked" },
+          { title: "Horaires spéciaux", url: "/dashboard/owner/availability/special" },
         ],
       },
     ],
   },
   {
     id: 3,
-    label: "Bookings",
+    label: "Réservations",
     items: [
       {
-        title: "Bookings",
+        title: "Réservations",
         url: "/dashboard/owner/bookings",
         icon: Calendar,
         subItems: [
-          { title: "All Bookings", url: "/dashboard/owner/bookings" },
-          { title: "Pending Approval", url: "/dashboard/owner/bookings?status=pending" },
-          { title: "Confirmed", url: "/dashboard/owner/bookings?status=confirmed" },
-          { title: "Calendar View", url: "/dashboard/owner/bookings/calendar" },
+          { title: "Toutes les réservations", url: "/dashboard/owner/bookings" },
+          { title: "En attente d'approbation", url: "/dashboard/owner/bookings?status=pending" },
+          { title: "Confirmées", url: "/dashboard/owner/bookings?status=confirmed" },
+          { title: "Vue calendrier", url: "/dashboard/owner/bookings/calendar" },
         ],
       },
       {
-        title: "Teachers",
+        title: "Enseignants",
         url: "/dashboard/owner/teachers",
         icon: Users,
         subItems: [
-          { title: "Regular Teachers", url: "/dashboard/owner/teachers" },
-          { title: "New Requests", url: "/dashboard/owner/teachers?status=new" },
-          { title: "Blocked Teachers", url: "/dashboard/owner/teachers?status=blocked" },
+          { title: "Enseignants réguliers", url: "/dashboard/owner/teachers" },
+          { title: "Nouvelles demandes", url: "/dashboard/owner/teachers?status=new" },
+          { title: "Enseignants bloqués", url: "/dashboard/owner/teachers?status=blocked" },
         ],
       },
     ],
   },
   {
     id: 4,
-    label: "Financial",
+    label: "Financier",
     items: [
       {
-        title: "Earnings",
+        title: "Revenus",
         url: "/dashboard/owner/earnings",
         icon: CreditCard,
         subItems: [
-          { title: "Overview", url: "/dashboard/owner/earnings" },
-          { title: "Transaction History", url: "/dashboard/owner/earnings/transactions" },
-          { title: "Payouts", url: "/dashboard/owner/earnings/payouts" },
-          { title: "Tax Reports", url: "/dashboard/owner/earnings/tax" },
+          { title: "Vue d'ensemble", url: "/dashboard/owner/earnings" },
+          { title: "Historique des transactions", url: "/dashboard/owner/earnings/transactions" },
+          { title: "Versements", url: "/dashboard/owner/earnings/payouts" },
+          { title: "Rapports fiscaux", url: "/dashboard/owner/earnings/tax" },
         ],
       },
     ],
   },
   {
     id: 5,
-    label: "Reputation",
+    label: "Réputation",
     items: [
       {
-        title: "Reviews",
+        title: "Avis",
         url: "/dashboard/owner/reviews",
         icon: Star,
         subItems: [
-          { title: "All Reviews", url: "/dashboard/owner/reviews" },
-          { title: "Respond to Reviews", url: "/dashboard/owner/reviews/respond" },
+          { title: "Tous les avis", url: "/dashboard/owner/reviews" },
+          { title: "Répondre aux avis", url: "/dashboard/owner/reviews/respond" },
         ],
       },
       {
@@ -160,26 +160,26 @@ export const ownerSidebarItems: NavGroup[] = [
   },
   {
     id: 6,
-    label: "Management",
+    label: "Gestion",
     items: [
       {
-        title: "Reports",
+        title: "Rapports",
         url: "/dashboard/owner/reports",
         icon: FileText,
         subItems: [
-          { title: "Booking Reports", url: "/dashboard/owner/reports/bookings" },
-          { title: "Financial Reports", url: "/dashboard/owner/reports/financial" },
-          { title: "Performance Reports", url: "/dashboard/owner/reports/performance" },
+          { title: "Rapports de réservation", url: "/dashboard/owner/reports/bookings" },
+          { title: "Rapports financiers", url: "/dashboard/owner/reports/financial" },
+          { title: "Rapports de performance", url: "/dashboard/owner/reports/performance" },
         ],
       },
       {
-        title: "Settings",
+        title: "Paramètres",
         url: "/dashboard/owner/settings",
         icon: Settings,
         subItems: [
-          { title: "Profile Settings", url: "/dashboard/owner/settings/profile" },
-          { title: "Notification Settings", url: "/dashboard/owner/settings/notifications" },
-          { title: "Pricing Settings", url: "/dashboard/owner/settings/pricing" },
+          { title: "Paramètres de profil", url: "/dashboard/owner/settings/profile" },
+          { title: "Paramètres de notification", url: "/dashboard/owner/settings/notifications" },
+          { title: "Paramètres de tarification", url: "/dashboard/owner/settings/pricing" },
         ],
       },
     ],

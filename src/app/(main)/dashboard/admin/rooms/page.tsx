@@ -8,8 +8,8 @@ import { authOptions } from "@/lib/auth";
 import { RoomsManagement } from "./_components/rooms-management";
 
 export const metadata: Metadata = {
-  title: "Rooms Management | Admin Dashboard",
-  description: "Manage training rooms and spaces across all organizations",
+  title: "Gestion des Salles | Tableau de bord Admin",
+  description: "Gérer les salles de formation et espaces dans toutes les organisations",
 };
 
 export default async function RoomsPage() {

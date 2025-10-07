@@ -43,20 +43,20 @@ export interface NavGroup {
 export const adminSidebarItems: NavGroup[] = [
   {
     id: 1,
-    label: "Overview",
+    label: "Vue d'ensemble",
     items: [
       {
-        title: "Dashboard",
+        title: "Tableau de bord",
         url: "/dashboard/admin",
         icon: LayoutDashboard,
       },
       {
-        title: "Analytics",
+        title: "Analytiques",
         url: "/dashboard/admin/analytics",
         icon: BarChart3,
       },
       {
-        title: "System Health",
+        title: "État du système",
         url: "/dashboard/admin/system",
         icon: Activity,
       },
@@ -64,84 +64,84 @@ export const adminSidebarItems: NavGroup[] = [
   },
   {
     id: 2,
-    label: "Management",
+    label: "Gestion",
     items: [
       {
-        title: "Users",
+        title: "Utilisateurs",
         url: "/dashboard/admin/users",
         icon: Users,
         subItems: [
-          { title: "All Users", url: "/dashboard/admin/users" },
-          { title: "Admins", url: "/dashboard/admin/users?role=ADMIN" },
-          { title: "Center Owners", url: "/dashboard/admin/users?role=CENTER_OWNER" },
-          { title: "Teachers", url: "/dashboard/admin/users?role=TEACHER" },
-          { title: "Partners", url: "/dashboard/admin/users?role=PARTNER" },
+          { title: "Tous les utilisateurs", url: "/dashboard/admin/users" },
+          { title: "Administrateurs", url: "/dashboard/admin/users?role=ADMIN" },
+          { title: "Propriétaires de centres", url: "/dashboard/admin/users?role=CENTER_OWNER" },
+          { title: "Enseignants", url: "/dashboard/admin/users?role=TEACHER" },
+          { title: "Partenaires", url: "/dashboard/admin/users?role=PARTNER" },
         ],
       },
       {
-        title: "Organizations",
+        title: "Organisations",
         url: "/dashboard/admin/organizations",
         icon: Building2,
         subItems: [
-          { title: "All Centers", url: "/dashboard/admin/organizations" },
-          { title: "Pending Approval", url: "/dashboard/admin/organizations?status=pending" },
-          { title: "Verified Centers", url: "/dashboard/admin/organizations?status=verified" },
+          { title: "Tous les centres", url: "/dashboard/admin/organizations" },
+          { title: "En attente d'approbation", url: "/dashboard/admin/organizations?status=pending" },
+          { title: "Centres vérifiés", url: "/dashboard/admin/organizations?status=verified" },
         ],
       },
       {
-        title: "Subscriptions",
+        title: "Abonnements",
         url: "/dashboard/admin/subscriptions",
         icon: Package,
         subItems: [
-          { title: "All Subscriptions", url: "/dashboard/admin/subscriptions" },
-          { title: "Packages", url: "/dashboard/admin/subscriptions?tab=packages" },
-          { title: "Expiring Soon", url: "/dashboard/admin/subscriptions?status=expiring" },
+          { title: "Tous les abonnements", url: "/dashboard/admin/subscriptions" },
+          { title: "Forfaits", url: "/dashboard/admin/subscriptions?tab=packages" },
+          { title: "Expire bientôt", url: "/dashboard/admin/subscriptions?status=expiring" },
         ],
       },
       {
-        title: "Bookings",
+        title: "Réservations",
         url: "/dashboard/admin/bookings",
         icon: Calendar,
         subItems: [
-          { title: "All Bookings", url: "/dashboard/admin/bookings" },
-          { title: "Pending", url: "/dashboard/admin/bookings?status=pending" },
-          { title: "Confirmed", url: "/dashboard/admin/bookings?status=confirmed" },
-          { title: "Disputes", url: "/dashboard/admin/bookings?status=dispute" },
+          { title: "Toutes les réservations", url: "/dashboard/admin/bookings" },
+          { title: "En attente", url: "/dashboard/admin/bookings?status=pending" },
+          { title: "Confirmées", url: "/dashboard/admin/bookings?status=confirmed" },
+          { title: "Litiges", url: "/dashboard/admin/bookings?status=dispute" },
         ],
       },
     ],
   },
   {
     id: 3,
-    label: "Financial",
+    label: "Financier",
     items: [
       {
-        title: "Payments",
+        title: "Paiements",
         url: "/dashboard/admin/payments",
         icon: CreditCard,
         subItems: [
-          { title: "All Transactions", url: "/dashboard/admin/payments" },
-          { title: "Commission Reports", url: "/dashboard/admin/payments/commissions" },
-          { title: "Payouts", url: "/dashboard/admin/payments/payouts" },
+          { title: "Toutes les transactions", url: "/dashboard/admin/payments" },
+          { title: "Rapports de commission", url: "/dashboard/admin/payments/commissions" },
+          { title: "Versements", url: "/dashboard/admin/payments/payouts" },
         ],
       },
     ],
   },
   {
     id: 4,
-    label: "Content & Support",
+    label: "Contenu et support",
     items: [
       {
-        title: "Reviews",
+        title: "Avis",
         url: "/dashboard/admin/reviews",
         icon: MessageSquare,
         subItems: [
-          { title: "All Reviews", url: "/dashboard/admin/reviews" },
-          { title: "Flagged Reviews", url: "/dashboard/admin/reviews?flagged=true" },
+          { title: "Tous les avis", url: "/dashboard/admin/reviews" },
+          { title: "Avis signalés", url: "/dashboard/admin/reviews?flagged=true" },
         ],
       },
       {
-        title: "Reports",
+        title: "Rapports",
         url: "/dashboard/admin/reports",
         icon: FileText,
       },
@@ -149,25 +149,25 @@ export const adminSidebarItems: NavGroup[] = [
   },
   {
     id: 5,
-    label: "System",
+    label: "Système",
     items: [
       {
-        title: "Settings",
+        title: "Paramètres",
         url: "/dashboard/admin/settings",
         icon: Settings,
         subItems: [
-          { title: "Platform Settings", url: "/dashboard/admin/settings/platform" },
-          { title: "Payment Settings", url: "/dashboard/admin/settings/payments" },
-          { title: "Email Templates", url: "/dashboard/admin/settings/emails" },
+          { title: "Paramètres de plateforme", url: "/dashboard/admin/settings/platform" },
+          { title: "Paramètres de paiement", url: "/dashboard/admin/settings/payments" },
+          { title: "Modèles d'email", url: "/dashboard/admin/settings/emails" },
         ],
       },
       {
-        title: "Security",
+        title: "Sécurité",
         url: "/dashboard/admin/security",
         icon: Shield,
       },
       {
-        title: "Database",
+        title: "Base de données",
         url: "/dashboard/admin/database",
         icon: Database,
         comingSoon: true,

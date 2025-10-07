@@ -8,8 +8,8 @@ import { authOptions } from "@/lib/auth";
 import { AdminDashboard } from "./_components/admin-dashboard";
 
 export const metadata: Metadata = {
-  title: "Admin Dashboard | SaaS Formation",
-  description: "Platform administration and management dashboard",
+  title: "Tableau de bord Admin | SaaS Formation",
+  description: "Tableau de bord d'administration et de gestion de la plateforme",
 };
 
 export default async function AdminDashboardPage() {

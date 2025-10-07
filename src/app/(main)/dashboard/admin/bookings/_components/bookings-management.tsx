@@ -173,46 +173,46 @@ export function BookingsManagement() {
       {/* Header */}
       <div className="flex items-center justify-between">
         <div>
-          <h1 className="text-3xl font-bold tracking-tight">Bookings Management</h1>
-          <p className="text-muted-foreground">Manage all bookings across the platform</p>
+          <h1 className="text-3xl font-bold tracking-tight">Gestion des Réservations</h1>
+          <p className="text-muted-foreground">Gérer toutes les réservations de la plateforme</p>
         </div>
         <Button>
           <Plus className="mr-2 h-4 w-4" />
-          Add Booking
+          Ajouter une Réservation
         </Button>
       </div>
 
       {/* Filters */}
       <Card>
         <CardHeader>
-          <CardTitle>Filters</CardTitle>
-          <CardDescription>Filter bookings by status and payment</CardDescription>
+          <CardTitle>Filtres</CardTitle>
+          <CardDescription>Filtrer les réservations par statut et paiement</CardDescription>
         </CardHeader>
         <CardContent>
           <div className="flex gap-4">
             <Select value={statusFilter} onValueChange={setStatusFilter}>
               <SelectTrigger className="w-[180px]">
-                <SelectValue placeholder="Filter by status" />
+                <SelectValue placeholder="Filtrer par statut" />
               </SelectTrigger>
               <SelectContent>
-                <SelectItem value="all-statuses">All statuses</SelectItem>
-                <SelectItem value="PENDING">Pending</SelectItem>
-                <SelectItem value="CONFIRMED">Confirmed</SelectItem>
-                <SelectItem value="CANCELLED">Cancelled</SelectItem>
-                <SelectItem value="COMPLETED">Completed</SelectItem>
-                <SelectItem value="NO_SHOW">No Show</SelectItem>
+                <SelectItem value="all-statuses">Tous les statuts</SelectItem>
+                <SelectItem value="PENDING">En attente</SelectItem>
+                <SelectItem value="CONFIRMED">Confirmées</SelectItem>
+                <SelectItem value="CANCELLED">Annulées</SelectItem>
+                <SelectItem value="COMPLETED">Terminées</SelectItem>
+                <SelectItem value="NO_SHOW">Absence</SelectItem>
               </SelectContent>
             </Select>
             <Select value={paymentStatusFilter} onValueChange={setPaymentStatusFilter}>
               <SelectTrigger className="w-[180px]">
-                <SelectValue placeholder="Filter by payment" />
+                <SelectValue placeholder="Filtrer par paiement" />
               </SelectTrigger>
               <SelectContent>
-                <SelectItem value="all-payments">All payments</SelectItem>
-                <SelectItem value="PENDING">Pending</SelectItem>
-                <SelectItem value="PAID">Paid</SelectItem>
-                <SelectItem value="FAILED">Failed</SelectItem>
-                <SelectItem value="REFUNDED">Refunded</SelectItem>
+                <SelectItem value="all-payments">Tous les paiements</SelectItem>
+                <SelectItem value="PENDING">En attente</SelectItem>
+                <SelectItem value="PAID">Payées</SelectItem>
+                <SelectItem value="FAILED">Échouées</SelectItem>
+                <SelectItem value="REFUNDED">Remboursées</SelectItem>
                 <SelectItem value="PARTIAL_REFUND">Partial Refund</SelectItem>
               </SelectContent>
             </Select>
@@ -232,14 +232,14 @@ export function BookingsManagement() {
           <Table>
             <TableHeader>
               <TableRow>
-                <TableHead>Booking Details</TableHead>
-                <TableHead>User</TableHead>
-                <TableHead>Organization</TableHead>
-                <TableHead>Room</TableHead>
-                <TableHead>Date & Time</TableHead>
-                <TableHead>Amount</TableHead>
-                <TableHead>Status</TableHead>
-                <TableHead>Payment</TableHead>
+                <TableHead>Détails de Réservation</TableHead>
+                <TableHead>Utilisateur</TableHead>
+                <TableHead>Organisation</TableHead>
+                <TableHead>Salle</TableHead>
+                <TableHead>Date et Heure</TableHead>
+                <TableHead>Montant</TableHead>
+                <TableHead>Statut</TableHead>
+                <TableHead>Paiement</TableHead>
                 <TableHead className="text-right">Actions</TableHead>
               </TableRow>
             </TableHeader>
@@ -247,13 +247,13 @@ export function BookingsManagement() {
               {loading ? (
                 <TableRow>
                   <TableCell colSpan={9} className="py-8 text-center">
-                    Loading bookings...
+                    Chargement des réservations...
                   </TableCell>
                 </TableRow>
               ) : bookings.length === 0 ? (
                 <TableRow>
                   <TableCell colSpan={9} className="py-8 text-center">
-                    No bookings found
+                    Aucune réservation trouvée
                   </TableCell>
                 </TableRow>
               ) : (

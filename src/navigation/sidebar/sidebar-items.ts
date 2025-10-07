@@ -46,7 +46,7 @@ export interface NavGroup {
 export const sidebarItems: NavGroup[] = [
   {
     id: 1,
-    label: "Dashboards",
+    label: "Tableaux de bord",
     items: [
       {
         title: "CRM",
@@ -59,7 +59,7 @@ export const sidebarItems: NavGroup[] = [
         icon: Banknote,
       },
       {
-        title: "Analytics",
+        title: "Analytiques",
         url: "/dashboard/coming-soon",
         icon: Gauge,
         comingSoon: true,
@@ -71,13 +71,13 @@ export const sidebarItems: NavGroup[] = [
         comingSoon: true,
       },
       {
-        title: "Academy",
+        title: "Académie",
         url: "/dashboard/coming-soon",
         icon: GraduationCap,
         comingSoon: true,
       },
       {
-        title: "Logistics",
+        title: "Logistique",
         url: "/dashboard/coming-soon",
         icon: Forklift,
         comingSoon: true,
@@ -101,7 +101,7 @@ export const sidebarItems: NavGroup[] = [
         comingSoon: true,
       },
       {
-        title: "Calendar",
+        title: "Calendrier",
         url: "/dashboard/coming-soon",
         icon: Calendar,
         comingSoon: true,
@@ -113,42 +113,42 @@ export const sidebarItems: NavGroup[] = [
         comingSoon: true,
       },
       {
-        title: "Invoice",
+        title: "Facture",
         url: "/dashboard/coming-soon",
         icon: ReceiptText,
         comingSoon: true,
       },
       {
-        title: "Users",
+        title: "Utilisateurs",
         url: "/dashboard/coming-soon",
         icon: Users,
         comingSoon: true,
       },
       {
-        title: "Roles",
+        title: "Rôles",
         url: "/dashboard/coming-soon",
         icon: Lock,
         comingSoon: true,
       },
       {
-        title: "Authentication",
+        title: "Authentification",
         url: "/auth",
         icon: Fingerprint,
         subItems: [
-          { title: "Login v1", url: "/auth/v1/login", newTab: true },
-          { title: "Login v2", url: "/auth/v2/login", newTab: true },
-          { title: "Register v1", url: "/auth/v1/register", newTab: true },
-          { title: "Register v2", url: "/auth/v2/register", newTab: true },
+          { title: "Connexion v1", url: "/auth/v1/login", newTab: true },
+          { title: "Connexion v2", url: "/auth/v2/login", newTab: true },
+          { title: "Inscription v1", url: "/auth/v1/register", newTab: true },
+          { title: "Inscription v2", url: "/auth/v2/register", newTab: true },
         ],
       },
     ],
   },
   {
     id: 3,
-    label: "Misc",
+    label: "Divers",
     items: [
       {
-        title: "Others",
+        title: "Autres",
         url: "/dashboard/coming-soon",
         icon: SquareArrowUpRight,
         comingSoon: true,

@@ -107,7 +107,7 @@ export function UsersManagement() {
 
       const response = await fetch(`/api/users?${params}`);
       if (!response.ok) {
-        throw new Error("Failed to fetch users");
+        throw new Error("Échec de la récupération des utilisateurs");
       }
 
       const data: UsersResponse = await response.json();
@@ -115,7 +115,7 @@ export function UsersManagement() {
       setPagination(data.pagination);
     } catch (error) {
       console.error("Error fetching users:", error);
-      toast.error("Failed to fetch users");
+      toast.error("Échec de la récupération des utilisateurs");
     } finally {
       setLoading(false);
     }
@@ -154,7 +154,7 @@ export function UsersManagement() {
   }, [page, search, roleFilter, verifiedFilter]);
 
   const handleDeleteUser = async (userId: string) => {
-    if (!confirm("Are you sure you want to delete this user? This action cannot be undone.")) {
+    if (!confirm("Êtes-vous sûr de vouloir supprimer cet utilisateur ? Cette action ne peut pas être annulée.")) {
       return;
     }
 
@@ -165,14 +165,14 @@ export function UsersManagement() {
 
       if (!response.ok) {
         const error = await response.json();
-        throw new Error(error.error || "Failed to delete user");
+        throw new Error(error.error || "Échec de la suppression de l'utilisateur");
       }
 
-      toast.success("User deleted successfully");
+      toast.success("Utilisateur supprimé avec succès");
       fetchUsers(); // Refresh the list
     } catch (error) {
       console.error("Error deleting user:", error);
-      toast.error(error instanceof Error ? error.message : "Failed to delete user");
+      toast.error(error instanceof Error ? error.message : "Échec de la suppression de l'utilisateur");
     }
   };
 
@@ -194,26 +194,26 @@ export function UsersManagement() {
       {/* Header */}
       <div className="flex items-center justify-between">
         <div>
-          <h1 className="text-3xl font-bold tracking-tight">Users Management</h1>
-          <p className="text-muted-foreground">Manage platform users, roles, and permissions</p>
+          <h1 className="text-3xl font-bold tracking-tight">Gestion des Utilisateurs</h1>
+          <p className="text-muted-foreground">Gérer les utilisateurs de la plateforme, les rôles et les permissions</p>
         </div>
         <Button onClick={() => setCreateModalOpen(true)}>
           <Plus className="mr-2 h-4 w-4" />
-          Add User
+          Ajouter un Utilisateur
         </Button>
       </div>
 
       {/* Filters */}
       <Card>
         <CardHeader>
-          <CardTitle>Filters</CardTitle>
-          <CardDescription>Filter and search users</CardDescription>
+          <CardTitle>Filtres</CardTitle>
+          <CardDescription>Filtrer et rechercher des utilisateurs</CardDescription>
         </CardHeader>
         <CardContent>
           <div className="flex gap-4">
             <div className="flex-1">
               <Input
-                placeholder="Search users..."
+                placeholder="Rechercher des utilisateurs..."
                 value={search}
                 onChange={(e) => setSearch(e.target.value)}
                 className="max-w-sm"
@@ -224,15 +224,15 @@ export function UsersManagement() {
               onValueChange={(value) => setRoleFilter(value === "all-roles" ? "" : value)}
             >
               <SelectTrigger className="w-[180px]">
-                <SelectValue placeholder="Filter by role" />
+                <SelectValue placeholder="Filtrer par rôle" />
               </SelectTrigger>
               <SelectContent>
-                <SelectItem value="all-roles">All roles</SelectItem>
-                <SelectItem value="ADMIN">Admins</SelectItem>
-                <SelectItem value="CENTER_OWNER">Center Owners</SelectItem>
-                <SelectItem value="TRAINING_MANAGER">Training Managers</SelectItem>
-                <SelectItem value="TEACHER">Teachers</SelectItem>
-                <SelectItem value="PARTNER">Partners</SelectItem>
+                <SelectItem value="all-roles">Tous les rôles</SelectItem>
+                <SelectItem value="ADMIN">Administrateurs</SelectItem>
+                <SelectItem value="CENTER_OWNER">Propriétaires de centres</SelectItem>
+                <SelectItem value="TRAINING_MANAGER">Gestionnaires de formation</SelectItem>
+                <SelectItem value="TEACHER">Enseignants</SelectItem>
+                <SelectItem value="PARTNER">Partenaires</SelectItem>
               </SelectContent>
             </Select>
             <Select
@@ -240,12 +240,12 @@ export function UsersManagement() {
               onValueChange={(value) => setVerifiedFilter(value === "all-statuses" ? "" : value)}
             >
               <SelectTrigger className="w-[180px]">
-                <SelectValue placeholder="Filter by status" />
+                <SelectValue placeholder="Filtrer par statut" />
               </SelectTrigger>
               <SelectContent>
-                <SelectItem value="all-statuses">All statuses</SelectItem>
-                <SelectItem value="true">Verified</SelectItem>
-                <SelectItem value="false">Unverified</SelectItem>
+                <SelectItem value="all-statuses">Tous les statuts</SelectItem>
+                <SelectItem value="true">Vérifiés</SelectItem>
+                <SelectItem value="false">Non vérifiés</SelectItem>
               </SelectContent>
             </Select>
           </div>
@@ -257,14 +257,14 @@ export function UsersManagement() {
         <CardHeader>
           <div className="flex items-center justify-between">
             <div>
-              <CardTitle>Users ({pagination.total})</CardTitle>
+              <CardTitle>Utilisateurs ({pagination.total})</CardTitle>
               <CardDescription>
-                Showing {users.length} of {pagination.total} users
+                Affichage de {users.length} sur {pagination.total} utilisateurs
                 {(roleFilter || search || verifiedFilter) && (
                   <span className="ml-2 text-xs">
-                    • Filtered: {roleFilter && `Role: ${roleFilter.replace("_", " ")}`}
-                    {search && ` • Search: ${search}`}
-                    {verifiedFilter && ` • Status: ${verifiedFilter === "true" ? "Verified" : "Unverified"}`}
+                    • Filtré : {roleFilter && `Rôle : ${roleFilter.replace("_", " ")}`}
+                    {search && ` • Recherche : ${search}`}
+                    {verifiedFilter && ` • Statut : ${verifiedFilter === "true" ? "Vérifié" : "Non vérifié"}`}
                   </span>
                 )}
               </CardDescription>
@@ -280,7 +280,7 @@ export function UsersManagement() {
                   setPage(1);
                 }}
               >
-                Clear Filters
+                Effacer les filtres
               </Button>
             )}
           </div>
@@ -289,13 +289,13 @@ export function UsersManagement() {
           <Table>
             <TableHeader>
               <TableRow>
-                <TableHead>User</TableHead>
-                <TableHead>Role</TableHead>
-                <TableHead>Status</TableHead>
-                <TableHead>Assigned Centers</TableHead>
-                <TableHead>Subscription</TableHead>
-                <TableHead>Speciality</TableHead>
-                <TableHead>Created</TableHead>
+                <TableHead>Utilisateur</TableHead>
+                <TableHead>Rôle</TableHead>
+                <TableHead>Statut</TableHead>
+                <TableHead>Centres assignés</TableHead>
+                <TableHead>Abonnement</TableHead>
+                <TableHead>Spécialité</TableHead>
+                <TableHead>Créé</TableHead>
                 <TableHead className="text-right">Actions</TableHead>
               </TableRow>
             </TableHeader>
@@ -303,13 +303,13 @@ export function UsersManagement() {
               {loading ? (
                 <TableRow>
                   <TableCell colSpan={8} className="py-8 text-center">
-                    Loading users...
+                    Chargement des utilisateurs...
                   </TableCell>
                 </TableRow>
               ) : users.length === 0 ? (
                 <TableRow>
                   <TableCell colSpan={8} className="py-8 text-center">
-                    No users found
+                    Aucun utilisateur trouvé
                   </TableCell>
                 </TableRow>
               ) : (
@@ -334,7 +334,7 @@ export function UsersManagement() {
                     </TableCell>
                     <TableCell>
                       <Badge variant={user.verified ? "default" : "secondary"}>
-                        {user.verified ? "Verified" : "Unverified"}
+                        {user.verified ? "Vérifié" : "Non vérifié"}
                       </Badge>
                     </TableCell>
                     <TableCell>
@@ -355,7 +355,7 @@ export function UsersManagement() {
                           ))}
                         </div>
                       ) : (
-                        <span className="text-muted-foreground text-sm">No assignments</span>
+                        <span className="text-muted-foreground text-sm">Aucune affectation</span>
                       )}
                     </TableCell>
                     <TableCell>
@@ -365,7 +365,7 @@ export function UsersManagement() {
                             {user.organizations[0].organization.subscriptions[0].package.plan}
                           </Badge>
                           <div className="text-muted-foreground mt-1 text-xs">
-                            Until {formatDate(user.organizations[0].organization.subscriptions[0].endDate)}
+                            Jusqu'au {formatDate(user.organizations[0].organization.subscriptions[0].endDate)}
                           </div>
                         </div>
                       ) : (
@@ -384,11 +384,11 @@ export function UsersManagement() {
                         <DropdownMenuContent align="end">
                           <DropdownMenuItem onClick={() => handleEditUser(user.id)}>
                             <Edit className="mr-2 h-4 w-4" />
-                            Edit User
+                            Modifier l'utilisateur
                           </DropdownMenuItem>
                           <DropdownMenuItem onClick={() => handleDeleteUser(user.id)} className="text-red-600">
                             <Trash2 className="mr-2 h-4 w-4" />
-                            Delete User
+                            Supprimer l'utilisateur
                           </DropdownMenuItem>
                         </DropdownMenuContent>
                       </DropdownMenu>
@@ -403,11 +403,11 @@ export function UsersManagement() {
           {pagination.pages > 1 && (
             <div className="mt-4 flex items-center justify-between">
               <div className="text-muted-foreground text-sm">
-                Page {pagination.page} of {pagination.pages}
+                Page {pagination.page} sur {pagination.pages}
               </div>
               <div className="flex gap-2">
                 <Button variant="outline" size="sm" onClick={() => setPage(page - 1)} disabled={page === 1}>
-                  Previous
+                  Précédent
                 </Button>
                 <Button
                   variant="outline"
@@ -415,7 +415,7 @@ export function UsersManagement() {
                   onClick={() => setPage(page + 1)}
                   disabled={page === pagination.pages}
                 >
-                  Next
+                  Suivant
                 </Button>
               </div>
             </div>

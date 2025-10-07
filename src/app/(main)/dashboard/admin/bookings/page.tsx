@@ -8,8 +8,8 @@ import { authOptions } from "@/lib/auth";
 import { BookingsManagement } from "./_components/bookings-management";
 
 export const metadata: Metadata = {
-  title: "Bookings Management | Admin Dashboard",
-  description: "Manage all bookings across the platform",
+  title: "Gestion des Réservations | Tableau de bord Admin",
+  description: "Gérer toutes les réservations de la plateforme",
 };
 
 export default async function BookingsPage() {

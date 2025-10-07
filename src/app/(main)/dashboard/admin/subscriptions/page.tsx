@@ -8,8 +8,8 @@ import { authOptions } from "@/lib/auth";
 import { SubscriptionManagement } from "./_components/subscription-management";
 
 export const metadata: Metadata = {
-  title: "Subscription Management | Admin Dashboard",
-  description: "Manage subscription packages and organization subscriptions",
+  title: "Gestion des Abonnements | Tableau de bord Admin",
+  description: "Gérer les forfaits d'abonnement et les abonnements d'organisations",
 };
 
 export default async function SubscriptionsPage() {

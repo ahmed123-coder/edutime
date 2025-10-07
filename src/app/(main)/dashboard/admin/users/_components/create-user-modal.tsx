@@ -14,14 +14,14 @@ import { Input } from "@/components/ui/input";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 
 const createUserSchema = z.object({
-  email: z.string().email("Invalid email address"),
-  name: z.string().min(2, "Name must be at least 2 characters").max(100),
+  email: z.string().email("Adresse email invalide"),
+  name: z.string().min(2, "Le nom doit contenir au moins 2 caractères").max(100),
   phone: z
     .string()
-    .regex(/^\+?[1-9]\d{1,14}$/, "Invalid phone number")
+    .regex(/^\+?[1-9]\d{1,14}$/, "Numéro de téléphone invalide")
     .optional()
     .or(z.literal("")),
-  password: z.string().min(6, "Password must be at least 6 characters"),
+  password: z.string().min(6, "Le mot de passe doit contenir au moins 6 caractères"),
   role: z.enum(["ADMIN", "CENTER_OWNER", "TRAINING_MANAGER", "TEACHER", "PARTNER"]),
   speciality: z.string().max(100).optional().or(z.literal("")),
 });
@@ -70,16 +70,16 @@ export function CreateUserModal({ open, onOpenChange, onUserCreated }: CreateUse
 
       if (!response.ok) {
         const error = await response.json();
-        throw new Error(error.error || "Failed to create user");
+        throw new Error(error.error || "Échec de la création de l'utilisateur");
       }
 
-      toast.success("User created successfully");
+      toast.success("Utilisateur créé avec succès");
       form.reset();
       onOpenChange(false);
       onUserCreated();
     } catch (error) {
       console.error("Error creating user:", error);
-      toast.error(error instanceof Error ? error.message : "Failed to create user");
+      toast.error(error instanceof Error ? error.message : "Échec de la création de l'utilisateur");
     } finally {
       setIsLoading(false);
     }
@@ -89,9 +89,9 @@ export function CreateUserModal({ open, onOpenChange, onUserCreated }: CreateUse
     <Dialog open={open} onOpenChange={onOpenChange}>
       <DialogContent className="max-h-[90vh] overflow-y-auto sm:max-w-[600px]">
         <DialogHeader>
-          <DialogTitle>Create New User</DialogTitle>
+          <DialogTitle>Créer un Nouvel Utilisateur</DialogTitle>
           <DialogDescription>
-            Add a new user to the platform. They will receive an email to verify their account.
+            Ajouter un nouvel utilisateur à la plateforme. Il recevra un email pour vérifier son compte.
           </DialogDescription>
         </DialogHeader>
 
@@ -103,9 +103,9 @@ export function CreateUserModal({ open, onOpenChange, onUserCreated }: CreateUse
                 name="name"
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel>Full Name</FormLabel>
+                    <FormLabel>Nom Complet</FormLabel>
                     <FormControl>
-                      <Input placeholder="Enter full name" {...field} />
+                      <Input placeholder="Entrer le nom complet" {...field} />
                     </FormControl>
                     <FormMessage />
                   </FormItem>
@@ -119,7 +119,7 @@ export function CreateUserModal({ open, onOpenChange, onUserCreated }: CreateUse
                   <FormItem>
                     <FormLabel>Email</FormLabel>
                     <FormControl>
-                      <Input type="email" placeholder="Enter email address" {...field} />
+                      <Input type="email" placeholder="Entrer l'adresse email" {...field} />
                     </FormControl>
                     <FormMessage />
                   </FormItem>
@@ -133,9 +133,9 @@ export function CreateUserModal({ open, onOpenChange, onUserCreated }: CreateUse
                 name="phone"
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel>Phone (Optional)</FormLabel>
+                    <FormLabel>Téléphone (Optionnel)</FormLabel>
                     <FormControl>
-                      <Input placeholder="Enter phone number" {...field} />
+                      <Input placeholder="Entrer le numéro de téléphone" {...field} />
                     </FormControl>
                     <FormMessage />
                   </FormItem>
@@ -147,9 +147,9 @@ export function CreateUserModal({ open, onOpenChange, onUserCreated }: CreateUse
                 name="password"
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel>Password</FormLabel>
+                    <FormLabel>Mot de Passe</FormLabel>
                     <FormControl>
-                      <Input type="password" placeholder="Enter password" {...field} />
+                      <Input type="password" placeholder="Entrer le mot de passe" {...field} />
                     </FormControl>
                     <FormMessage />
                   </FormItem>
@@ -163,19 +163,19 @@ export function CreateUserModal({ open, onOpenChange, onUserCreated }: CreateUse
                 name="role"
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel>Role</FormLabel>
+                    <FormLabel>Rôle</FormLabel>
                     <Select onValueChange={field.onChange} defaultValue={field.value}>
                       <FormControl>
                         <SelectTrigger>
-                          <SelectValue placeholder="Select a role" />
+                          <SelectValue placeholder="Sélectionner un rôle" />
                         </SelectTrigger>
                       </FormControl>
                       <SelectContent>
-                        <SelectItem value="ADMIN">Admin</SelectItem>
-                        <SelectItem value="CENTER_OWNER">Center Owner</SelectItem>
-                        <SelectItem value="TRAINING_MANAGER">Training Manager</SelectItem>
-                        <SelectItem value="TEACHER">Teacher</SelectItem>
-                        <SelectItem value="PARTNER">Partner</SelectItem>
+                        <SelectItem value="ADMIN">Administrateur</SelectItem>
+                        <SelectItem value="CENTER_OWNER">Propriétaire de Centre</SelectItem>
+                        <SelectItem value="TRAINING_MANAGER">Gestionnaire de Formation</SelectItem>
+                        <SelectItem value="TEACHER">Enseignant</SelectItem>
+                        <SelectItem value="PARTNER">Partenaire</SelectItem>
                       </SelectContent>
                     </Select>
                     <FormMessage />
@@ -188,9 +188,9 @@ export function CreateUserModal({ open, onOpenChange, onUserCreated }: CreateUse
                 name="speciality"
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel>Speciality (Optional)</FormLabel>
+                    <FormLabel>Spécialité (Optionnel)</FormLabel>
                     <FormControl>
-                      <Input placeholder="Enter speciality" {...field} />
+                      <Input placeholder="Entrer la spécialité" {...field} />
                     </FormControl>
                     <FormMessage />
                   </FormItem>
@@ -200,10 +200,10 @@ export function CreateUserModal({ open, onOpenChange, onUserCreated }: CreateUse
 
             <div className="flex justify-end space-x-2 pt-4">
               <Button type="button" variant="outline" onClick={() => onOpenChange(false)} disabled={isLoading}>
-                Cancel
+                Annuler
               </Button>
               <Button type="submit" disabled={isLoading}>
-                {isLoading ? "Creating..." : "Create User"}
+                {isLoading ? "Création..." : "Créer l'Utilisateur"}
               </Button>
             </div>
           </form>

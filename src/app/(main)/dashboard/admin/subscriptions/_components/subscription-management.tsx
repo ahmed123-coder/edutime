@@ -54,17 +54,17 @@ export function SubscriptionManagement() {
       {/* Header */}
       <div className="flex items-center justify-between">
         <div>
-          <h1 className="text-3xl font-bold tracking-tight">Subscription Management</h1>
-          <p className="text-muted-foreground">Manage subscription packages and organization subscriptions</p>
+          <h1 className="text-3xl font-bold tracking-tight">Gestion des Abonnements</h1>
+          <p className="text-muted-foreground">Gérer les forfaits d'abonnement et les abonnements d'organisations</p>
         </div>
         <div className="flex gap-2">
           <Button variant="outline" onClick={() => setCreatePackageOpen(true)}>
             <Package className="mr-2 h-4 w-4" />
-            Create Package
+            Créer un Forfait
           </Button>
           <Button onClick={() => setAssignSubscriptionOpen(true)}>
             <Plus className="mr-2 h-4 w-4" />
-            Assign Subscription
+            Assigner un Abonnement
           </Button>
         </div>
       </div>
@@ -73,45 +73,45 @@ export function SubscriptionManagement() {
       <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
         <Card>
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-sm font-medium">Total Packages</CardTitle>
+            <CardTitle className="text-sm font-medium">Total Forfaits</CardTitle>
             <Package className="text-muted-foreground h-4 w-4" />
           </CardHeader>
           <CardContent>
             <div className="text-2xl font-bold">{stats.totalPackages}</div>
-            <p className="text-muted-foreground text-xs">Available subscription plans</p>
+            <p className="text-muted-foreground text-xs">Plans d'abonnement disponibles</p>
           </CardContent>
         </Card>
 
         <Card>
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-sm font-medium">Active Subscriptions</CardTitle>
+            <CardTitle className="text-sm font-medium">Abonnements Actifs</CardTitle>
             <Users className="text-muted-foreground h-4 w-4" />
           </CardHeader>
           <CardContent>
             <div className="text-2xl font-bold">{stats.activeSubscriptions}</div>
-            <p className="text-muted-foreground text-xs">Currently active subscriptions</p>
+            <p className="text-muted-foreground text-xs">Abonnements actuellement actifs</p>
           </CardContent>
         </Card>
 
         <Card>
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-sm font-medium">Monthly Revenue</CardTitle>
+            <CardTitle className="text-sm font-medium">Revenus Mensuels</CardTitle>
             <DollarSign className="text-muted-foreground h-4 w-4" />
           </CardHeader>
           <CardContent>
             <div className="text-2xl font-bold">{stats.monthlyRevenue.toLocaleString()} TND</div>
-            <p className="text-muted-foreground text-xs">Total monthly recurring revenue</p>
+            <p className="text-muted-foreground text-xs">Total des revenus récurrents mensuels</p>
           </CardContent>
         </Card>
 
         <Card>
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-sm font-medium">Expiring Soon</CardTitle>
+            <CardTitle className="text-sm font-medium">Expire Bientôt</CardTitle>
             <Calendar className="text-muted-foreground h-4 w-4" />
           </CardHeader>
           <CardContent>
             <div className="text-2xl font-bold">{stats.expiringThisMonth}</div>
-            <p className="text-muted-foreground text-xs">Subscriptions expiring this month</p>
+            <p className="text-muted-foreground text-xs">Abonnements expirant ce mois</p>
           </CardContent>
         </Card>
       </div>
@@ -119,8 +119,8 @@ export function SubscriptionManagement() {
       {/* Main Content */}
       <Tabs defaultValue="packages" className="space-y-4">
         <TabsList>
-          <TabsTrigger value="packages">Packages</TabsTrigger>
-          <TabsTrigger value="subscriptions">Subscriptions</TabsTrigger>
+          <TabsTrigger value="packages">Forfaits</TabsTrigger>
+          <TabsTrigger value="subscriptions">Abonnements</TabsTrigger>
         </TabsList>
 
         <TabsContent value="packages">

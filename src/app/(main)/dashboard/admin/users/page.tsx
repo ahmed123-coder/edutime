@@ -8,8 +8,8 @@ import { authOptions } from "@/lib/auth";
 import { UsersManagement } from "./_components/users-management";
 
 export const metadata: Metadata = {
-  title: "Users Management | Admin Dashboard",
-  description: "Manage platform users, roles, and permissions",
+  title: "Gestion des Utilisateurs | Tableau de bord Admin",
+  description: "Gérer les utilisateurs de la plateforme, les rôles et les permissions",
 };
 
 export default async function UsersPage() {

@@ -8,8 +8,8 @@ import { authOptions } from "@/lib/auth";
 import { OrganizationsManagement } from "./_components/organizations-management";
 
 export const metadata: Metadata = {
-  title: "Organizations Management | Admin Dashboard",
-  description: "Manage training centers and partner organizations",
+  title: "Gestion des Organisations | Tableau de bord Admin",
+  description: "Gérer les centres de formation et organisations partenaires",
 };
 
 export default async function OrganizationsPage() {

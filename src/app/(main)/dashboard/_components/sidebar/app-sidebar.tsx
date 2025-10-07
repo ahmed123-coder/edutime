@@ -2,7 +2,7 @@
 
 import Link from "next/link";
 
-import { Settings, CircleHelp, Search, Database, ClipboardList, File, Command } from "lucide-react";
+import { Settings, CircleHelp, Search, Database, ClipboardList, File } from "lucide-react";
 import { useSession } from "next-auth/react";
 
 import {
@@ -14,7 +14,7 @@ import {
   SidebarMenuButton,
   SidebarMenuItem,
 } from "@/components/ui/sidebar";
-import { APP_CONFIG } from "@/config/app-config";
+import { IMAGES } from "@/lib/images";
 import { getSidebarItems, getDefaultDashboardUrl } from "@/navigation/sidebar/get-sidebar-items";
 
 import { NavMain } from "./nav-main";
@@ -72,8 +72,11 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
           <SidebarMenuItem>
             <SidebarMenuButton asChild className="data-[slot=sidebar-menu-button]:!p-1.5">
               <Link href={defaultDashboardUrl}>
-                <Command />
-                <span className="text-base font-semibold">{APP_CONFIG.name}</span>
+                <img
+                  src={IMAGES.LOGO_RECTANGLE}
+                  alt="EduTime"
+                  className="h-8 w-auto"
+                />
               </Link>
             </SidebarMenuButton>
           </SidebarMenuItem>
