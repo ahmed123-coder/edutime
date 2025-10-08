@@ -16,7 +16,9 @@ const createRoomSchema = z.object({
   hourlyRate: z.union([z.number(), z.string()]).transform((val) => typeof val === 'string' ? parseFloat(val) : val).refine((val) => val > 0, { message: "Hourly rate must be positive" }),
   equipment: z.array(z.string()).optional(),
   amenities: z.array(z.string()).optional(),
-  photos: z.array(z.string().url()).optional(),
+  photos: z.array(z.string()).optional(),
+  active: z.boolean().optional(),
+  defaultPhoto: z.string().optional(),
 });
 
 const updateRoomSchema = z.object({
@@ -227,6 +229,7 @@ export async function POST(request: NextRequest) {
         equipment: validatedData.equipment,
         amenities: validatedData.amenities,
         photos: validatedData.photos,
+        active: validatedData.active ?? true,
       },
       select: {
         id: true,
