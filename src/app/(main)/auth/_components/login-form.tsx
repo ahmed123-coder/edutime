@@ -50,7 +50,7 @@ export function LoginForm() {
 
       if (result?.error) {
         toast.error("Login failed", {
-          description: "Invalid email or password. Please try again.",
+          description: <span className="text-red-600">Invalid email or password. Please try again.</span>,
         });
       } else {
         // Get updated session to check verification status

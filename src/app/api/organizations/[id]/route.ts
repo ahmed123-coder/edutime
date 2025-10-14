@@ -13,10 +13,10 @@ const updateOrganizationSchema = z.object({
   type: z.enum(["TRAINING_CENTER", "PARTNER_SERVICE"]).optional(),
   address: z
     .object({
-      street: z.string(),
-      city: z.string(),
+      street: z.string().optional(),
+      city: z.string().optional(),
       state: z.string().optional(),
-      country: z.string(),
+      country: z.string().optional(),
       zipCode: z.string().optional(),
       postalCode: z.string().optional(),
     })
@@ -28,15 +28,11 @@ const updateOrganizationSchema = z.object({
     })
     .optional(),
   phone: z.string().optional(),
-  email: z.string().optional().refine((val) => !val || z.string().email().safeParse(val).success, {
-    message: "Invalid email format"
-  }),
-  website: z.string().optional().refine((val) => !val || z.string().url().safeParse(val).success, {
-    message: "Invalid URL format"
-  }),
+  email: z.string().optional(),
+  website: z.string().optional(),
   hours: z.record(z.object({
-    open: z.string(),
-    close: z.string(),
+    open: z.string().optional(),
+    close: z.string().optional(),
     closed: z.boolean()
   })).optional(),
   verified: z.boolean().optional(),
@@ -234,3 +230,4 @@ export async function DELETE(request: NextRequest, { params }: { params: Promise
     return NextResponse.json({ error: "Internal server error" }, { status: 500 });
   }
 }
+

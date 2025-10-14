@@ -160,7 +160,7 @@ export async function GET(request: NextRequest) {
       ];
     }
 
-    if (type) {
+    if (type && type !== "all-types") {
       whereClause.type = type;
     }
 
@@ -185,6 +185,7 @@ export async function GET(request: NextRequest) {
           subscription: true,
           subscriptionEnd: true,
           address: true,
+          coordinates: true,
           phone: true,
           email: true,
           website: true,

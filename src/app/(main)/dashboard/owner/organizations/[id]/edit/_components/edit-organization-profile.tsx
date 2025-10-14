@@ -2,7 +2,8 @@
 
 import { useState, useEffect, useRef } from "react";
 import { useRouter } from "next/navigation";
-import { Camera, MapPin, Phone, Mail, Globe, Clock, Save, ArrowLeft, Upload } from "lucide-react";
+import dynamic from "next/dynamic";
+import { Camera, MapPin, Phone, Mail, Globe, Clock, Save, ArrowLeft, Upload, Building2 } from "lucide-react";
 import { toast } from "sonner";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Badge } from "@/components/ui/badge";
@@ -14,7 +15,32 @@ import { Textarea } from "@/components/ui/textarea";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Switch } from "@/components/ui/switch";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { RoomsManagement } from "./rooms-management";
+
+// Dynamically import LocationPicker to avoid loading map on initial page load
+const LocationPicker = dynamic(
+  () => import("@/app/(main)/dashboard/owner/center/_components/location-picker").then(mod => ({ default: mod.LocationPicker })),
+  {
+    ssr: false,
+    loading: () => (
+      <div className="flex items-center justify-center h-64 bg-gray-100 rounded-lg">
+        <div className="text-sm text-gray-500">Loading map...</div>
+      </div>
+    )
+  }
+);
+
+// Dynamically import RoomsManagement to avoid loading heavy components on initial page load
+const RoomsManagement = dynamic(
+  () => import("@/app/(main)/dashboard/admin/organizations/[id]/edit/_components/rooms-management").then(mod => ({ default: mod.RoomsManagement })),
+  {
+    ssr: false,
+    loading: () => (
+      <div className="flex items-center justify-center h-40 bg-gray-100 rounded-lg">
+        <div className="text-sm text-gray-500">Loading rooms...</div>
+      </div>
+    )
+  }
+);
 
 interface Organization {
   id: string;
@@ -31,6 +57,10 @@ interface Organization {
   verified: boolean;
   active: boolean;
   hours?: any;
+  coordinates?: {
+    lat: number;
+    lng: number;
+  };
 }
 
 interface EditOrganizationProfileProps {
@@ -44,6 +74,16 @@ export function EditOrganizationProfile({ organizationId }: EditOrganizationProf
   const [saving, setSaving] = useState(false);
   const [uploading, setUploading] = useState(false);
   const fileInputRef = useRef<HTMLInputElement>(null);
+  const [searchQuery, setSearchQuery] = useState("");
+  const dayNames: { [key: string]: string } = {
+    monday: "Lundi",
+    tuesday: "Mardi",
+    wednesday: "Mercredi",
+    thursday: "Jeudi",
+    friday: "Vendredi",
+    saturday: "Samedi",
+    sunday: "Dimanche"
+  };
   const [formData, setFormData] = useState({
     name: "",
     logo: "",
@@ -59,8 +99,10 @@ export function EditOrganizationProfile({ organizationId }: EditOrganizationProf
       zipCode: "",
       country: "Tunisia"
     },
-    verified: false,
-    active: true,
+    coordinates: {
+      lat: 36.7948545, // Default Tunis coordinates
+      lng: 10.7063772
+    },
     hours: {
       monday: { open: "08:00", close: "18:00", closed: false },
       tuesday: { open: "08:00", close: "18:00", closed: false },
@@ -69,7 +111,8 @@ export function EditOrganizationProfile({ organizationId }: EditOrganizationProf
       friday: { open: "08:00", close: "18:00", closed: false },
       saturday: { open: "08:00", close: "18:00", closed: false },
       sunday: { open: "08:00", close: "18:00", closed: true }
-    }
+    },
+    daysOrder: ["monday", "tuesday", "wednesday", "thursday", "friday", "saturday", "sunday"]
   });
 
   useEffect(() => {
@@ -80,7 +123,7 @@ export function EditOrganizationProfile({ organizationId }: EditOrganizationProf
     try {
       const response = await fetch(`/api/organizations/${organizationId}`);
       if (!response.ok) throw new Error("Failed to fetch organization");
-      
+
       const data = await response.json();
       setOrganization(data.organization);
       setFormData({
@@ -98,8 +141,10 @@ export function EditOrganizationProfile({ organizationId }: EditOrganizationProf
           zipCode: data.organization.address?.zipCode || "",
           country: data.organization.address?.country || "Tunisia"
         },
-        verified: data.organization.verified || false,
-        active: data.organization.active || true,
+        coordinates: {
+          lat: data.organization.coordinates?.lat || 36.7948545,
+          lng: data.organization.coordinates?.lng || 10.7063772
+        },
         hours: data.organization.hours || {
           monday: { open: "08:00", close: "18:00", closed: false },
           tuesday: { open: "08:00", close: "18:00", closed: false },
@@ -108,11 +153,12 @@ export function EditOrganizationProfile({ organizationId }: EditOrganizationProf
           friday: { open: "08:00", close: "18:00", closed: false },
           saturday: { open: "08:00", close: "18:00", closed: false },
           sunday: { open: "08:00", close: "18:00", closed: true }
-        }
+        },
+        daysOrder: ["monday", "tuesday", "wednesday", "thursday", "friday", "saturday", "sunday"]
       });
     } catch (error) {
       toast.error("Failed to load organization");
-      router.push("/dashboard/admin/organizations");
+      router.push("/dashboard/owner/organizations");
     } finally {
       setLoading(false);
     }
@@ -183,6 +229,48 @@ export function EditOrganizationProfile({ organizationId }: EditOrganizationProf
     fileInputRef.current?.click();
   };
 
+  const handleLocationChange = (lat: number, lng: number) => {
+    setFormData({
+      ...formData,
+      coordinates: { lat, lng }
+    });
+  };
+
+  const handleSearch = async () => {
+    if (!searchQuery.trim()) return;
+
+    try {
+      // Use a geocoding service or API to get coordinates from search query
+      const response = await fetch(`https://nominatim.openstreetmap.org/search?format=json&q=${encodeURIComponent(searchQuery)}&limit=1`);
+      const data = await response.json();
+
+      if (data && data.length > 0) {
+        const { lat, lon } = data[0];
+        handleLocationChange(parseFloat(lat), parseFloat(lon));
+
+        // Optionally update address fields
+        const addressParts = data[0].display_name.split(', ');
+        if (addressParts.length >= 3) {
+          setFormData({
+            ...formData,
+            coordinates: { lat: parseFloat(lat), lng: parseFloat(lon) },
+            address: {
+              ...formData.address,
+              street: addressParts[0] || "",
+              city: addressParts[1] || "",
+              state: addressParts[2] || "",
+              country: addressParts[addressParts.length - 1] || "Tunisia"
+            }
+          });
+        }
+      } else {
+        toast.error("Location not found");
+      }
+    } catch (error) {
+      toast.error("Failed to search location");
+    }
+  };
+
   const handleSave = async () => {
     try {
       setSaving(true);
@@ -195,7 +283,7 @@ export function EditOrganizationProfile({ organizationId }: EditOrganizationProf
       if (!response.ok) throw new Error("Failed to update organization");
 
       toast.success("Organization updated successfully");
-      router.push("/dashboard/admin/organizations");
+      router.push("/dashboard/owner/organizations");
     } catch (error) {
       toast.error("Failed to update organization");
     } finally {
@@ -221,7 +309,7 @@ export function EditOrganizationProfile({ organizationId }: EditOrganizationProf
           <Button
             variant="ghost"
             size="sm"
-            onClick={() => router.push("/dashboard/admin/organizations")}
+            onClick={() => router.push("/dashboard/owner/organizations")}
           >
             <ArrowLeft className="h-4 w-4 mr-2" />
             Back to Organizations
@@ -289,8 +377,8 @@ export function EditOrganizationProfile({ organizationId }: EditOrganizationProf
                   <Badge variant={organization.subscription === "PRO" ? "default" : "secondary"}>
                     {organization.subscription}
                   </Badge>
-                  <Badge variant={formData.verified ? "default" : "destructive"}>
-                    {formData.verified ? "Verified" : "Unverified"}
+                  <Badge variant={organization.verified ? "default" : "destructive"}>
+                    {organization.verified ? "Verified" : "Unverified"}
                   </Badge>
                 </div>
                 <div>
@@ -312,11 +400,13 @@ export function EditOrganizationProfile({ organizationId }: EditOrganizationProf
           {/* Main Content */}
           <div className="mt-8">
             <Tabs defaultValue="general" className="w-full">
-              <TabsList className="grid w-full grid-cols-2">
+              <TabsList className="grid w-full grid-cols-4">
                 <TabsTrigger value="general">Informations générales</TabsTrigger>
+                <TabsTrigger value="availability">Horaires</TabsTrigger>
+                <TabsTrigger value="location">Localisation</TabsTrigger>
                 <TabsTrigger value="rooms">Salles</TabsTrigger>
               </TabsList>
-              
+
               <TabsContent value="general" className="mt-6">
                 <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
             {/* Left Column - Contact & Settings */}
@@ -362,11 +452,13 @@ export function EditOrganizationProfile({ organizationId }: EditOrganizationProf
                 <CardContent className="space-y-4">
                   <div>
                     <Label htmlFor="type">Organization Type</Label>
+                    
+
                     <Select
                       value={formData.type}
                       onValueChange={(value) => setFormData({ ...formData, type: value })}
                     >
-                      <SelectTrigger>
+                      <SelectTrigger className="mt-2">
                         <SelectValue />
                       </SelectTrigger>
                       <SelectContent>
@@ -374,22 +466,6 @@ export function EditOrganizationProfile({ organizationId }: EditOrganizationProf
                         <SelectItem value="PARTNER_SERVICE">Partner Service</SelectItem>
                       </SelectContent>
                     </Select>
-                  </div>
-                  <div className="flex items-center justify-between">
-                    <Label htmlFor="verified">Verified Status</Label>
-                    <Switch
-                      id="verified"
-                      checked={formData.verified}
-                      onCheckedChange={(checked) => setFormData({ ...formData, verified: checked })}
-                    />
-                  </div>
-                  <div className="flex items-center justify-between">
-                    <Label htmlFor="active">Active Status</Label>
-                    <Switch
-                      id="active"
-                      checked={formData.active}
-                      onCheckedChange={(checked) => setFormData({ ...formData, active: checked })}
-                    />
                   </div>
                 </CardContent>
               </Card>
@@ -455,70 +531,96 @@ export function EditOrganizationProfile({ organizationId }: EditOrganizationProf
                 </CardContent>
               </Card>
 
-              {/* Operating Hours */}
-              <Card>
-                <CardHeader>
-                  <CardTitle className="flex items-center gap-2">
-                    <Clock className="h-4 w-4" />
-                    Operating Hours
-                  </CardTitle>
-                </CardHeader>
-                <CardContent>
-                  <div className="space-y-3">
-                    {Object.entries(formData.hours || {}).map(([day, hours]) => (
-                      <div key={day} className="flex items-center gap-4">
-                        <div className="w-20 text-sm font-medium capitalize">{day}</div>
-                        <Switch
-                          checked={!hours?.closed}
-                          onCheckedChange={(checked) => setFormData({
-                            ...formData,
-                            hours: {
-                              ...formData.hours,
-                              [day]: { ...hours, closed: !checked }
-                            }
-                          })}
-                        />
-                        {!hours?.closed && (
-                          <>
-                            <Input
-                              type="time"
-                              value={hours?.open || "08:00"}
-                              onChange={(e) => setFormData({
-                                ...formData,
-                                hours: {
-                                  ...formData.hours,
-                                  [day]: { ...hours, open: e.target.value }
-                                }
-                              })}
-                              className="w-24"
-                            />
-                            <span className="text-muted-foreground">to</span>
-                            <Input
-                              type="time"
-                              value={hours?.close || "18:00"}
-                              onChange={(e) => setFormData({
-                                ...formData,
-                                hours: {
-                                  ...formData.hours,
-                                  [day]: { ...hours, close: e.target.value }
-                                }
-                              })}
-                              className="w-24"
-                            />
-                          </>
-                        )}
-                        {hours?.closed && (
-                          <span className="text-muted-foreground text-sm">Closed</span>
-                        )}
-                      </div>
-                    ))}
-                  </div>
-                </CardContent>
-              </Card>
             </div>
                 </div>
               </TabsContent>
-              
+
+              <TabsContent value="availability" className="mt-6">
+                <Card>
+                  <CardHeader>
+                    <CardTitle className="flex items-center gap-2">
+                      <Clock className="h-5 w-5" />
+                      Horaires
+                    </CardTitle>
+                  </CardHeader>
+                  <CardContent>
+                    <div className="space-y-3">
+                      {formData.daysOrder?.map((day) => {
+                        const hours = formData.hours?.[day as keyof typeof formData.hours];
+                        return (
+                          <div key={day} className="flex items-center gap-4">
+                            <div className="w-20 text-sm font-medium">{dayNames[day] || day}</div>
+                            <Switch
+                              checked={!hours?.closed}
+                              onCheckedChange={(checked) => setFormData({
+                                ...formData,
+                                hours: {
+                                  ...formData.hours,
+                                  [day]: { ...hours, closed: !checked }
+                                }
+                              })}
+                            />
+                            {!hours?.closed && (
+                              <>
+                                <Input
+                                  type="time"
+                                  value={hours?.open || "08:00"}
+                                  onChange={(e) => setFormData({
+                                    ...formData,
+                                    hours: {
+                                      ...formData.hours,
+                                      [day]: { ...hours, open: e.target.value }
+                                    }
+                                  })}
+                                  className="w-24"
+                                />
+                                <span className="text-muted-foreground">à</span>
+                                <Input
+                                  type="time"
+                                  value={hours?.close || "18:00"}
+                                  onChange={(e) => setFormData({
+                                    ...formData,
+                                    hours: {
+                                      ...formData.hours,
+                                      [day]: { ...hours, close: e.target.value }
+                                    }
+                                  })}
+                                  className="w-24"
+                                />
+                              </>
+                            )}
+                            {hours?.closed && (
+                              <span className="text-muted-foreground text-sm">Fermé</span>
+                            )}
+                          </div>
+                        );
+                      })}
+                    </div>
+                  </CardContent>
+                </Card>
+              </TabsContent>
+
+              <TabsContent value="location" className="mt-6">
+                <Card>
+                  <CardHeader>
+                    <CardTitle className="flex items-center gap-2">
+                      <MapPin className="h-5 w-5" />
+                      Carte
+                    </CardTitle>
+                  </CardHeader>
+                  <CardContent>
+                    <LocationPicker
+                      lat={formData.coordinates.lat}
+                      lng={formData.coordinates.lng}
+                      onLocationChange={handleLocationChange}
+                      searchQuery={searchQuery}
+                      onSearchChange={setSearchQuery}
+                      onSearch={handleSearch}
+                    />
+                  </CardContent>
+                </Card>
+              </TabsContent>
+
               <TabsContent value="rooms" className="mt-6">
                 <RoomsManagement organizationId={organizationId} />
               </TabsContent>

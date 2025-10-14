@@ -167,28 +167,32 @@ export function CenterHeader({ center }: CenterHeaderProps) {
                   Horaires d'ouverture
                 </h3>
                 <div className="space-y-2 text-sm">
-                  {Object.entries(center.hours).map(([day, hours]) => (
-                    <div key={day} className="flex justify-between">
-                      <span className="capitalize">
-                        {day === "monday"
-                          ? "Lundi"
-                          : day === "tuesday"
-                            ? "Mardi"
-                            : day === "wednesday"
-                              ? "Mercredi"
-                              : day === "thursday"
-                                ? "Jeudi"
-                                : day === "friday"
-                                  ? "Vendredi"
-                                  : day === "saturday"
-                                    ? "Samedi"
-                                    : "Dimanche"}
-                      </span>
-                      <span className={hours.closed ? "text-red-600" : ""}>
-                        {hours.closed ? "Fermé" : `${hours.open} - ${hours.close}`}
-                      </span>
-                    </div>
-                  ))}
+                  {(() => {
+                    const dayOrder = ['monday', 'tuesday', 'wednesday', 'thursday', 'friday', 'saturday', 'sunday'] as const;
+                    const dayLabels: Record<string, string> = {
+                      monday: "Lundi",
+                      tuesday: "Mardi",
+                      wednesday: "Mercredi",
+                      thursday: "Jeudi",
+                      friday: "Vendredi",
+                      saturday: "Samedi",
+                      sunday: "Dimanche"
+                    };
+                    return dayOrder.map((day) => {
+                      const hours = center.hours[day];
+                      if (!hours) return null;
+                      return (
+                        <div key={day} className="flex justify-between">
+                          <span className="capitalize">
+                            {dayLabels[day]}
+                          </span>
+                          <span className={hours.closed ? "text-red-600" : ""}>
+                            {hours.closed ? "Fermé" : `${hours.open} - ${hours.close}`}
+                          </span>
+                        </div>
+                      );
+                    });
+                  })()}
                 </div>
               </CardContent>
             </Card>
