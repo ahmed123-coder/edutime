@@ -81,6 +81,7 @@ export async function GET(request: NextRequest) {
     const limit = parseInt(searchParams.get("limit") || "10");
     const organizationId = searchParams.get("organizationId") || "";
     const roomId = searchParams.get("roomId") || "";
+    const roomIds = searchParams.get("roomIds") || "";
     const status = searchParams.get("status") || "";
     const paymentStatus = searchParams.get("paymentStatus") || "";
     const dateFrom = searchParams.get("dateFrom");
@@ -121,8 +122,21 @@ export async function GET(request: NextRequest) {
       whereClause.roomId = roomId;
     }
 
+    if (roomIds) {
+      const roomIdsArray = roomIds.split(',').map(id => id.trim()).filter(id => id.length > 0);
+      if (roomIdsArray.length > 0) {
+        whereClause.roomId = { in: roomIdsArray };
+      }
+    }
+
     if (status) {
-      whereClause.status = status;
+      // Handle comma-separated statuses like "PENDING,CONFIRMED"
+      const statusArray = status.split(',').map(s => s.trim());
+      if (statusArray.length > 1) {
+        whereClause.status = { in: statusArray };
+      } else {
+        whereClause.status = status;
+      }
     }
 
     if (paymentStatus) {
@@ -247,7 +261,11 @@ export async function POST(request: NextRequest) {
       }
     }
 
-    // Check for time conflicts
+    // Check for time conflicts - convert time strings to Date objects for comparison
+    const startTimeDate = new Date(`1970-01-01T${validatedData.startTime}:00.000Z`);
+    const endTimeDate = new Date(`1970-01-01T${validatedData.endTime}:00.000Z`);
+
+    // Check for conflicting bookings
     const conflictingBooking = await prisma.booking.findFirst({
       where: {
         roomId: validatedData.roomId,
@@ -257,13 +275,22 @@ export async function POST(request: NextRequest) {
         },
         OR: [
           {
-            AND: [{ startTime: { lte: validatedData.startTime } }, { endTime: { gt: validatedData.startTime } }],
+            AND: [
+              { startTime: { lte: startTimeDate } },
+              { endTime: { gt: startTimeDate } }
+            ],
           },
           {
-            AND: [{ startTime: { lt: validatedData.endTime } }, { endTime: { gte: validatedData.endTime } }],
+            AND: [
+              { startTime: { lt: endTimeDate } },
+              { endTime: { gte: endTimeDate } }
+            ],
           },
           {
-            AND: [{ startTime: { gte: validatedData.startTime } }, { endTime: { lte: validatedData.endTime } }],
+            AND: [
+              { startTime: { gte: startTimeDate } },
+              { endTime: { lte: endTimeDate } }
+            ],
           },
         ],
       },
@@ -271,6 +298,43 @@ export async function POST(request: NextRequest) {
 
     if (conflictingBooking) {
       return NextResponse.json({ error: "Time slot is already booked" }, { status: 400 });
+    }
+
+    // Check for room availability blocks (BLOCKED or MAINTENANCE)
+    const conflictingAvailability = await prisma.roomAvailability.findFirst({
+      where: {
+        roomId: validatedData.roomId,
+        date: new Date(validatedData.date),
+        type: {
+          in: ["BLOCKED", "MAINTENANCE"],
+        },
+        OR: [
+          {
+            AND: [
+              { startTime: { lte: startTimeDate } },
+              { endTime: { gt: startTimeDate } }
+            ],
+          },
+          {
+            AND: [
+              { startTime: { lt: endTimeDate } },
+              { endTime: { gte: endTimeDate } }
+            ],
+          },
+          {
+            AND: [
+              { startTime: { gte: startTimeDate } },
+              { endTime: { lte: endTimeDate } }
+            ],
+          },
+        ],
+      },
+    });
+
+    if (conflictingAvailability) {
+      return NextResponse.json({
+        error: `Room is not available during this time slot (${conflictingAvailability.type.toLowerCase()}${conflictingAvailability.reason ? ': ' + conflictingAvailability.reason : ''})`
+      }, { status: 400 });
     }
 
     // Calculate amounts
@@ -287,8 +351,8 @@ export async function POST(request: NextRequest) {
         roomId: validatedData.roomId,
         userId: session.user.id,
         date: new Date(validatedData.date),
-        startTime: validatedData.startTime,
-        endTime: validatedData.endTime,
+        startTime: startTimeDate,
+        endTime: endTimeDate,
         totalAmount,
         commission,
         status: "PENDING",

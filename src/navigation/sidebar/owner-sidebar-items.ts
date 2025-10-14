@@ -11,6 +11,8 @@ import {
   Star,
   FileText,
   Clock,
+  Gift,
+  Bell,
   type LucideIcon,
 } from "lucide-react";
 
@@ -49,25 +51,37 @@ export const ownerSidebarItems: NavGroup[] = [
         url: "/dashboard/owner",
         icon: LayoutDashboard,
       },
+     
       {
-        title: "Analytiques",
-        url: "/dashboard/owner/analytics",
-        icon: BarChart3,
+        title: "Disponibilité",
+        url: "/dashboard/owner/availability",
+        icon: Clock,
+     
       },
     ],
   },
   {
     id: 2,
-    label: "Mon centre",
+    label: "Alertes",
     items: [
       {
-        title: "Profil du centre",
+        title: "Notifications",
+        url: "/dashboard/owner/notifications",
+        icon: Bell,
+      },
+    ],
+  },
+  {
+    id: 3,
+    label: "Organisations",
+    items: [
+      {
+        title: "Profil d'organisations",
         url: "/dashboard/owner/center",
         icon: Building2,
         subItems: [
-          { title: "Informations de base", url: "/dashboard/owner/center" },
+          { title: "informations générales", url: "/dashboard/owner/organizations" },
           { title: "Localisation et carte", url: "/dashboard/owner/center/location" },
-          { title: "Photos et médias", url: "/dashboard/owner/center/media" },
           { title: "Équipements", url: "/dashboard/owner/center/amenities" },
         ],
       },
@@ -75,112 +89,53 @@ export const ownerSidebarItems: NavGroup[] = [
         title: "Salles et espaces",
         url: "/dashboard/owner/rooms",
         icon: MapPin,
-        subItems: [
-          { title: "Toutes les salles", url: "/dashboard/owner/rooms" },
-          { title: "Ajouter une nouvelle salle", url: "/dashboard/owner/rooms/new" },
-          { title: "Types de salles", url: "/dashboard/owner/rooms/types" },
-        ],
+       
       },
-      {
-        title: "Disponibilité",
-        url: "/dashboard/owner/availability",
-        icon: Clock,
-        subItems: [
-          { title: "Planning", url: "/dashboard/owner/availability" },
-          { title: "Dates bloquées", url: "/dashboard/owner/availability/blocked" },
-          { title: "Horaires spéciaux", url: "/dashboard/owner/availability/special" },
-        ],
-      },
+  
     ],
   },
   {
-    id: 3,
+    id: 4,
     label: "Réservations",
     items: [
       {
         title: "Réservations",
         url: "/dashboard/owner/bookings",
         icon: Calendar,
-        subItems: [
-          { title: "Toutes les réservations", url: "/dashboard/owner/bookings" },
-          { title: "En attente d'approbation", url: "/dashboard/owner/bookings?status=pending" },
-          { title: "Confirmées", url: "/dashboard/owner/bookings?status=confirmed" },
-          { title: "Vue calendrier", url: "/dashboard/owner/bookings/calendar" },
-        ],
+      
       },
       {
         title: "Enseignants",
         url: "/dashboard/owner/teachers",
         icon: Users,
-        subItems: [
-          { title: "Enseignants réguliers", url: "/dashboard/owner/teachers" },
-          { title: "Nouvelles demandes", url: "/dashboard/owner/teachers?status=new" },
-          { title: "Enseignants bloqués", url: "/dashboard/owner/teachers?status=blocked" },
-        ],
+       
       },
     ],
   },
   {
-    id: 4,
+    id: 5,
     label: "Financier",
     items: [
       {
         title: "Revenus",
         url: "/dashboard/owner/earnings",
         icon: CreditCard,
-        subItems: [
-          { title: "Vue d'ensemble", url: "/dashboard/owner/earnings" },
-          { title: "Historique des transactions", url: "/dashboard/owner/earnings/transactions" },
-          { title: "Versements", url: "/dashboard/owner/earnings/payouts" },
-          { title: "Rapports fiscaux", url: "/dashboard/owner/earnings/tax" },
-        ],
-      },
-    ],
-  },
-  {
-    id: 5,
-    label: "Réputation",
-    items: [
-      {
-        title: "Avis",
-        url: "/dashboard/owner/reviews",
-        icon: Star,
-        subItems: [
-          { title: "Tous les avis", url: "/dashboard/owner/reviews" },
-          { title: "Répondre aux avis", url: "/dashboard/owner/reviews/respond" },
-        ],
-      },
-      {
-        title: "Messages",
-        url: "/dashboard/owner/messages",
-        icon: MessageSquare,
+     
       },
     ],
   },
   {
     id: 6,
-    label: "Gestion",
     items: [
-      {
-        title: "Rapports",
-        url: "/dashboard/owner/reports",
-        icon: FileText,
-        subItems: [
-          { title: "Rapports de réservation", url: "/dashboard/owner/reports/bookings" },
-          { title: "Rapports financiers", url: "/dashboard/owner/reports/financial" },
-          { title: "Rapports de performance", url: "/dashboard/owner/reports/performance" },
-        ],
-      },
+ 
       {
         title: "Paramètres",
         url: "/dashboard/owner/settings",
         icon: Settings,
-        subItems: [
-          { title: "Paramètres de profil", url: "/dashboard/owner/settings/profile" },
-          { title: "Paramètres de notification", url: "/dashboard/owner/settings/notifications" },
-          { title: "Paramètres de tarification", url: "/dashboard/owner/settings/pricing" },
-        ],
+        
       },
+      
+     
     ],
   },
 ];

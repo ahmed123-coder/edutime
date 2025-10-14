@@ -5,14 +5,14 @@ import { getServerSession } from "next-auth";
 
 import { authOptions } from "@/lib/auth";
 
-import { OrganizationsManagement } from "./_components/organizations-management";
+import { RoomsAvailability } from "./_components/rooms-availability";
 
 export const metadata: Metadata = {
-  title: "Gestion des Organisations | Tableau de bord Centre",
-  description: "Gérer vos centres de formation et organisations",
+  title: "Disponibilité des Salles | Tableau de bord Centre",
+  description: "Consulter la disponibilité des salles de formation",
 };
 
-export default async function OrganizationsPage() {
+export default async function AvailabilityPage() {
   const session = await getServerSession(authOptions);
 
   if (!session) {
@@ -28,5 +28,5 @@ export default async function OrganizationsPage() {
     redirect("/dashboard"); // Redirect to their appropriate dashboard
   }
 
-  return <OrganizationsManagement />;
+  return <RoomsAvailability />;
 }

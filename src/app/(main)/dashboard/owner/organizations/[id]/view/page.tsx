@@ -1,18 +1,22 @@
 import { Metadata } from "next";
 import { redirect } from "next/navigation";
-
 import { getServerSession } from "next-auth";
-
 import { authOptions } from "@/lib/auth";
-
-import { OrganizationsManagement } from "./_components/organizations-management";
+import { ViewOrganizationProfile } from "./_components/view-organization-profile";
 
 export const metadata: Metadata = {
-  title: "Gestion des Organisations | Tableau de bord Centre",
-  description: "Gérer vos centres de formation et organisations",
+  title: "Voir l'Organisation | Tableau de bord Centre",
+  description: "Voir les détails de l'organisation",
 };
 
-export default async function OrganizationsPage() {
+interface ViewOrganizationPageProps {
+  params: Promise<{
+    id: string;
+  }>;
+}
+
+export default async function ViewOrganizationPage({ params }: ViewOrganizationPageProps) {
+  const { id } = await params;
   const session = await getServerSession(authOptions);
 
   if (!session) {
@@ -28,5 +32,5 @@ export default async function OrganizationsPage() {
     redirect("/dashboard"); // Redirect to their appropriate dashboard
   }
 
-  return <OrganizationsManagement />;
+  return <ViewOrganizationProfile organizationId={id} />;
 }
