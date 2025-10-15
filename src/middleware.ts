@@ -28,6 +28,8 @@ export default withAuth(
       "/terms",
       "/help",
       "/organizations",
+      "/api/mobile",
+      "/api/docs",
     ];
 
     // Check if route is public
@@ -41,6 +43,16 @@ export default withAuth(
     if (pathname.startsWith("/api/")) {
       // Allow auth API routes
       if (pathname.startsWith("/api/auth/")) {
+        return NextResponse.next();
+      }
+
+      // Allow mobile API routes (they handle their own authentication)
+      if (pathname.startsWith("/api/mobile/")) {
+        return NextResponse.next();
+      }
+
+      // Allow docs API routes
+      if (pathname.startsWith("/api/docs")) {
         return NextResponse.next();
       }
 
@@ -160,6 +172,8 @@ export default withAuth(
           "/terms",
           "/help",
           "/organizations",
+          "/api/mobile",
+          "/api/docs",
         ];
 
         const isPublicRoute = publicRoutes.some((route) => pathname === route || pathname.startsWith(`${route}/`));

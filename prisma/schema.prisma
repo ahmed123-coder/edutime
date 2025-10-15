@@ -31,6 +31,7 @@ model User {
   // Relations
   accounts      Account[]
   sessions      Session[]
+  refreshTokens RefreshToken[]
   organizations OrganizationMember[]
   bookings      Booking[]
   reviews       Review[]
@@ -87,6 +88,23 @@ model VerificationToken {
 
   @@unique([identifier, token])
   @@map("verification_tokens")
+}
+
+// Mobile API refresh tokens for device management
+model RefreshToken {
+  id         String    @id @default(cuid())
+  userId     String
+  token      String    @unique
+  deviceId   String?
+  deviceInfo String?
+  lastUsed   DateTime  @default(now())
+  expiresAt  DateTime
+  isRevoked  Boolean   @default(false)
+  createdAt  DateTime  @default(now())
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@map("refresh_tokens")
 }
 
 // ============================================================================
