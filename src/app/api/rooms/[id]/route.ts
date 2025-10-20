@@ -212,9 +212,9 @@ export async function DELETE(request: NextRequest, { params }: { params: Promise
 
     const { id: roomId } = await params;
 
-    // Only admins can delete rooms
-    if (session.user.role !== "ADMIN") {
-      return NextResponse.json({ error: "Forbidden: Only admins can delete rooms" }, { status: 403 });
+    // Check if user can delete the room (admins or organization owners)
+    if (session.user.role !== "ADMIN" && !(await canAccessRoom(session.user.role, session.user.id, roomId))) {
+      return NextResponse.json({ error: "Forbidden: You don't have permission to delete this room" }, { status: 403 });
     }
 
     // Check if room exists

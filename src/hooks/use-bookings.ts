@@ -186,7 +186,7 @@ export function useBookings({ onSuccess, onError }: UseBookingsOptions = {}) {
     try {
       const params = new URLSearchParams({
         roomIds: roomIds.join(','),
-        status: "PENDING,CONFIRMED",
+        status: "PENDING,CONFIRMED,COMPLETED,NO_SHOW",
       });
 
       const response = await fetch(`/api/bookings?${params}`);

@@ -7,6 +7,16 @@ import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle } from "@/components/ui/dialog";
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+} from "@/components/ui/alert-dialog";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
@@ -335,6 +345,7 @@ export function RoomsManagement({ organizationId }: RoomsManagementProps) {
   const [loading, setLoading] = useState(true);
   const [createModalOpen, setCreateModalOpen] = useState(false);
   const [editModalOpen, setEditModalOpen] = useState(false);
+  const [deleteDialogOpen, setDeleteDialogOpen] = useState(false);
   const [selectedRoom, setSelectedRoom] = useState<Room | null>(null);
   const [availableEquipment, setAvailableEquipment] = useState<Equipment[]>([]);
   const [availableAmenities, setAvailableAmenities] = useState<Amenity[]>([]);
@@ -534,18 +545,29 @@ export function RoomsManagement({ organizationId }: RoomsManagementProps) {
     }
   }, [selectedRoom, formData, organizationId]);
 
-  const handleDelete = async (roomId: string) => {
-    if (!confirm("Are you sure you want to delete this room?")) return;
-    
+  const handleDelete = async () => {
+    if (!selectedRoom) return;
+
     try {
-      const response = await fetch(`/api/rooms/${roomId}`, { method: "DELETE" });
-      if (!response.ok) throw new Error("Failed to delete room");
-      
+      const response = await fetch(`/api/rooms/${selectedRoom.id}`, { method: "DELETE" });
+      if (!response.ok) {
+        const errorData = await response.json();
+        throw new Error(errorData.error || "Failed to delete room");
+      }
+
       toast.success("Room deleted successfully");
       fetchRooms();
+      setDeleteDialogOpen(false);
+      setSelectedRoom(null);
     } catch (error) {
-      toast.error("Failed to delete room");
+      console.error("Error deleting room:", error);
+      toast.error(error instanceof Error ? error.message : "Failed to delete room");
     }
+  };
+
+  const handleDeleteClick = (room: Room) => {
+    setSelectedRoom(room);
+    setDeleteDialogOpen(true);
   };
 
 
@@ -624,7 +646,7 @@ export function RoomsManagement({ organizationId }: RoomsManagementProps) {
                       <Edit className="h-4 w-4 mr-2" />
                       Modifier
                     </Button>
-                    <Button size="sm" variant="outline" onClick={() => handleDelete(room.id)}>
+                    <Button size="sm" variant="outline" onClick={() => handleDeleteClick(room)}>
                       <Trash2 className="h-4 w-4 mr-2" />
                       Supprimer
                     </Button>
@@ -753,6 +775,24 @@ export function RoomsManagement({ organizationId }: RoomsManagementProps) {
         onDragEnd={handleDragEnd}
         draggedIndex={draggedIndex}
       />
+
+      {/* Delete Confirmation Dialog */}
+      <AlertDialog open={deleteDialogOpen} onOpenChange={setDeleteDialogOpen}>
+        <AlertDialogContent>
+          <AlertDialogHeader>
+            <AlertDialogTitle>Supprimer la salle</AlertDialogTitle>
+            <AlertDialogDescription>
+              Êtes-vous sûr de vouloir supprimer "{selectedRoom?.name}" ? Cette action est irréversible et supprimera définitivement la salle du système.
+            </AlertDialogDescription>
+          </AlertDialogHeader>
+          <AlertDialogFooter>
+            <AlertDialogCancel onClick={() => setSelectedRoom(null)}>Annuler</AlertDialogCancel>
+            <AlertDialogAction onClick={handleDelete} className="bg-destructive text-destructive-foreground hover:bg-destructive/90">
+              Supprimer la salle
+            </AlertDialogAction>
+          </AlertDialogFooter>
+        </AlertDialogContent>
+      </AlertDialog>
     </div>
   );
 }
