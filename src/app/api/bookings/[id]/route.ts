@@ -182,6 +182,8 @@ export async function PUT(request: NextRequest, { params }: { params: Promise<{ 
 
     const { id: bookingId } = await params;
 
+    console.log("🔄 PUT request for booking:", bookingId, "by user:", session.user.id);
+
     // Check permissions
     if (!(await canAccessBooking(session.user.role, session.user.id, bookingId))) {
       return NextResponse.json({ error: "Forbidden" }, { status: 403 });
@@ -209,7 +211,9 @@ export async function PUT(request: NextRequest, { params }: { params: Promise<{ 
     }
 
     const body = await request.json();
+    console.log("📥 Request body:", body);
     const validatedData = updateBookingSchema.parse(body);
+    console.log("✅ Validated data:", validatedData);
 
     // Additional permission checks for specific fields
     if (
@@ -244,30 +248,36 @@ export async function PUT(request: NextRequest, { params }: { params: Promise<{ 
       const newStartTime = validatedData.startTime || existingBooking.startTime;
       const newEndTime = validatedData.endTime || existingBooking.endTime;
 
+      // Ensure times are strings for DateTime construction
+      const newStartTimeStr = typeof newStartTime === 'string' ? newStartTime : newStartTime.toTimeString().slice(0, 5);
+      const newEndTimeStr = typeof newEndTime === 'string' ? newEndTime : newEndTime.toTimeString().slice(0, 5);
+
+      // Create DateTime objects for time comparisons
+      const newStartDateTime = new Date(`${newDate.toISOString().split('T')[0]}T${newStartTimeStr}:00Z`);
+      const newEndDateTime = new Date(`${newDate.toISOString().split('T')[0]}T${newEndTimeStr}:00Z`);
+
       const conflictingBooking = await prisma.booking.findFirst({
         where: {
           id: { not: bookingId }, // Exclude current booking
           roomId: existingBooking.roomId,
           date: newDate,
-          status: {
-            in: ["PENDING", "CONFIRMED"],
-          },
+          status: "CONFIRMED", // Only prevent conflicts with CONFIRMED bookings
           OR: [
             {
-              AND: [{ startTime: { lte: newStartTime } }, { endTime: { gt: newStartTime } }],
+              AND: [{ startTime: { lte: newStartDateTime } }, { endTime: { gt: newStartDateTime } }],
             },
             {
-              AND: [{ startTime: { lt: newEndTime } }, { endTime: { gte: newEndTime } }],
+              AND: [{ startTime: { lt: newEndDateTime } }, { endTime: { gte: newEndDateTime } }],
             },
             {
-              AND: [{ startTime: { gte: newStartTime } }, { endTime: { lte: newEndTime } }],
+              AND: [{ startTime: { gte: newStartDateTime } }, { endTime: { lte: newEndDateTime } }],
             },
           ],
         },
       });
 
       if (conflictingBooking) {
-        return NextResponse.json({ error: "Time slot is already booked" }, { status: 400 });
+        return NextResponse.json({ error: "Time slot is already booked by a confirmed reservation" }, { status: 400 });
       }
 
       // Recalculate amounts if time changed
@@ -286,10 +296,26 @@ export async function PUT(request: NextRequest, { params }: { params: Promise<{ 
       }
     }
 
+    // Transform string values to DateTime objects for Prisma
+    const updateData: any = { ...validatedData };
+
+    if (updateData.date) {
+      updateData.date = new Date(updateData.date);
+    }
+
+    if (updateData.startTime) {
+      updateData.startTime = new Date(`1970-01-01T${updateData.startTime}:00Z`);
+    }
+
+    if (updateData.endTime) {
+      updateData.endTime = new Date(`1970-01-01T${updateData.endTime}:00Z`);
+    }
+
+    console.log("💾 Updating booking with data:", updateData);
     // Update booking
     const updatedBooking = await prisma.booking.update({
       where: { id: bookingId },
-      data: validatedData,
+      data: updateData,
       select: {
         id: true,
         organizationId: true,
@@ -334,13 +360,15 @@ export async function PUT(request: NextRequest, { params }: { params: Promise<{ 
       },
     });
 
+    console.log("✅ Booking updated successfully:", updatedBooking.id);
     return NextResponse.json({ booking: updatedBooking });
   } catch (error) {
     if (error instanceof z.ZodError) {
+      console.error("❌ Zod validation error:", error.errors);
       return NextResponse.json({ error: "Validation error", details: error.errors }, { status: 400 });
     }
 
-    console.error("Error updating booking:", error);
+    console.error("💥 Error updating booking:", error);
     return NextResponse.json({ error: "Internal server error" }, { status: 500 });
   }
 }

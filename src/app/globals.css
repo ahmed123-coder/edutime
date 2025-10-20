@@ -165,6 +165,14 @@ These serve as the fallback; there is no separate default.css file. */
   transition: none !important;
 }
 
+body.dragging {
+  user-select: none;
+}
+
+[data-dragging="true"] {
+  cursor: grabbing !important;
+}
+
 /* Leaflet map container fix */
 .leaflet-container {
   height: 100%;

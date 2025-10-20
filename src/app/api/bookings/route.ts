@@ -261,43 +261,32 @@ export async function POST(request: NextRequest) {
       }
     }
 
-    // Check for time conflicts - convert time strings to Date objects for comparison
+    // Parse times for conflict checking
     const startTimeDate = new Date(`1970-01-01T${validatedData.startTime}:00.000Z`);
     const endTimeDate = new Date(`1970-01-01T${validatedData.endTime}:00.000Z`);
 
-    // Check for conflicting bookings
+    // Check for confirmed booking conflicts
     const conflictingBooking = await prisma.booking.findFirst({
       where: {
         roomId: validatedData.roomId,
         date: new Date(validatedData.date),
-        status: {
-          in: ["PENDING", "CONFIRMED"],
-        },
+        status: "CONFIRMED",
         OR: [
           {
-            AND: [
-              { startTime: { lte: startTimeDate } },
-              { endTime: { gt: startTimeDate } }
-            ],
+            AND: [{ startTime: { lte: startTimeDate } }, { endTime: { gt: startTimeDate } }],
           },
           {
-            AND: [
-              { startTime: { lt: endTimeDate } },
-              { endTime: { gte: endTimeDate } }
-            ],
+            AND: [{ startTime: { lt: endTimeDate } }, { endTime: { gte: endTimeDate } }],
           },
           {
-            AND: [
-              { startTime: { gte: startTimeDate } },
-              { endTime: { lte: endTimeDate } }
-            ],
+            AND: [{ startTime: { gte: startTimeDate } }, { endTime: { lte: endTimeDate } }],
           },
         ],
       },
     });
 
     if (conflictingBooking) {
-      return NextResponse.json({ error: "Time slot is already booked" }, { status: 400 });
+      return NextResponse.json({ error: "Time slot is already booked by a confirmed reservation" }, { status: 400 });
     }
 
     // Check for room availability blocks (BLOCKED or MAINTENANCE)

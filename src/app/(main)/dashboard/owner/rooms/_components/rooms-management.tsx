@@ -16,6 +16,7 @@ import {
   Wifi,
   Car,
   Coffee,
+  Trash2,
 } from "lucide-react";
 import { toast } from "sonner";
 
@@ -31,6 +32,16 @@ import {
 } from "@/components/ui/dropdown-menu";
 import { Input } from "@/components/ui/input";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+} from "@/components/ui/alert-dialog";
 import { ImageGallery } from "@/components/image-gallery";
 
 interface Room {
@@ -90,6 +101,8 @@ export function RoomsManagement() {
     total: 0,
     pages: 0,
   });
+  const [deleteDialogOpen, setDeleteDialogOpen] = useState(false);
+  const [roomToDelete, setRoomToDelete] = useState<Room | null>(null);
 
   const fetchRooms = async () => {
     try {
@@ -135,6 +148,29 @@ export function RoomsManagement() {
       style: "currency",
       currency: "USD",
     }).format(amount);
+  };
+
+  const handleDeleteRoom = async () => {
+    if (!roomToDelete) return;
+
+    try {
+      const response = await fetch(`/api/rooms/${roomToDelete.id}`, {
+        method: "DELETE",
+      });
+
+      if (!response.ok) {
+        const errorData = await response.json();
+        throw new Error(errorData.error || "Failed to delete room");
+      }
+
+      toast.success("Room deleted successfully");
+      fetchRooms(); // Refresh the list
+      setDeleteDialogOpen(false);
+      setRoomToDelete(null);
+    } catch (error) {
+      console.error("Error deleting room:", error);
+      toast.error(error instanceof Error ? error.message : "Failed to delete room");
+    }
   };
 
   const renderAmenities = (amenities?: string[]) => {
@@ -255,6 +291,16 @@ export function RoomsManagement() {
                           <Edit className="mr-2 h-4 w-4" />
                           Edit Room
                         </DropdownMenuItem>
+                        <DropdownMenuItem
+                          className="text-destructive focus:text-destructive"
+                          onClick={() => {
+                            setRoomToDelete(room);
+                            setDeleteDialogOpen(true);
+                          }}
+                        >
+                          <Trash2 className="mr-2 h-4 w-4" />
+                          Delete Room
+                        </DropdownMenuItem>
                       </DropdownMenuContent>
                     </DropdownMenu>
                   </div>
@@ -369,6 +415,24 @@ export function RoomsManagement() {
           </div>
         </div>
       )}
+
+      {/* Delete Confirmation Dialog */}
+      <AlertDialog open={deleteDialogOpen} onOpenChange={setDeleteDialogOpen}>
+        <AlertDialogContent>
+          <AlertDialogHeader>
+            <AlertDialogTitle>Delete Room</AlertDialogTitle>
+            <AlertDialogDescription>
+              Are you sure you want to delete "{roomToDelete?.name}"? This action cannot be undone and will permanently remove the room from the system.
+            </AlertDialogDescription>
+          </AlertDialogHeader>
+          <AlertDialogFooter>
+            <AlertDialogCancel onClick={() => setRoomToDelete(null)}>Cancel</AlertDialogCancel>
+            <AlertDialogAction onClick={handleDeleteRoom} className="bg-destructive text-destructive-foreground hover:bg-destructive/90">
+              Delete Room
+            </AlertDialogAction>
+          </AlertDialogFooter>
+        </AlertDialogContent>
+      </AlertDialog>
     </div>
   );
 }
