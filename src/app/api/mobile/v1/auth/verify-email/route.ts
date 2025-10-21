@@ -36,7 +36,7 @@ export async function GET(request: NextRequest) {
       return ApiResponseBuilder.error(
         ErrorCode.TOKEN_EXPIRED,
         "Verification token has expired",
-        HttpStatus.GONE
+        HttpStatus.BAD_REQUEST
       );
     }
 

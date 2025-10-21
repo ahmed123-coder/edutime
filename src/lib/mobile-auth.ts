@@ -119,8 +119,10 @@ export class MobileAuthService {
       // Find user by Google account
       const account = await prisma.account.findUnique({
         where: {
-          providerAccountId: googleId,
-          provider: "google",
+          provider_providerAccountId: {
+            provider: "google",
+            providerAccountId: googleId,
+          },
         },
         include: {
           user: true,

@@ -33,7 +33,7 @@ export async function POST(request: NextRequest) {
       return ApiResponseBuilder.error(
         ErrorCode.TOKEN_EXPIRED,
         "Reset token has expired",
-        HttpStatus.GONE
+        HttpStatus.BAD_REQUEST
       );
     }
 

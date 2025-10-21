@@ -4,11 +4,11 @@ import { resendVerificationSchema } from "@/lib/validations/mobile-auth";
 import { prisma } from "@/lib/prisma";
 import { withPasswordResetRateLimit } from "@/lib/rate-limiting";
 import { ApiResponseBuilder, HttpStatus } from "@/lib/api-response";
-import { MobileErrorHandler } from "@/lib/mobile-errors";
+import { withErrorHandler } from "@/lib/mobile-errors";
 import { ErrorCode } from "@/types/mobile-api";
 
 export const POST = withPasswordResetRateLimit(
-  MobileErrorHandler.withErrorHandler(async (request: NextRequest) => {
+  withErrorHandler(async (request: NextRequest) => {
     const body = await request.json();
 
     // Validate input

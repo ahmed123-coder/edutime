@@ -95,9 +95,9 @@ function SwaggerUIComponent() {
         onComplete={() => {
           console.log("Swagger UI loaded successfully with CSS");
         }}
-        onError={(error) => {
-          console.error("Swagger UI error:", error);
-        }}
+        // onError={(error: Error) => {
+        //   console.error("Swagger UI error:", error);
+        // }}
         // Use modern configuration to reduce warnings
         plugins={[]}
         persistAuthorization={true}
