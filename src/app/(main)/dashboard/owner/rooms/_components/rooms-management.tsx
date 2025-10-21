@@ -52,8 +52,8 @@ interface Room {
   capacity: number;
   area?: number;
   hourlyRate: number;
-  equipment?: string[];
-  amenities?: string[];
+  equipment?: string[] | any;
+  amenities?: string[] | any;
   photos?: string[];
   active: boolean;
   createdAt: string;
@@ -173,12 +173,12 @@ export function RoomsManagement() {
     }
   };
 
-  const renderAmenities = (amenities?: string[]) => {
-    if (!amenities || amenities.length === 0) return null;
+  const renderAmenities = (amenities?: string[] | any) => {
+    if (!amenities || !Array.isArray(amenities) || amenities.length === 0) return null;
 
     return (
       <div className="flex flex-wrap gap-1">
-        {amenities.slice(0, 3).map((amenity, index) => {
+        {amenities.slice(0, 3).map((amenity: any, index: number) => {
           const IconComponent = amenityIcons[amenity.toLowerCase()] || Building2;
           return (
             <div key={index} className="text-muted-foreground flex items-center gap-1 text-xs">
@@ -354,11 +354,11 @@ export function RoomsManagement() {
                     )}
 
                     {/* Equipment */}
-                    {room.equipment && room.equipment.length > 0 && (
+                    {room.equipment && Array.isArray(room.equipment) && room.equipment.length > 0 && (
                       <div>
                         <h4 className="text-lg font-semibold mb-2">Equipment</h4>
                         <div className="flex flex-wrap gap-2">
-                          {room.equipment.map((equipmentId, index) => (
+                          {room.equipment.map((equipmentId: any, index: number) => (
                             <Badge key={index} variant="outline" className="px-3 py-1">
                               {equipmentId}
                             </Badge>
