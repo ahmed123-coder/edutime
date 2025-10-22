@@ -52,7 +52,7 @@ export function SearchSection() {
   };
 
   return (
-    <section className="bg-background py-16">
+    <section id="search" className="bg-background py-16">
       <div className="container mx-auto px-4">
         <div className="mx-auto max-w-4xl">
           {/* Section Header */}

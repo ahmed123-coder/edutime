@@ -1,20 +1,39 @@
 "use client";
 
+import Image from "next/image";
+import landingHero from "@/../public/assets/landing.png";
+import logoRectangle from "@/../public/assets/logo_rectangle.png";
+import logoSquare from "@/../public/assets/logo_carre.png";
+
 import Link from "next/link";
 
-import { ArrowRight, Play, Star, Users, Building, Award } from "lucide-react";
+import { ArrowRight, Star, Users, Building, Award } from "lucide-react";
 
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { IMAGES } from "@/lib/images";
 
+
+export const images = {
+  LANDING_HERO: landingHero,
+  LOGO_RECTANGLE: logoRectangle,
+  LOGO_SQUARE: logoSquare,
+  AVATARS: {
+    DEFAULT: logoSquare,
+  },
+} as const;
+
 export function HeroSection() {
+  const handleScrollToSearch = () => {
+    document.getElementById('search')?.scrollIntoView({ behavior: 'smooth' });
+  };
+
   return (
     <section className="from-primary/5 via-background to-secondary/5 relative overflow-hidden bg-gradient-to-br">
       {/* Background Pattern */}
-      <div className="bg-grid-pattern absolute inset-0 opacity-5" />
+      <div className="bg-grid-pattern absolute inset-0 opacity-5 pointer-events-none" />
 
-      <div className="container mx-auto px-4 py-20 lg:py-32">
+      <div className="container relative z-10 mx-auto px-4 py-20 lg:py-32">
         <div className="grid items-center gap-12 lg:grid-cols-2">
           {/* Content */}
           <div className="space-y-8">
@@ -55,15 +74,9 @@ export function HeroSection() {
 
             {/* CTA Buttons */}
             <div className="flex flex-col gap-4 sm:flex-row">
-              <Button size="lg" asChild className="px-8 text-lg">
-                <Link href="/search">
-                  Commencer la recherche
-                  <ArrowRight className="ml-2 h-5 w-5" />
-                </Link>
-              </Button>
-              <Button size="lg" variant="outline" className="px-8 text-lg">
-                <Play className="mr-2 h-5 w-5" />
-                Voir la démo
+              <Button size="lg" onClick={handleScrollToSearch}>
+                Commencer la recherche
+                <ArrowRight className="ml-2 h-5 w-5" />
               </Button>
             </div>
 
@@ -84,7 +97,9 @@ export function HeroSection() {
           <div className="relative">
             {/* Main Image */}
             <div className="relative overflow-hidden rounded-2xl shadow-2xl">
-              <img src={IMAGES.LANDING_HERO} alt="Espace de formation moderne" className="h-auto w-full object-cover" />
+              <Image src={images.LANDING_HERO} alt="Espace de formation moderne"
+                className="object-cover" priority />
+
               <div className="absolute inset-0 bg-gradient-to-t from-black/20 to-transparent" />
             </div>
 
