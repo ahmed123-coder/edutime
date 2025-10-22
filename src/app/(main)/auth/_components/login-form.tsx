@@ -18,8 +18,8 @@ import { Input } from "@/components/ui/input";
 import { getDefaultDashboardUrl } from "@/navigation/sidebar/get-sidebar-items";
 
 const FormSchema = z.object({
-  email: z.string().email({ message: "Please enter a valid email address." }),
-  password: z.string().min(6, { message: "Password must be at least 6 characters." }),
+  email: z.string().email({ message: "Veuillez entrer une adresse email valide." }),
+  password: z.string().min(6, { message: "Le mot de passe doit contenir au moins 6 caractères." }),
   remember: z.boolean().optional(),
 });
 
@@ -49,27 +49,27 @@ export function LoginForm() {
       });
 
       if (result?.error) {
-        toast.error("Login failed", {
-          description: <span className="text-red-600">Invalid email or password. Please try again.</span>,
+        toast.error("Échec de la connexion", {
+          description: <span className="text-red-600">Email ou mot de passe invalide. Veuillez réessayer.</span>,
         });
       } else {
         // Get updated session to check verification status
         const session = await getSession();
         if (session?.user?.verified) {
-          toast.success("Login successful", {
-            description: "Welcome back!",
+          toast.success("Connexion réussie", {
+            description: "Bon retour!",
           });
           router.push(callbackUrl);
         } else {
-          toast.warning("Email verification required", {
-            description: "Please verify your email before accessing the dashboard.",
+          toast.warning("Vérification email requise", {
+            description: "Veuillez vérifier votre email avant d'accéder au tableau de bord.",
           });
           router.push("/auth/verify-email");
         }
       }
     } catch (error) {
-      toast.error("Login failed", {
-        description: "An error occurred. Please try again.",
+      toast.error("Échec de la connexion", {
+        description: "Une erreur est survenue. Veuillez réessayer.",
       });
     } finally {
       setIsLoading(false);
@@ -84,9 +84,9 @@ export function LoginForm() {
           name="email"
           render={({ field }) => (
             <FormItem>
-              <FormLabel>Email Address</FormLabel>
+              <FormLabel>Adresse Email</FormLabel>
               <FormControl>
-                <Input id="email" type="email" placeholder="you@example.com" autoComplete="email" {...field} />
+                <Input id="email" type="email" placeholder="vous@exemple.com" autoComplete="email" {...field} />
               </FormControl>
               <FormMessage />
             </FormItem>
@@ -97,7 +97,7 @@ export function LoginForm() {
           name="password"
           render={({ field }) => (
             <FormItem>
-              <FormLabel>Password</FormLabel>
+              <FormLabel>Mot de passe</FormLabel>
               <FormControl>
                 <Input
                   id="password"
@@ -125,14 +125,14 @@ export function LoginForm() {
                 />
               </FormControl>
               <FormLabel htmlFor="login-remember" className="text-muted-foreground ml-1 text-sm font-medium">
-                Remember me for 30 days
+                Se souvenir de moi pendant 30 jours
               </FormLabel>
             </FormItem>
           )}
         />
         <Button className="w-full" type="submit" disabled={isLoading}>
           {isLoading && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
-          Login
+          Se connecter
         </Button>
       </form>
     </Form>

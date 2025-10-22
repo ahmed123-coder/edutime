@@ -31,7 +31,7 @@ export function GoogleButton({ className, ...props }: React.ComponentProps<typeo
   return (
     <Button variant="secondary" className={cn(className)} onClick={handleGoogleSignIn} disabled={isLoading} {...props}>
       {isLoading ? <Loader2 className="size-4 animate-spin" /> : <SimpleIcon icon={siGoogle} className="size-4" />}
-      Continue with Google
+      Continuer avec Google
     </Button>
   );
 }
