@@ -38,7 +38,7 @@ export default function LoginPage() {
         <div className="flex h-full flex-col items-center justify-center p-12 text-center">
           <div className="space-y-6">
             <img
-              src="/assets/logo-edutime-vertical.svg"
+              src="/assets/logo-vertical.png"
               alt="EduTime Logo"
               className="mx-auto h-auto max-w-full"
               style={{ maxHeight: '200px' }}

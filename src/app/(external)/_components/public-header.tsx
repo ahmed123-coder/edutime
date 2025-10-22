@@ -70,7 +70,7 @@ export function PublicHeader() {
             <Image
               src={images.LOGO_RECTANGLE}
               alt="Espace de formation moderne"
-              className="h-8 w-auto object-cover"
+              className="h-12 w-auto object-cover"
               priority
             />
           </Link>
