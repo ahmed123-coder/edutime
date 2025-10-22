@@ -2,6 +2,7 @@
 
 import { useState } from "react";
 
+import Image from "next/image";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 
@@ -9,8 +10,14 @@ import { Menu, X, Search, User, Phone, Mail } from "lucide-react";
 
 import { Button } from "@/components/ui/button";
 import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet";
+import logoRectangle from "@/../public/assets/logo_rectangle.png";
 import { IMAGES } from "@/lib/images";
 import { cn } from "@/lib/utils";
+
+
+export const images = {
+  LOGO_RECTANGLE: logoRectangle,
+} as const;
 
 const navigation = [
   { name: "Accueil", href: "/" },
@@ -60,8 +67,14 @@ export function PublicHeader() {
         <div className="flex h-16 items-center justify-between">
           {/* Logo */}
           <Link href="/" className="flex items-center space-x-2">
-            <img src={IMAGES.LOGO_RECTANGLE} alt="SaaS Formation" className="h-8 w-auto" />
+            <Image
+              src={images.LOGO_RECTANGLE}
+              alt="Espace de formation moderne"
+              className="h-8 w-auto object-cover"
+              priority
+            />
           </Link>
+
 
           {/* Desktop Navigation */}
           <nav className="hidden items-center space-x-6 md:flex">
