@@ -1,6 +1,7 @@
 "use client";
 
 import { useState } from "react";
+import { useRouter } from "next/navigation";
 
 import { EllipsisVertical, CircleUser, CreditCard, MessageSquareDot, LogOut, Loader2 } from "lucide-react";
 import { useSession, signOut } from "next-auth/react";
@@ -30,6 +31,7 @@ export function NavUser({
   const { data: session, status } = useSession();
   const { isMobile } = useSidebar();
   const [isLoggingOut, setIsLoggingOut] = useState(false);
+  const router = useRouter();
 
   // Use session data if available, otherwise fallback to user prop
   const currentUser = session?.user
@@ -52,6 +54,46 @@ export function NavUser({
       setIsLoggingOut(false);
     }
   };
+
+  const getNotificationsPath = () => {
+    if (!session?.user?.role) return "/dashboard/notifications";
+    
+    switch (session.user.role) {
+      case "ADMIN":
+        return "/dashboard/admin/owner/notifications";
+      case "CENTER_OWNER":
+        return "/dashboard/owner/notifications";
+      default:
+        return "/dashboard/notifications";
+    }
+  };
+
+  const getComptePath = () => {
+  if (!session?.user?.role) return "/dashboard/account";
+  
+  switch (session.user.role) {
+    case "ADMIN":
+      return "/dashboard/admin/owner";
+    case "CENTER_OWNER":
+      return "/dashboard/owner/profile";
+    default:
+      return "/dashboard/account";
+  }
+};
+
+const getFacturationPath = () => {
+  if (!session?.user?.role) return "/dashboard/billing";
+  
+  switch (session.user.role) {
+    case "ADMIN":
+      return "/dashboard/admin/subscriptions";
+    case "CENTER_OWNER":
+      return "/dashboard/owner/billing";
+    default:
+      return "/dashboard/billing";
+  }
+};
+
 
   if (status === "loading") {
     return (
@@ -117,15 +159,15 @@ export function NavUser({
             </DropdownMenuLabel>
             <DropdownMenuSeparator />
             <DropdownMenuGroup>
-              <DropdownMenuItem>
+              <DropdownMenuItem onClick={() => router.push(getComptePath())}>
                 <CircleUser />
                 Compte
               </DropdownMenuItem>
               <DropdownMenuItem>
-                <CreditCard />
+                <CreditCard onClick={() => router.push(getFacturationPath())}/>
                 Facturation
               </DropdownMenuItem>
-              <DropdownMenuItem>
+              <DropdownMenuItem onClick={() => router.push(getNotificationsPath())}>
                 <MessageSquareDot />
                 Notifications
               </DropdownMenuItem>

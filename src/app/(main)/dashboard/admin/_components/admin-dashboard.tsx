@@ -1,6 +1,7 @@
 "use client";
 
-import { Users, Building2, Calendar, CreditCard, TrendingUp, AlertTriangle, Activity, DollarSign } from "lucide-react";
+import Link from "next/link";
+import { Users, Building2, Calendar, CreditCard, TrendingUp, AlertTriangle, Activity, DollarSign, UserCog } from "lucide-react";
 
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
@@ -15,9 +16,17 @@ export function AdminDashboard() {
           <h1 className="text-3xl font-bold tracking-tight">Tableau de bord Admin</h1>
           <p className="text-muted-foreground">Vue d'ensemble de la plateforme et outils de gestion</p>
         </div>
-        <Badge variant="secondary" className="border-red-200 bg-red-50 text-red-700">
-          Accès Admin
-        </Badge>
+        <div className="flex items-center gap-4">
+          <Link href="/dashboard/admin/owner">
+            <Button variant="outline" size="sm">
+              <UserCog className="h-4 w-4 mr-2" />
+              Compte
+            </Button>
+          </Link>
+          <Badge variant="secondary" className="border-red-200 bg-red-50 text-red-700">
+            Accès Admin
+          </Badge>
+        </div>
       </div>
 
       {/* Key Metrics */}

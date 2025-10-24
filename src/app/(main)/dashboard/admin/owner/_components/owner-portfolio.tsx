@@ -1,0 +1,172 @@
+"use client";
+
+import { useState } from "react";
+import Link from "next/link";
+import { Edit, User, Mail, Phone, GraduationCap, Calendar, Shield } from "lucide-react";
+
+import { Button } from "@/components/ui/button";
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
+import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
+import { Badge } from "@/components/ui/badge";
+
+interface OwnerPortfolioProps {
+  isAdmin?: boolean;
+}
+
+export function OwnerPortfolio({ isAdmin = false }: OwnerPortfolioProps) {
+  const [userData] = useState({
+    id: "user_123",
+    name: "Ahmed Ben Ali",
+    email: "ahmed.benali@example.com",
+    phone: "+216 98 123 456",
+    avatar: "",
+    speciality: "Formation et développement professionnel",
+    role: "CENTER_OWNER",
+    verified: true,
+    createdAt: "2024-01-15",
+  });
+
+  const editPath = isAdmin ? "/dashboard/admin/owner/edit" : "/dashboard/owner/profile/edit";
+
+  return (
+    <div className="space-y-6">
+      {/* Header */}
+      <div className="flex items-center justify-between">
+        <div>
+          <h1 className="text-3xl font-bold tracking-tight">
+            {isAdmin ? "Portfolio Propriétaire" : "Mon Portfolio"}
+          </h1>
+          <p className="text-muted-foreground">
+            {isAdmin ? "Détails du portfolio du propriétaire" : "Gérer vos informations personnelles"}
+          </p>
+        </div>
+        <Link href={editPath}>
+          <Button>
+            <Edit className="h-4 w-4 mr-2" />
+            Modifier
+          </Button>
+        </Link>
+      </div>
+
+      <div className="grid gap-6 lg:grid-cols-3">
+        {/* Profile Overview */}
+        <Card>
+          <CardHeader>
+            <CardTitle className="flex items-center gap-2">
+              <User className="h-5 w-5" />
+              Profil
+            </CardTitle>
+          </CardHeader>
+          <CardContent className="space-y-4">
+            <div className="flex flex-col items-center space-y-4">
+              <Avatar className="h-24 w-24">
+                <AvatarImage src={userData.avatar} />
+                <AvatarFallback className="text-lg">
+                  {userData.name.split(' ').map(n => n[0]).join('')}
+                </AvatarFallback>
+              </Avatar>
+              <div className="text-center">
+                <h3 className="font-semibold text-lg">{userData.name}</h3>
+                <p className="text-muted-foreground text-sm">{userData.role}</p>
+              </div>
+              <div className="flex gap-2">
+                <Badge variant={userData.verified ? "default" : "secondary"}>
+                  <Shield className="h-3 w-3 mr-1" />
+                  {userData.verified ? "Vérifié" : "Non vérifié"}
+                </Badge>
+              </div>
+            </div>
+          </CardContent>
+        </Card>
+
+        {/* Contact Information */}
+        <Card className="lg:col-span-2">
+          <CardHeader>
+            <CardTitle>Informations de contact</CardTitle>
+            <CardDescription>Détails de contact et informations personnelles</CardDescription>
+          </CardHeader>
+          <CardContent className="space-y-4">
+            <div className="grid gap-4 md:grid-cols-2">
+              <div className="flex items-center gap-3">
+                <Mail className="h-4 w-4 text-muted-foreground" />
+                <div>
+                  <p className="text-sm font-medium">Email</p>
+                  <p className="text-sm text-muted-foreground">{userData.email}</p>
+                </div>
+              </div>
+              
+              <div className="flex items-center gap-3">
+                <Phone className="h-4 w-4 text-muted-foreground" />
+                <div>
+                  <p className="text-sm font-medium">Téléphone</p>
+                  <p className="text-sm text-muted-foreground">{userData.phone}</p>
+                </div>
+              </div>
+
+              <div className="flex items-center gap-3">
+                <GraduationCap className="h-4 w-4 text-muted-foreground" />
+                <div>
+                  <p className="text-sm font-medium">Spécialité</p>
+                  <p className="text-sm text-muted-foreground">{userData.speciality}</p>
+                </div>
+              </div>
+
+              <div className="flex items-center gap-3">
+                <Calendar className="h-4 w-4 text-muted-foreground" />
+                <div>
+                  <p className="text-sm font-medium">Membre depuis</p>
+                  <p className="text-sm text-muted-foreground">
+                    {new Date(userData.createdAt).toLocaleDateString('fr-FR')}
+                  </p>
+                </div>
+              </div>
+            </div>
+          </CardContent>
+        </Card>
+      </div>
+
+      {/* Statistics */}
+      <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
+        <Card>
+          <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+            <CardTitle className="text-sm font-medium">Organisations</CardTitle>
+          </CardHeader>
+          <CardContent>
+            <div className="text-2xl font-bold">3</div>
+            <p className="text-muted-foreground text-xs">Centres gérés</p>
+          </CardContent>
+        </Card>
+
+        <Card>
+          <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+            <CardTitle className="text-sm font-medium">Réservations</CardTitle>
+          </CardHeader>
+          <CardContent>
+            <div className="text-2xl font-bold">127</div>
+            <p className="text-muted-foreground text-xs">Ce mois</p>
+          </CardContent>
+        </Card>
+
+        <Card>
+          <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+            <CardTitle className="text-sm font-medium">Revenus</CardTitle>
+          </CardHeader>
+          <CardContent>
+            <div className="text-2xl font-bold">€2,450</div>
+            <p className="text-muted-foreground text-xs">Ce mois</p>
+          </CardContent>
+        </Card>
+
+        <Card>
+          <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+            <CardTitle className="text-sm font-medium">Note moyenne</CardTitle>
+          </CardHeader>
+          <CardContent>
+            <div className="text-2xl font-bold">4.8</div>
+            <p className="text-muted-foreground text-xs">Sur 5 étoiles</p>
+          </CardContent>
+        </Card>
+      </div>
+    </div>
+  );
+}

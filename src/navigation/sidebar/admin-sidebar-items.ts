@@ -54,11 +54,13 @@ export const adminSidebarItems: NavGroup[] = [
         title: "Analytiques",
         url: "/dashboard/admin/analytics",
         icon: BarChart3,
+        comingSoon: true,
       },
       {
         title: "État du système",
         url: "/dashboard/admin/system",
         icon: Activity,
+        comingSoon: true,
       },
     ],
   },
@@ -119,6 +121,7 @@ export const adminSidebarItems: NavGroup[] = [
         title: "Paiements",
         url: "/dashboard/admin/payments",
         icon: CreditCard,
+        comingSoon: true,
         subItems: [
           { title: "Toutes les transactions", url: "/dashboard/admin/payments" },
           { title: "Rapports de commission", url: "/dashboard/admin/payments/commissions" },
@@ -135,6 +138,7 @@ export const adminSidebarItems: NavGroup[] = [
         title: "Avis",
         url: "/dashboard/admin/reviews",
         icon: MessageSquare,
+        comingSoon: true,
         subItems: [
           { title: "Tous les avis", url: "/dashboard/admin/reviews" },
           { title: "Avis signalés", url: "/dashboard/admin/reviews?flagged=true" },
@@ -144,6 +148,7 @@ export const adminSidebarItems: NavGroup[] = [
         title: "Rapports",
         url: "/dashboard/admin/reports",
         icon: FileText,
+        comingSoon: true,
       },
     ],
   },
@@ -155,6 +160,7 @@ export const adminSidebarItems: NavGroup[] = [
         title: "Paramètres",
         url: "/dashboard/admin/settings",
         icon: Settings,
+        comingSoon: true,
         subItems: [
           { title: "Paramètres de plateforme", url: "/dashboard/admin/settings/platform" },
           { title: "Paramètres de paiement", url: "/dashboard/admin/settings/payments" },
@@ -165,6 +171,7 @@ export const adminSidebarItems: NavGroup[] = [
         title: "Sécurité",
         url: "/dashboard/admin/security",
         icon: Shield,
+        comingSoon: true,
       },
       {
         title: "Base de données",
