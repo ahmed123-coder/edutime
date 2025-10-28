@@ -1,0 +1,645 @@
+openapi: 3.0.0
+info:
+  title: EduTime Mobile API
+  version: 1.0.0
+  description: Mobile API for EduTime - Authentication and Resource Management
+  contact:
+    name: EduTime Support
+    email: support@edutime.com
+  license:
+    name: MIT
+    url: https://opensource.org/licenses/MIT
+
+servers:
+  - url: http://localhost:3000
+    description: Development server
+  - url: https://api.edutime.com
+    description: Production server
+
+security:
+  - BearerAuth: []
+
+tags:
+  - name: Authentication
+    description: User authentication and authorization endpoints
+  - name: Profile
+    description: User profile management endpoints
+  - name: Email Verification
+    description: Email verification endpoints
+  - name: Password Reset
+    description: Password reset endpoints
+
+paths:
+  /api/mobile/v1/auth/register:
+    post:
+      tags:
+        - Authentication
+      summary: Register a new user
+      description: Create a new user account with email verification
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/RegisterRequest'
+      responses:
+        '201':
+          description: User registered successfully
+          content:
+            application/json:
+              schema:
+                allOf:
+                  - $ref: '#/components/schemas/ApiResponse'
+                  - type: object
+                    properties:
+                      data:
+                        type: object
+                        properties:
+                          user:
+                            $ref: '#/components/schemas/User'
+                          message:
+                            type: string
+                            example: "User created successfully. Please check your email for verification."
+                          requiresVerification:
+                            type: boolean
+                            example: true
+        '400':
+          $ref: '#/components/responses/BadRequest'
+        '409':
+          $ref: '#/components/responses/Conflict'
+        '429':
+          $ref: '#/components/responses/TooManyRequests'
+        '500':
+          $ref: '#/components/responses/InternalServerError'
+
+  /api/mobile/v1/auth/login:
+    post:
+      tags:
+        - Authentication
+      summary: User login
+      description: Authenticate user with email and password
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/LoginRequest'
+      responses:
+        '200':
+          description: Login successful
+          content:
+            application/json:
+              schema:
+                allOf:
+                  - $ref: '#/components/schemas/ApiResponse'
+                  - type: object
+                    properties:
+                      data:
+                        $ref: '#/components/schemas/LoginResponse'
+        '400':
+          $ref: '#/components/responses/BadRequest'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '403':
+          description: Email not verified
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ApiResponse'
+        '429':
+          $ref: '#/components/responses/TooManyRequests'
+        '500':
+          $ref: '#/components/responses/InternalServerError'
+
+  /api/mobile/v1/auth/google:
+    post:
+      tags:
+        - Authentication
+      summary: Google OAuth login
+      description: Authenticate user with Google OAuth
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/GoogleAuthRequest'
+      responses:
+        '200':
+          description: Google authentication successful
+          content:
+            application/json:
+              schema:
+                allOf:
+                  - $ref: '#/components/schemas/ApiResponse'
+                  - type: object
+                    properties:
+                      data:
+                        allOf:
+                          - $ref: '#/components/schemas/LoginResponse'
+                          - type: object
+                            properties:
+                              isNewUser:
+                                type: boolean
+                                description: Whether this is a new user registration
+        '400':
+          $ref: '#/components/responses/BadRequest'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '500':
+          $ref: '#/components/responses/InternalServerError'
+
+  /api/mobile/v1/auth/refresh-token:
+    post:
+      tags:
+        - Authentication
+      summary: Refresh access token
+      description: Obtain new access token using refresh token
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/RefreshTokenRequest'
+      responses:
+        '200':
+          description: Token refreshed successfully
+          content:
+            application/json:
+              schema:
+                allOf:
+                  - $ref: '#/components/schemas/ApiResponse'
+                  - type: object
+                    properties:
+                      data:
+                        $ref: '#/components/schemas/LoginResponse'
+        '400':
+          $ref: '#/components/responses/BadRequest'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '500':
+          $ref: '#/components/responses/InternalServerError'
+
+  /api/mobile/v1/auth/logout:
+    post:
+      tags:
+        - Authentication
+      summary: User logout
+      description: Logout user and revoke refresh token
+      security:
+        - BearerAuth: []
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                refreshToken:
+                  type: string
+                  description: "Refresh token to revoke (optional)"
+      responses:
+        '200':
+          description: Logout successful
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ApiResponse'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '500':
+          $ref: '#/components/responses/InternalServerError'
+
+  /api/mobile/v1/auth/me:
+    get:
+      tags:
+        - Profile
+      summary: Get current user profile
+      description: Get current user profile and active devices
+      security:
+        - BearerAuth: []
+      responses:
+        '200':
+          description: User profile retrieved successfully
+          content:
+            application/json:
+              schema:
+                allOf:
+                  - $ref: '#/components/schemas/ApiResponse'
+                  - type: object
+                    properties:
+                      data:
+                        type: object
+                        properties:
+                          user:
+                            $ref: '#/components/schemas/User'
+                          devices:
+                            type: array
+                            items:
+                              $ref: '#/components/schemas/DeviceInfo'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '500':
+          $ref: '#/components/responses/InternalServerError'
+
+  /api/mobile/v1/auth/verify-email:
+    get:
+      tags:
+        - Email Verification
+      summary: Verify email address
+      description: Verify user email address using token
+      parameters:
+        - in: query
+          name: token
+          required: true
+          schema:
+            type: string
+          description: Email verification token
+      responses:
+        '200':
+          description: Email verified successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ApiResponse'
+        '400':
+          $ref: '#/components/responses/BadRequest'
+        '404':
+          $ref: '#/components/responses/NotFound'
+        '410':
+          description: Verification token expired
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ApiResponse'
+        '500':
+          $ref: '#/components/responses/InternalServerError'
+
+  /api/mobile/v1/auth/resend-verification:
+    post:
+      tags:
+        - Email Verification
+      summary: Resend verification email
+      description: Resend email verification token
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+                - email
+              properties:
+                email:
+                  type: string
+                  format: email
+                  description: User email address
+      responses:
+        '200':
+          description: Verification email sent
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ApiResponse'
+        '400':
+          $ref: '#/components/responses/BadRequest'
+        '404':
+          $ref: '#/components/responses/NotFound'
+        '429':
+          $ref: '#/components/responses/TooManyRequests'
+        '500':
+          $ref: '#/components/responses/InternalServerError'
+
+components:
+  securitySchemes:
+    BearerAuth:
+      type: http
+      scheme: bearer
+      bearerFormat: JWT
+      description: JWT access token obtained from login or refresh endpoints
+
+  schemas:
+    ApiResponse:
+      type: object
+      properties:
+        success:
+          type: boolean
+          description: Indicates if the request was successful
+        data:
+          type: object
+          description: Response data payload
+        error:
+          $ref: '#/components/schemas/Error'
+        meta:
+          $ref: '#/components/schemas/ResponseMeta'
+
+    User:
+      type: object
+      properties:
+        id:
+          type: string
+          format: cuid
+          description: Unique user identifier
+        email:
+          type: string
+          format: email
+          description: User email address
+        name:
+          type: string
+          description: User display name
+          nullable: true
+        role:
+          $ref: '#/components/schemas/UserRole'
+        verified:
+          type: boolean
+          description: Whether the user's email has been verified
+        phone:
+          type: string
+          description: User phone number
+          nullable: true
+        speciality:
+          type: string
+          description: User speciality or expertise
+          nullable: true
+        avatar:
+          type: string
+          format: uri
+          description: URL to user avatar image
+          nullable: true
+        createdAt:
+          type: string
+          format: date-time
+          description: User account creation timestamp
+        updatedAt:
+          type: string
+          format: date-time
+          description: Last update timestamp
+
+    UserRole:
+      type: string
+      enum:
+        - ADMIN
+        - CENTER_OWNER
+        - TRAINING_MANAGER
+        - TEACHER
+        - PARTNER
+      description: User role in the system
+
+    TokenPair:
+      type: object
+      required:
+        - accessToken
+        - refreshToken
+        - expiresIn
+        - tokenType
+      properties:
+        accessToken:
+          type: string
+          description: JWT access token for API calls
+        refreshToken:
+          type: string
+          description: JWT refresh token for obtaining new access tokens
+        expiresIn:
+          type: integer
+          description: Access token expiration time in seconds
+        tokenType:
+          type: string
+          enum:
+            - Bearer
+          description: Token type
+
+    LoginRequest:
+      type: object
+      required:
+        - email
+        - password
+      properties:
+        email:
+          type: string
+          format: email
+          description: User email address
+        password:
+          type: string
+          minLength: 1
+          description: User password
+        deviceId:
+          type: string
+          description: Unique device identifier for multi-device support
+        deviceInfo:
+          type: string
+          description: Device information (user agent, platform, etc.)
+
+    LoginResponse:
+      type: object
+      properties:
+        user:
+          $ref: '#/components/schemas/User'
+        tokens:
+          $ref: '#/components/schemas/TokenPair'
+
+    RegisterRequest:
+      type: object
+      required:
+        - email
+        - name
+        - password
+      properties:
+        email:
+          type: string
+          format: email
+          description: User email address
+        name:
+          type: string
+          minLength: 2
+          maxLength: 100
+          description: User display name
+        phone:
+          type: string
+          description: User phone number (international format)
+          pattern: '^\\+?[1-9]\\d{1,14}$'
+        password:
+          type: string
+          minLength: 6
+          description: User password (minimum 6 characters)
+        role:
+          $ref: '#/components/schemas/UserRole'
+          description: User role (defaults to TEACHER)
+        speciality:
+          type: string
+          maxLength: 100
+          description: User speciality or expertise
+        deviceId:
+          type: string
+          description: Unique device identifier
+        deviceInfo:
+          type: string
+          description: Device information
+
+    GoogleAuthRequest:
+      type: object
+      required:
+        - idToken
+        - accessToken
+      properties:
+        idToken:
+          type: string
+          description: Google OAuth ID token
+        accessToken:
+          type: string
+          description: Google OAuth access token
+        deviceId:
+          type: string
+          description: Unique device identifier
+        deviceInfo:
+          type: string
+          description: Device information
+
+    RefreshTokenRequest:
+      type: object
+      required:
+        - refreshToken
+      properties:
+        refreshToken:
+          type: string
+          description: JWT refresh token
+
+    DeviceInfo:
+      type: object
+      properties:
+        deviceId:
+          type: string
+          description: Unique device identifier
+        deviceName:
+          type: string
+          description: Human-readable device name
+          nullable: true
+        platform:
+          type: string
+          description: Device platform (iOS, Android, etc.)
+          nullable: true
+        osVersion:
+          type: string
+          description: Operating system version
+          nullable: true
+        appVersion:
+          type: string
+          description: Mobile app version
+          nullable: true
+        lastUsed:
+          type: string
+          format: date-time
+          description: Last time the device was used
+        isActive:
+          type: boolean
+          description: Whether the device is currently active
+
+    Error:
+      type: object
+      required:
+        - code
+        - message
+      properties:
+        code:
+          type: string
+          description: Machine-readable error code
+          enum:
+            - UNAUTHORIZED
+            - INVALID_TOKEN
+            - TOKEN_EXPIRED
+            - INVALID_CREDENTIALS
+            - EMAIL_NOT_VERIFIED
+            - VALIDATION_ERROR
+            - NOT_FOUND
+            - ALREADY_EXISTS
+            - FORBIDDEN
+            - CONFLICT
+            - RATE_LIMIT_EXCEEDED
+            - INTERNAL_ERROR
+            - SERVICE_UNAVAILABLE
+        message:
+          type: string
+          description: Human-readable error message
+        details:
+          type: object
+          description: Additional error context or validation errors
+
+    ResponseMeta:
+      type: object
+      properties:
+        timestamp:
+          type: string
+          format: date-time
+          description: Response timestamp in ISO 8601 format
+        requestId:
+          type: string
+          format: uuid
+          description: Unique request identifier for debugging
+        pagination:
+          type: object
+          properties:
+            page:
+              type: integer
+              description: Current page number
+            limit:
+              type: integer
+              description: Items per page
+            total:
+              type: integer
+              description: Total number of items
+            totalPages:
+              type: integer
+              description: Total number of pages
+            hasNext:
+              type: boolean
+              description: Whether there are more pages
+            hasPrev:
+              type: boolean
+              description: Whether there are previous pages
+
+  responses:
+    BadRequest:
+      description: Bad request
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/ApiResponse'
+
+    Unauthorized:
+      description: Unauthorized
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/ApiResponse'
+
+    Forbidden:
+      description: Forbidden
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/ApiResponse'
+
+    NotFound:
+      description: Resource not found
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/ApiResponse'
+
+    Conflict:
+      description: Conflict
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/ApiResponse'
+
+    TooManyRequests:
+      description: Rate limit exceeded
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/ApiResponse'
+
+    InternalServerError:
+      description: Internal server error
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/ApiResponse'
