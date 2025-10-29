@@ -27,8 +27,8 @@ const createOrganizationSchema = z.object({
     })
     .optional(),
   phone: z.string().optional(),
-  email: z.string().email().optional(),
-  website: z.string().url().optional(),
+  email: z.string().email().optional().or(z.literal("")).transform(val => val === "" ? undefined : val),
+  website: z.string().url().optional().or(z.literal("")).transform(val => val === "" ? undefined : val),
   hours: z
     .object({
       monday: z.object({ open: z.string(), close: z.string() }).optional(),
@@ -93,8 +93,8 @@ const updateOrganizationSchema = z.object({
     })
     .optional(),
   phone: z.string().optional(),
-  email: z.string().email().optional(),
-  website: z.string().url().optional(),
+  email: z.string().email().optional().or(z.literal("")).transform(val => val === "" ? undefined : val),
+  website: z.string().url().optional().or(z.literal("")).transform(val => val === "" ? undefined : val),
   hours: z
     .object({
       monday: z.object({ open: z.string(), close: z.string() }).optional(),

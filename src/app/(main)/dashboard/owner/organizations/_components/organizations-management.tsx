@@ -28,6 +28,7 @@ import {
 import { Input } from "@/components/ui/input";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
+import { CreateOrganizationModal } from "./create-organization-modal";
 
 interface Organization {
   id: string;
@@ -158,6 +159,7 @@ export function OrganizationsManagement() {
           <h1 className="text-3xl font-bold tracking-tight">Gestion des Organisations</h1>
           <p className="text-muted-foreground">Gérer vos centres de formation et organisations partenaires</p>
         </div>
+        <CreateOrganizationModal onOrganizationCreated={fetchOrganizations} />
       </div>
 
       {/* Filters */}
@@ -371,4 +373,3 @@ export function OrganizationsManagement() {
     </div>
   );
 }
-
