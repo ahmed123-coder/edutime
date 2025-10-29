@@ -2,7 +2,7 @@ import { Metadata } from "next";
 import { redirect } from "next/navigation";
 import { getServerSession } from "next-auth";
 import { authOptions } from "@/lib/auth";
-import { OwnerPortfolio } from "../../admin/profile/_components/owner-portfolio";
+import { OwnerPortfolio } from "./_components/owner-portfolio";
 
 export const metadata: Metadata = {
   title: "Mon Portfolio | Propriétaire",

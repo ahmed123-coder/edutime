@@ -2,13 +2,12 @@
 
 import { useState, useEffect } from "react";
 import Link from "next/link";
-import { Edit, User, Mail, Phone, GraduationCap, Calendar, Shield, Loader2, ChevronDown } from "lucide-react";
+import { Edit, User, Mail, Phone, GraduationCap, Calendar, Shield, Loader2 } from "lucide-react";
 
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Badge } from "@/components/ui/badge";
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 
 interface User {
   id: string;
@@ -36,25 +35,20 @@ interface OwnerPortfolioProps {
 
 export function OwnerPortfolio({ isAdmin = false }: OwnerPortfolioProps) {
   const [userData, setUserData] = useState<User | null>(null);
-  const [allOwners, setAllOwners] = useState<User[]>([]);
-  const [selectedOwnerId, setSelectedOwnerId] = useState<string>('');
   const [stats, setStats] = useState<Stats | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
-    fetchOwnerData();
+    fetchData();
   }, []);
 
-  const fetchOwnerData = async () => {
+  const fetchData = async () => {
     try {
       setLoading(true);
-      const profileEndpoint = isAdmin ? '/api/admin/me' : '/api/owner/profile';
-      const statsEndpoint = isAdmin ? '/api/admin/stats' : '/api/owner/stats';
-      
       const [profileRes, statsRes] = await Promise.all([
-        fetch(profileEndpoint),
-        fetch(statsEndpoint)
+        fetch('/api/owner/profile'),
+        fetch('/api/owner/stats')
       ]);
       
       if (!profileRes.ok || !statsRes.ok) throw new Error('Failed to fetch data');
@@ -64,24 +58,12 @@ export function OwnerPortfolio({ isAdmin = false }: OwnerPortfolioProps) {
         statsRes.json()
       ]);
       
-      if (profileData.user) {
-        setUserData(profileData.user);
-        setAllOwners([profileData.user]);
-        setSelectedOwnerId(profileData.user.id);
-      }
+      if (profileData.user) setUserData(profileData.user);
       setStats(statsData);
     } catch (err) {
       setError(err instanceof Error ? err.message : 'Failed to load data');
     } finally {
       setLoading(false);
-    }
-  };
-
-  const handleOwnerChange = (ownerId: string) => {
-    const owner = allOwners.find(o => o.id === ownerId);
-    if (owner) {
-      setUserData(owner);
-      setSelectedOwnerId(ownerId);
     }
   };
 
@@ -114,24 +96,6 @@ export function OwnerPortfolio({ isAdmin = false }: OwnerPortfolioProps) {
           <p className="text-muted-foreground">
             {isAdmin ? "Détails du portfolio du propriétaire" : "Gérer vos informations personnelles"}
           </p>
-          
-          {/* Owner Selection */}
-          {isAdmin && allOwners.length > 1 && (
-            <div className="mt-4 max-w-xs">
-              <Select value={selectedOwnerId} onValueChange={handleOwnerChange}>
-                <SelectTrigger>
-                  <SelectValue placeholder="Sélectionner un propriétaire" />
-                </SelectTrigger>
-                <SelectContent>
-                  {allOwners.map((owner) => (
-                    <SelectItem key={owner.id} value={owner.id}>
-                      {owner.name || owner.email}
-                    </SelectItem>
-                  ))}
-                </SelectContent>
-              </Select>
-            </div>
-          )}
         </div>
         
         <Link href={editPath}>
@@ -227,7 +191,7 @@ export function OwnerPortfolio({ isAdmin = false }: OwnerPortfolioProps) {
           </CardHeader>
           <CardContent>
             <div className="text-2xl font-bold">{stats?.organizations || 0}</div>
-            <p className="text-muted-foreground text-xs">{isAdmin ? 'Total système' : 'Centres gérés'}</p>
+            <p className="text-muted-foreground text-xs">Centres gérés</p>
           </CardContent>
         </Card>
 

@@ -1,47 +1,167 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect, useRef } from "react";
 import { useRouter } from "next/navigation";
-import { ArrowLeft, Save, Upload, User, Mail, Phone, GraduationCap } from "lucide-react";
+import { ArrowLeft, Save, Upload, User, Mail, Phone, GraduationCap, Loader2 } from "lucide-react";
 
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
+import { useToast } from "@/hooks/use-toast";
 
 export function EditOwnerProfile() {
   const router = useRouter();
+  const { toast } = useToast();
+  const fileInputRef = useRef<HTMLInputElement>(null);
+  
   const [isLoading, setIsLoading] = useState(false);
+  const [isUploading, setIsUploading] = useState(false);
+  const [loading, setLoading] = useState(true);
 
   const [formData, setFormData] = useState({
-    name: "Ahmed Ben Ali",
-    email: "ahmed.benali@example.com",
-    phone: "+216 98 123 456",
+    name: "",
+    email: "",
+    phone: "",
     avatar: "",
-    speciality: "Formation et développement professionnel",
+    speciality: "",
   });
+
+  useEffect(() => {
+    fetchUserData();
+  }, []);
+
+  const fetchUserData = async () => {
+    try {
+      setLoading(true);
+      const response = await fetch('/api/owner/profile');
+      if (!response.ok) throw new Error('Failed to fetch user data');
+      
+      const data = await response.json();
+      if (data.user) {
+        setFormData({
+          name: data.user.name || '',
+          email: data.user.email || '',
+          phone: data.user.phone || '',
+          avatar: data.user.avatar || '',
+          speciality: data.user.speciality || '',
+        });
+      }
+    } catch (err) {
+      toast({
+        title: "Erreur",
+        description: "Impossible de charger les données utilisateur",
+        variant: "destructive",
+      });
+    } finally {
+      setLoading(false);
+    }
+  };
 
   const handleInputChange = (field: string, value: string) => {
     setFormData(prev => ({ ...prev, [field]: value }));
   };
 
+  const handlePhotoUpload = async (file: File) => {
+    try {
+      setIsUploading(true);
+      const uploadFormData = new FormData();
+      uploadFormData.append('file', file);
+      uploadFormData.append('type', 'avatar');
+
+      const response = await fetch('/api/upload', {
+        method: 'POST',
+        body: uploadFormData,
+      });
+
+      if (!response.ok) throw new Error('Upload failed');
+
+      const data = await response.json();
+      setFormData(prev => ({ ...prev, avatar: data.url }));
+      
+      toast({
+        title: "Succès",
+        description: "Photo uploadée avec succès",
+      });
+    } catch (err) {
+      toast({
+        title: "Erreur",
+        description: "Échec de l'upload de la photo",
+        variant: "destructive",
+      });
+    } finally {
+      setIsUploading(false);
+    }
+  };
+
+  const handleFileSelect = (event: React.ChangeEvent<HTMLInputElement>) => {
+    const file = event.target.files?.[0];
+    if (file) {
+      if (!file.type.startsWith('image/')) {
+        toast({
+          title: "Erreur",
+          description: "Seuls les fichiers image sont autorisés",
+          variant: "destructive",
+        });
+        return;
+      }
+      
+      if (file.size > 5 * 1024 * 1024) {
+        toast({
+          title: "Erreur",
+          description: "La taille du fichier doit être inférieure à 5MB",
+          variant: "destructive",
+        });
+        return;
+      }
+      
+      handlePhotoUpload(file);
+    }
+  };
+
   const handleSave = async () => {
     setIsLoading(true);
     try {
-      const response = await fetch('/api/owner/profile/update', {
+      const response = await fetch('/api/owner/profile', {
         method: 'PUT',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(formData),
+        body: JSON.stringify({
+          name: formData.name,
+          phone: formData.phone,
+          speciality: formData.speciality,
+          avatar: formData.avatar,
+        }),
       });
+      
       if (response.ok) {
+        toast({
+          title: "Succès",
+          description: "Profil mis à jour avec succès",
+        });
         router.back();
+      } else {
+        const errorData = await response.json();
+        throw new Error(errorData.error || 'Failed to update profile');
       }
     } catch (error) {
-      console.error('Error updating profile:', error);
+      toast({
+        title: "Erreur",
+        description: error instanceof Error ? error.message : "Erreur lors de la mise à jour",
+        variant: "destructive",
+      });
+    } finally {
+      setIsLoading(false);
     }
-    setIsLoading(false);
   };
+
+  if (loading) {
+    return (
+      <div className="flex items-center justify-center min-h-[400px]">
+        <Loader2 className="h-8 w-8 animate-spin" />
+      </div>
+    );
+  }
 
   return (
     <div className="space-y-6">
@@ -69,14 +189,30 @@ export function EditOwnerProfile() {
           <CardContent className="space-y-4">
             <div className="flex flex-col items-center space-y-4">
               <Avatar className="h-24 w-24">
-                <AvatarImage src={formData.avatar} />
+                <AvatarImage src={formData.avatar || ''} />
                 <AvatarFallback className="text-lg">
-                  {formData.name.split(' ').map(n => n[0]).join('')}
+                  {formData.name ? formData.name.split(' ').map(n => n[0]).join('') : 'U'}
                 </AvatarFallback>
               </Avatar>
-              <Button variant="outline" size="sm">
-                <Upload className="h-4 w-4 mr-2" />
-                Changer la photo
+              <input
+                ref={fileInputRef}
+                type="file"
+                accept="image/*"
+                onChange={handleFileSelect}
+                className="hidden"
+              />
+              <Button 
+                variant="outline" 
+                size="sm" 
+                onClick={() => fileInputRef.current?.click()}
+                disabled={isUploading}
+              >
+                {isUploading ? (
+                  <Loader2 className="h-4 w-4 mr-2 animate-spin" />
+                ) : (
+                  <Upload className="h-4 w-4 mr-2" />
+                )}
+                {isUploading ? 'Upload...' : 'Changer la photo'}
               </Button>
             </div>
           </CardContent>
@@ -107,7 +243,8 @@ export function EditOwnerProfile() {
                 id="email"
                 type="email"
                 value={formData.email}
-                onChange={(e) => handleInputChange("email", e.target.value)}
+                disabled
+                className="bg-muted"
               />
             </div>
 
@@ -144,8 +281,12 @@ export function EditOwnerProfile() {
         <Button variant="outline" onClick={() => router.back()}>
           Annuler
         </Button>
-        <Button onClick={handleSave} disabled={isLoading}>
-          <Save className="h-4 w-4 mr-2" />
+        <Button onClick={handleSave} disabled={isLoading || isUploading}>
+          {isLoading ? (
+            <Loader2 className="h-4 w-4 mr-2 animate-spin" />
+          ) : (
+            <Save className="h-4 w-4 mr-2" />
+          )}
           {isLoading ? "Enregistrement..." : "Enregistrer"}
         </Button>
       </div>

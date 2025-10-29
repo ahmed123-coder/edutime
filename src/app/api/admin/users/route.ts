@@ -82,21 +82,33 @@ export async function GET(request: NextRequest) {
       return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
     }
 
-    const user = await prisma.user.findUnique({
-      where: { id: session.user.id },
-      select: {
-        id: true,
-        email: true,
-        name: true,
-        phone: true,
-        role: true,
-        verified: true,
-        avatar: true,
-        speciality: true,
-        createdAt: true,
-        updatedAt: true,
-      },
-    });
+        const user = await prisma.user.findUnique({
+          where: { id: session.user.id },
+          select: {
+            id: true,
+            email: true,
+            name: true,
+            phone: true,
+            role: true,
+            verified: true,
+            avatar: true,
+            speciality: true,
+            createdAt: true,
+            organizations: {
+              select: {
+                id: true,
+                role: true,
+                organization: {
+                  select: {
+                    id: true,
+                    name: true,
+                    type: true,
+                  },
+                },
+              },
+            },
+          },
+        });
 
     if (!user) {
       return NextResponse.json({ error: "User not found" }, { status: 404 });
