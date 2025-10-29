@@ -86,7 +86,7 @@ const getFacturationPath = () => {
   
   switch (session.user.role) {
     case "ADMIN":
-      return "/dashboard/admin/subscriptions";
+      return "/dashboard/admin/billing";
     case "CENTER_OWNER":
       return "/dashboard/owner/billing";
     default:
@@ -163,8 +163,8 @@ const getFacturationPath = () => {
                 <CircleUser />
                 Compte
               </DropdownMenuItem>
-              <DropdownMenuItem>
-                <CreditCard onClick={() => router.push(getFacturationPath())}/>
+              <DropdownMenuItem onClick={() => router.push(getFacturationPath())}>
+                <CreditCard />
                 Facturation
               </DropdownMenuItem>
               <DropdownMenuItem onClick={() => router.push(getNotificationsPath())}>
