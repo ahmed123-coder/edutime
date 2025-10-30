@@ -38,7 +38,7 @@ export async function POST(request: NextRequest) {
   try {
     const session = await getServerSession(authOptions);
 
-    if (!session?.user || session.user.role !== "ADMIN") {
+    if (!session?.user || session.user.role !== "ADMIN" && session.user.role !== "CENTER_OWNER") {
       return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
     }
 
@@ -64,8 +64,7 @@ export async function POST(request: NextRequest) {
 export async function PUT(request: NextRequest) {
   try {
     const session = await getServerSession(authOptions);
-
-    if (!session?.user || session.user.role !== "ADMIN") {
+    if (!session?.user || session.user.role !== "ADMIN" && session.user.role !== "CENTER_OWNER") {
       return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
     }
 
@@ -92,11 +91,9 @@ export async function PUT(request: NextRequest) {
 export async function DELETE(request: NextRequest) {
   try {
     const session = await getServerSession(authOptions);
-
-    if (!session?.user || session.user.role !== "ADMIN") {
-      return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+    if (!session?.user || session.user.role !== "ADMIN" && session.user.role !== "CENTER_OWNER") {
+        return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
     }
-
     const { searchParams } = new URL(request.url);
     const id = searchParams.get("id");
 
