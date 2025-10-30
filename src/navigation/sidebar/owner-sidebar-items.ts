@@ -13,6 +13,8 @@ import {
   Clock,
   Gift,
   Bell,
+  Wrench,
+  Sofa,
   type LucideIcon,
 } from "lucide-react";
 
@@ -89,7 +91,16 @@ export const ownerSidebarItems: NavGroup[] = [
         title: "Salles et espaces",
         url: "/dashboard/owner/rooms",
         icon: MapPin,
-       
+      },
+      {
+        title: "Équipements",
+        url: "/dashboard/owner/equipment",
+        icon: Wrench,
+      },
+      {
+        title: "Commodités",
+        url: "/dashboard/owner/amenities",
+        icon: Sofa,
       },
   
     ],
